@@ -2727,7 +2727,9 @@ const App = () => {
                         {item.priceFormatted}
                       </div>
                     </div>
-                    <HeartOutlined style={{ fontSize: "20px" }} />
+                    <HeartOutlined
+                      style={{ fontSize: "20px", cursor: "pointer" }}
+                    />
                   </div>
                 </div>
               </Card>
