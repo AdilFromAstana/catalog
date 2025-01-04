@@ -1,6 +1,12 @@
-import React, { useState } from "react";
-import { Layout, Button, Drawer, List, Card, Radio } from "antd";
-import { HeartOutlined, OrderedListOutlined } from "@ant-design/icons";
+import React, { useEffect, useState } from "react";
+import { Layout, Button, Drawer, List, Radio, Input, Slider } from "antd";
+import {
+  ControlOutlined,
+  HeartOutlined,
+  LeftOutlined,
+  MenuOutlined,
+  OrderedListOutlined,
+} from "@ant-design/icons";
 import "./App.css";
 
 const { Header, Content } = Layout;
@@ -2639,7 +2645,31 @@ const mockProducts = [
 
 const App = () => {
   const [isSortDrawerVisible, setSortDrawerVisible] = useState(false);
+  const [isPriceDrawerVisible, setPriceDrawerVisible] = useState(false);
+  const [isMenuDrawerVisible, setMenuDrawerVisible] = useState(false);
   const [sortOrder, setSortOrder] = useState("asc");
+  const [availableProdutcs, setAvailableProducts] = useState([]);
+  const [allCategories, setAllCategories] = useState([]);
+  const [hierarchyPath, setHierarchyPath] = useState([]);
+  const [minPrice, setMinPrice] = useState(0);
+  const [maxPrice, setMaxPrice] = useState(0);
+  const [maxValue, setMaxValue] = useState(0);
+  const [minValue, setMinValue] = useState(0);
+  const [tempMinValue, setTempMinValue] = useState(0);
+  const [tempMaxValue, setTempMaxValue] = useState(0);
+
+  const handleCategoryClick = (category) => {
+    setHierarchyPath((prev) => [...prev, category]);
+  };
+
+  const handleBackClick = () => {
+    setHierarchyPath((prev) => prev.slice(0, -1));
+  };
+
+  const currentHierarchy = hierarchyPath.reduce(
+    (acc, curr) => acc.find((node) => node.title === curr)?.children || [],
+    allCategories
+  );
 
   const toggleSortDrawer = (open) => {
     setSortDrawerVisible(open);
@@ -2650,89 +2680,180 @@ const App = () => {
     }
   };
 
-  const handleSortChange = (value) => {
-    setSortOrder(value);
+  const togglePriceDrawer = (open) => {
+    setPriceDrawerVisible(open);
+    if (open) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+    }
   };
 
-  const sortedProducts = [...mockProducts].sort((a, b) => {
+  const handleSortChange = (value) => {
+    setSortOrder(value);
+    toggleSortDrawer();
+  };
+
+  const toggleMenuDrawer = () => {
+    setMenuDrawerVisible(!isMenuDrawerVisible);
+  };
+
+  const sortedProducts = [...availableProdutcs].sort((a, b) => {
     switch (sortOrder) {
       case "asc":
-        return a.price - b.price;
+        return a.unitPrice - b.unitPrice;
       case "desc":
-        return b.price - a.price;
+        return b.unitPrice - a.unitPrice;
       default:
         return 0;
     }
   });
 
+  const handleSliderChange = ([min, max]) => {
+    setTempMinValue(min);
+    setTempMaxValue(max);
+  };
+
+  const getCategoryTitle = () => {
+    return hierarchyPath.length === 0
+      ? "Все категории"
+      : hierarchyPath[hierarchyPath.length - 1];
+  };
+
+  const handlePriceApply = () => {
+    setMinValue(tempMinValue);
+    setMaxValue(tempMaxValue);
+    setPriceDrawerVisible(false); // Закрываем фильтр
+  };
+
+  const handlePriceReset = () => {
+    setTempMinValue(minPrice);
+    setTempMaxValue(maxPrice);
+  };
+
+  useEffect(() => {
+    const currentCategory = hierarchyPath[hierarchyPath.length - 1];
+
+    // Фильтруем только по категории (без учета диапазона цен)
+    const filteredByCategory = mockProducts.filter((product) => {
+      return !currentCategory || product.category.includes(currentCategory);
+    });
+
+    // Вычисляем минимальную и максимальную цены на основе отфильтрованных по категории продуктов
+    if (filteredByCategory.length > 0) {
+      const prices = filteredByCategory.map((product) => product.unitPrice);
+      const min = Math.min(...prices);
+      const max = Math.max(...prices);
+
+      setMinPrice(min);
+      setMaxPrice(max);
+      setTempMinValue(min);
+      setTempMaxValue(max);
+
+      // Устанавливаем значения по умолчанию для слайдера
+      if (minValue === 0 && maxValue === 0) {
+        setMinValue(min);
+        setMaxValue(max);
+      }
+    } else {
+      setMinPrice(0);
+      setMaxPrice(0);
+      setMinValue(0);
+      setMaxValue(0);
+    }
+
+    // Фильтруем по категории и диапазону цен
+    const filteredProducts = filteredByCategory.filter((product) => {
+      return product.unitPrice >= minValue && product.unitPrice <= maxValue;
+    });
+
+    setAvailableProducts(filteredProducts);
+  }, [hierarchyPath, minValue, maxValue]);
+
+  useEffect(() => {
+    const hierarchy = {};
+
+    mockProducts.forEach((product) => {
+      let current = hierarchy;
+
+      product.category.forEach((cat, index) => {
+        if (!current[cat]) {
+          current[cat] = {
+            title: cat,
+            children: index === product.category.length - 1 ? null : {},
+          };
+        }
+        current = current[cat].children;
+      });
+    });
+
+    const convertToTree = (node) =>
+      Object.entries(node).map(([key, value]) => ({
+        title: key,
+        children: value.children ? convertToTree(value.children) : null,
+      }));
+
+    setAllCategories(convertToTree(hierarchy));
+  }, []);
+
   return (
-    <Layout style={{ minHeight: "100vh" }}>
-      <Header
-        style={{
-          background: "#fff",
-          padding: "0 16px",
-          display: "flex",
-          justifyContent: "space-between",
-        }}
-      >
-        <h1 style={{ margin: 0, fontSize: "18px" }}>Каталог товаров</h1>
-        <Button type="primary" onClick={() => toggleSortDrawer(true)}>
-          <OrderedListOutlined />
-        </Button>
+    <Layout className="layout">
+      <Header className="header">
+        <h1 className="header-title">Каталог товаров</h1>
+        <MenuOutlined className="icon" onClick={toggleMenuDrawer} />
       </Header>
-      <Content style={{ padding: "16px" }}>
+      <Content>
+        <div className="content">
+          <div className="nav-item" onClick={handleBackClick}>
+            <LeftOutlined className="icon" />
+          </div>
+          <div className="category-info">
+            <div className="category-title">{getCategoryTitle()}</div>
+            <div>{availableProdutcs.length}</div>
+          </div>
+          <div className="nav-item">
+            <OrderedListOutlined className="icon" onClick={toggleSortDrawer} />
+          </div>
+          <div className="nav-item">
+            <ControlOutlined className="icon" onClick={togglePriceDrawer} />
+          </div>
+        </div>
+
+        {currentHierarchy.length > 0 && (
+          <div className="scrollable-row">
+            {currentHierarchy.map((node) => (
+              <Button
+                key={node.title}
+                type="primary"
+                onClick={() => {
+                  handleCategoryClick(node.title);
+                }}
+              >
+                {node.title}
+              </Button>
+            ))}
+          </div>
+        )}
+
         <List
-          grid={{ gutter: 16, column: 1 }}
           dataSource={sortedProducts}
           renderItem={(item) => (
-            <List.Item>
-              <Card>
-                <div
-                  style={{
-                    display: "grid",
-                    gridTemplateColumns: "25% 1fr",
-                    height: "150px",
-                    gap: "10px",
-                    boxSizing: "border-box",
-                  }}
-                >
-                  <img
-                    src={item.previewImage}
-                    alt={item.previewImage}
-                    style={{
-                      maxWidth: "100%",
-                      maxHeight: "150px",
-                      margin: "auto",
-                    }}
-                  />
-                  <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "row",
-                      alignItems: "flex-start",
-                      justifyContent: "space-between",
-                    }}
-                  >
-                    <div
-                      style={{
-                        display: "flex",
-                        flexDirection: "column",
-                      }}
-                    >
-                      <div style={{ fontSize: "16px" }}>{item.title}</div>
-                      <div style={{ fontSize: "12px", opacity: "0.7" }}>
-                        {item.category[item.category.length - 1]}
-                      </div>
-                      <div style={{ fontSize: "16px", fontWeight: 700 }}>
-                        {item.priceFormatted}
-                      </div>
-                    </div>
-                    <HeartOutlined
-                      style={{ fontSize: "20px", cursor: "pointer" }}
-                    />
+            <List.Item className="list-item">
+              <img
+                src={item.previewImage}
+                alt={item.previewImage}
+                className="product-image"
+              />
+              <div className="product-details">
+                <div className="product-info">
+                  <div className="product-title">{item.title}</div>
+                  <div className="product-category">
+                    {item.category[item.category.length - 1]}
                   </div>
+                  <div className="product-price">{item.priceFormatted}</div>
                 </div>
-              </Card>
+                <HeartOutlined className="icon" />
+              </div>
             </List.Item>
           )}
         />
@@ -2743,18 +2864,109 @@ const App = () => {
         onClose={() => toggleSortDrawer(false)}
         open={isSortDrawerVisible}
       >
-        <h4>Сортировка</h4>
         <Radio.Group
           onChange={(e) => handleSortChange(e.target.value)}
           defaultValue="asc"
-          style={{ display: "flex", flexDirection: "column", gap: "8px" }}
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "space-between",
+            height: "100%",
+          }}
         >
-          <Radio value="asc">Сначала дешевые</Radio>
-          <Radio value="desc">Сначала дорогие</Radio>
-          <Radio value="popular">Популярные</Radio>
-          <Radio value="new">Новинки</Radio>
-          <Radio value="rating">Высокий рейтинг</Radio>
+          <Radio style={{ height: "100%", alignItems: "center" }} value="asc">
+            Сначала дешевые
+          </Radio>
+          <Radio style={{ height: "100%", alignItems: "center" }} value="desc">
+            Сначала дорогие
+          </Radio>
+          <Radio
+            style={{ height: "100%", alignItems: "center" }}
+            value="popular"
+          >
+            Популярные
+          </Radio>
+          <Radio style={{ height: "100%", alignItems: "center" }} value="new">
+            Новинки
+          </Radio>
+          <Radio
+            style={{ height: "100%", alignItems: "center" }}
+            value="rating"
+          >
+            Высокий рейтинг
+          </Radio>
         </Radio.Group>
+      </Drawer>
+      <Drawer
+        title="Цена"
+        placement="bottom"
+        onClose={() => togglePriceDrawer(false)}
+        open={isPriceDrawerVisible}
+      >
+        <div
+          style={{
+            display: "flex",
+            gap: "20px",
+            justifyContent: "space-between",
+          }}
+        >
+          <Input
+            size="large"
+            onChange={(e) => setTempMinValue(Number(e.target.value))}
+            value={tempMinValue}
+            max={maxPrice}
+            min={0}
+            type="tel"
+            prefix="от"
+          />
+          <Input
+            size="large"
+            onChange={(e) => setTempMaxValue(Number(e.target.value))}
+            value={tempMaxValue}
+            min={0}
+            max={maxPrice}
+            prefix="до"
+            type="tel"
+          />
+        </div>
+        <Slider
+          range
+          defaultValue={[tempMinValue, tempMaxValue]}
+          value={[tempMinValue, tempMaxValue]}
+          max={maxPrice}
+          min={minPrice}
+          onChange={handleSliderChange}
+        />
+        <div
+          style={{
+            display: "flex",
+            gap: "10px",
+            justifyContent: "space-between",
+          }}
+        >
+          <Button
+            size="large"
+            style={{ width: "100%" }}
+            onClick={handlePriceReset}
+          >
+            Сбросить
+          </Button>
+          <Button
+            size="large"
+            type="primary"
+            style={{ width: "100%" }}
+            onClick={handlePriceApply}
+          >
+            Применить
+          </Button>
+        </div>
+      </Drawer>
+      <Drawer
+        placement="right"
+        onClose={() => setMenuDrawerVisible(false)}
+        open={isMenuDrawerVisible}
+      >
+        АГА
       </Drawer>
     </Layout>
   );
