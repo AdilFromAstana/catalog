@@ -1,0 +1,135 @@
+.content {
+  padding: 0 20px;
+}
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.time,
+.user-icon {
+  font-size: 16px;
+}
+
+.main-image-container {
+  height: 320px;
+  width: 320px;
+  align-self: center;
+  text-align: center;
+}
+
+.item-gallery {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.item-info {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.main-image {
+  max-width: 100%;
+  max-height: 320px;
+  margin: auto;
+}
+
+.thumbnail-container {
+  overflow-x: auto; /* Горизонтальный скролл */
+  display: flex;
+  gap: 10px;
+  padding: 10px 0;
+  scroll-behavior: smooth; /* Плавная прокрутка */
+  border-top: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
+}
+
+.thumbnail-container::-webkit-scrollbar {
+  height: 8px; /* Высота горизонтального скроллбара */
+}
+
+.thumbnail-container::-webkit-scrollbar-thumb {
+  background-color: #ccc; /* Цвет "ползунка" */
+  border-radius: 4px;
+}
+
+.thumbnail-container::-webkit-scrollbar-track {
+  background: #f0f0f0; /* Цвет фона трека */
+}
+
+.thumbnail {
+  width: 60px;
+  height: 60px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  cursor: pointer;
+  object-fit: cover;
+  transition: transform 0.2s;
+}
+
+.active-thumbnail {
+  border: 2px solid #007bff;
+}
+
+.item-title {
+  font-size: 24px;
+  margin: 0;
+  padding: 10px 0;
+  border-bottom: 1px solid #ddd;
+}
+
+.item-price {
+  font-size: 36px;
+}
+
+.installment {
+  font-size: 14px;
+  color: #777;
+}
+
+.buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.add-to-cart {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  border-radius: 4px;
+  font-size: 20px;
+  cursor: pointer;
+  background: #007bff;
+  color: white;
+}
+
+/* Описание */
+.description {
+  padding-top: 10px;
+  border-top: 1px solid #ddd;
+}
+
+.description h3 {
+  margin: 0;
+  margin-bottom: 10px;
+}
+
+.description p {
+  margin: 0;
+  color: #555;
+}
+
+/* Характеристики */
+.specifications {
+  padding-top: 10px;
+  border-top: 1px solid #ddd;
+}
+
+.specifications h3 {
+  margin: 0;
+  margin-bottom: 10px;
+}
