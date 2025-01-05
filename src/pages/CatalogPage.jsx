@@ -21,6 +21,13 @@ const CatalogPage = () => {
   const [tempMinValue, setTempMinValue] = useState(minPrice);
   const [tempMaxValue, setTempMaxValue] = useState(maxPrice);
   const { favorites, toggleFavorite } = useFavorites();
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 9;
+
+  const handlePageChange = (page) => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    setCurrentPage(page);
+  };
 
   const findCategoryPath = (categories, targetCategory, path = []) => {
     for (const category of categories) {
@@ -161,6 +168,12 @@ const CatalogPage = () => {
     setPriceDrawerVisible(false);
   };
 
+  const paginatedProducts = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    return sortedProducts.slice(startIndex, endIndex);
+  }, [currentPage, sortedProducts]);
+
   useEffect(() => {
     const currentCategory = hierarchyPath[hierarchyPath.length - 1];
 
@@ -259,11 +272,15 @@ const CatalogPage = () => {
             handleTreeCategoryClick={handleTreeCategoryClick}
           />
           <ProductList
-            products={sortedProducts}
+            products={paginatedProducts} // Продукты текущей страницы
             favorites={favorites}
             toggleFavorite={toggleFavorite}
             handleSortChange={handleSortChange}
             sortOrder={sortOrder}
+            currentPage={currentPage}
+            handlePageChange={handlePageChange}
+            itemsPerPage={itemsPerPage}
+            totalProducts={sortedProducts.length} // Общее количество продуктов
           />
         </div>
       </Content>
