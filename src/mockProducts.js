@@ -2,6 +2,7 @@ const mockProducts = [
   {
     id: "11636226b",
     title: "Зимняя куртка MINESTONE черный",
+    color: "black",
     brand: "MINESTONE",
     categoryId: "01153",
     hasVariants: true,
@@ -175,6 +176,7 @@ const mockProducts = [
   {
     id: "11267230b",
     title: "Зимняя куртка MINESTONE черный",
+    color: "black",
     brand: "MINESTONE",
     categoryId: "01153",
     hasVariants: true,
@@ -340,6 +342,7 @@ const mockProducts = [
   {
     id: "15151517b",
     title: "Зимняя куртка MINESTONE черный",
+    color: "black",
     brand: "MINESTONE",
     categoryId: "01153",
     hasVariants: true,
@@ -521,6 +524,7 @@ const mockProducts = [
   {
     id: "11295760b",
     title: "Демисезонная куртка MINESTONE серый",
+    color: "gray",
     brand: "MINESTONE",
     categoryId: "01161",
     hasVariants: true,
@@ -701,6 +705,7 @@ const mockProducts = [
   {
     id: "15069206b",
     title: "Зимняя куртка MINESTONE черный",
+    color: "black",
     brand: "MINESTONE",
     categoryId: "01153",
     hasVariants: true,
@@ -842,6 +847,7 @@ const mockProducts = [
   {
     id: "11606015b",
     title: "Зимняя куртка MINESTONE зеленый",
+    color: "green",
     brand: "MINESTONE",
     categoryId: "01153",
     hasVariants: true,
@@ -1015,6 +1021,7 @@ const mockProducts = [
   {
     id: "11725556b",
     title: "Зимняя куртка MINESTONE серый",
+    color: "gray",
     brand: "MINESTONE",
     categoryId: "01153",
     hasVariants: true,
@@ -1196,6 +1203,7 @@ const mockProducts = [
   {
     id: "15061859b",
     title: "Зимняя куртка MINESTONE черный",
+    color: "black",
     brand: "MINESTONE",
     categoryId: "01153",
     hasVariants: true,
@@ -1345,6 +1353,7 @@ const mockProducts = [
   {
     id: "15068840b",
     title: "Поло MINESTONE черный",
+    color: "black",
     brand: "MINESTONE",
     categoryId: "01407",
     hasVariants: true,
@@ -1494,6 +1503,7 @@ const mockProducts = [
   {
     id: "11295765b",
     title: "Демисезонная куртка MINESTONE черный",
+    color: "black",
     brand: "MINESTONE",
     categoryId: "01161",
     hasVariants: true,
@@ -1675,6 +1685,7 @@ const mockProducts = [
   {
     id: "11590297b",
     title: "Демисезонная куртка MINESTONE черный",
+    color: "black",
     brand: "MINESTONE",
     categoryId: "01161",
     hasVariants: true,
@@ -1824,6 +1835,7 @@ const mockProducts = [
   {
     id: "11267234b",
     title: "Зимняя куртка MINESTONE коричневый",
+    color: "brown",
     brand: "MINESTONE",
     categoryId: "01153",
     hasVariants: true,
@@ -1989,6 +2001,7 @@ const mockProducts = [
   {
     id: "15305633b",
     title: "Зимняя куртка MINESTONE черный",
+    color: "black",
     brand: "MINESTONE",
     categoryId: "01153",
     hasVariants: true,
@@ -2170,6 +2183,7 @@ const mockProducts = [
   {
     id: "11636225b",
     title: "Зимняя куртка MINESTONE синий",
+    color: "blue",
     brand: "MINESTONE",
     categoryId: "01153",
     hasVariants: true,
@@ -2335,6 +2349,7 @@ const mockProducts = [
   {
     id: "11303311b",
     title: "Зимняя куртка MINESTONE коричневый",
+    color: "brown",
     brand: "MINESTONE",
     categoryId: "01153",
     hasVariants: true,
@@ -2500,6 +2515,7 @@ const mockProducts = [
   {
     id: "15310460b",
     title: "Зимняя куртка MINESTONE черный",
+    color: "black",
     brand: "MINESTONE",
     categoryId: "01153",
     hasVariants: true,
@@ -2657,6 +2673,7 @@ const mockProducts = [
   {
     id: "11658380b",
     title: "Джинсы прямые MINESTONE черный",
+    color: "black",
     brand: "MINESTONE",
     categoryId: "01022",
     hasVariants: true,
@@ -2821,6 +2838,7 @@ const mockProducts = [
   {
     id: "11112475b",
     title: "Водолазка MINESTONE черный",
+    color: "black",
     brand: "MINESTONE",
     categoryId: "01308",
     hasVariants: true,
@@ -2985,6 +3003,7 @@ const mockProducts = [
   {
     id: "13088276b",
     title: "Поло MINESTONE серый",
+    color: "gray",
     brand: "MINESTONE",
     categoryId: "01407",
     hasVariants: true,
@@ -3134,6 +3153,7 @@ const mockProducts = [
   {
     id: "15340343b",
     title: "Пуловер MINESTONE темно-серый",
+    color: "gray",
     brand: "MINESTONE",
     categoryId: "01308",
     hasVariants: true,
@@ -3322,6 +3342,7 @@ const mockProducts = [
   {
     id: "15341272b",
     title: "Толстовка MINESTONE черный",
+    color: "black",
     brand: "MINESTONE",
     categoryId: "01328",
     hasVariants: true,
@@ -3453,6 +3474,7 @@ const mockProducts = [
   {
     id: "15398159b",
     title: "Толстовка MINESTONE графит",
+    color: "graphite",
     brand: "MINESTONE",
     categoryId: "01328",
     hasVariants: true,
@@ -3609,6 +3631,7 @@ const mockProducts = [
   {
     id: "11811055b",
     title: "Зимняя куртка MINESTONE хаки",
+    color: "khaki",
     brand: "MINESTONE",
     categoryId: "01153",
     hasVariants: true,
@@ -3790,6 +3813,7 @@ const mockProducts = [
   {
     id: "15340334b",
     title: "Лонгслив MINESTONE темно-синий",
+    color: "blue",
     brand: "MINESTONE",
     categoryId: "01407",
     hasVariants: true,
@@ -3922,6 +3946,7 @@ const mockProducts = [
   {
     id: "15068842b",
     title: "Поло MINESTONE белый",
+    color: "white",
     brand: "MINESTONE",
     categoryId: "01407",
     hasVariants: true,
@@ -4071,6 +4096,7 @@ const mockProducts = [
   {
     id: "11814540b",
     title: "MINESTONE MST-1-С23-M40 зеленый",
+    color: "green",
     brand: "MINESTONE",
     categoryId: "00977",
     hasVariants: true,
@@ -4245,6 +4271,7 @@ const mockProducts = [
   {
     id: "15010418b",
     title: "Джемпер MINESTONE темно-синий",
+    color: "blue",
     brand: "MINESTONE",
     categoryId: "01308",
     hasVariants: true,
@@ -4409,6 +4436,7 @@ const mockProducts = [
   {
     id: "11634401b",
     title: "Зимняя куртка MINESTONE черный",
+    color: "black",
     brand: "MINESTONE",
     categoryId: "01153",
     hasVariants: true,
@@ -4582,6 +4610,7 @@ const mockProducts = [
   {
     id: "15068793b",
     title: "Свитер MINESTONE графит",
+    color: "graphite",
     brand: "MINESTONE",
     categoryId: "01308",
     hasVariants: true,
@@ -4722,6 +4751,7 @@ const mockProducts = [
   {
     id: "15151377b",
     title: "Пуховик MINESTONE синий",
+    color: "blue",
     brand: "MINESTONE",
     categoryId: "01153",
     hasVariants: true,
@@ -4919,6 +4949,7 @@ const mockProducts = [
   {
     id: "11267259b",
     title: "Зимняя куртка MINESTONE серый",
+    color: "gray",
     brand: "MINESTONE",
     categoryId: "01153",
     hasVariants: true,
@@ -5084,6 +5115,7 @@ const mockProducts = [
   {
     id: "15319585b",
     title: "Джинсы прямые MINESTONE синий",
+    color: "blue",
     brand: "MINESTONE",
     categoryId: "01022",
     hasVariants: true,
@@ -5274,6 +5306,7 @@ const mockProducts = [
   {
     id: "15340335b",
     title: "Лонгслив MINESTONE белый",
+    color: "white",
     brand: "MINESTONE",
     categoryId: "01407",
     hasVariants: true,
@@ -5390,6 +5423,7 @@ const mockProducts = [
   {
     id: "11112529b",
     title: "Водолазка MINESTONE черный",
+    color: "black",
     brand: "MINESTONE",
     categoryId: "01308",
     hasVariants: true,
@@ -5554,6 +5588,7 @@ const mockProducts = [
   {
     id: "11112532b",
     title: "Водолазка MINESTONE серый",
+    color: "gray",
     brand: "MINESTONE",
     categoryId: "01308",
     hasVariants: true,
@@ -5718,6 +5753,7 @@ const mockProducts = [
   {
     id: "15157082b",
     title: "Зимняя куртка MINESTONE черный",
+    color: "black",
     brand: "MINESTONE",
     categoryId: "01153",
     hasVariants: true,
@@ -5939,6 +5975,7 @@ const mockProducts = [
   {
     id: "12085118b",
     title: "Классические брюки MINESTONE черный",
+    color: "black",
     brand: "MINESTONE",
     categoryId: "00977",
     hasVariants: true,
@@ -6112,6 +6149,7 @@ const mockProducts = [
   {
     id: "11725557b",
     title: "Зимняя куртка MINESTONE бежевый",
+    color: "biege",
     brand: "MINESTONE",
     categoryId: "01153",
     hasVariants: true,
@@ -6284,6 +6322,7 @@ const mockProducts = [
   {
     id: "13093207b",
     title: "Рубашка свободного кроя MINESTONE зеленый",
+    color: "green",
     brand: "MINESTONE",
     categoryId: "00976",
     hasVariants: true,
@@ -6441,6 +6480,7 @@ const mockProducts = [
   {
     id: "15105059b",
     title: "Джинсы прямые MINESTONE синий",
+    color: "blue",
     brand: "MINESTONE",
     categoryId: "01022",
     hasVariants: true,
@@ -6597,6 +6637,7 @@ const mockProducts = [
   {
     id: "15157088b",
     title: "Зимняя куртка MINESTONE зеленый",
+    color: "green",
     brand: "MINESTONE",
     categoryId: "01153",
     hasVariants: true,
@@ -6818,6 +6859,7 @@ const mockProducts = [
   {
     id: "15305622b",
     title: "Зимняя куртка MINESTONE серый",
+    color: "gray",
     brand: "MINESTONE",
     categoryId: "01153",
     hasVariants: true,
@@ -6999,6 +7041,7 @@ const mockProducts = [
   {
     id: "12649765b",
     title: "Поло MINESTONE белый",
+    color: "white",
     brand: "MINESTONE",
     categoryId: "01407",
     hasVariants: true,
@@ -7132,6 +7175,7 @@ const mockProducts = [
   {
     id: "12547015b",
     title: "Карго MINESTONE черный",
+    color: "black",
     brand: "MINESTONE",
     categoryId: "00977",
     hasVariants: true,
@@ -7306,6 +7350,7 @@ const mockProducts = [
   {
     id: "12649706b",
     title: "Поло MINESTONE синий",
+    color: "blue",
     brand: "MINESTONE",
     categoryId: "01407",
     hasVariants: true,
@@ -7439,6 +7484,7 @@ const mockProducts = [
   {
     id: "12775316b",
     title: "Поло MINESTONE черный",
+    color: "black",
     brand: "MINESTONE",
     categoryId: "01407",
     hasVariants: true,
@@ -7580,6 +7626,7 @@ const mockProducts = [
   {
     id: "11112439b",
     title: "Водолазка MINESTONE бежевый",
+    color: "biege",
     brand: "MINESTONE",
     categoryId: "01308",
     hasVariants: true,
@@ -7744,6 +7791,7 @@ const mockProducts = [
   {
     id: "15068848b",
     title: "Поло MINESTONE коричневый",
+    color: "brown",
     brand: "MINESTONE",
     categoryId: "01407",
     hasVariants: true,

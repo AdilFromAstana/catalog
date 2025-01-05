@@ -1,15 +1,13 @@
-import React, { useEffect, useState } from "react";
-import { Button, Drawer, Radio, Input, Slider } from "antd";
-import {
-  ControlOutlined,
-  LeftOutlined,
-  OrderedListOutlined,
-} from "@ant-design/icons";
+import React, { useEffect, useMemo, useState } from "react";
 import ProductList from "../components/ProductList";
+import CategoryNavigation from "../components/CategoryNavigation";
+import Filters from "../components/Filters";
+import DrawerFilters from "../components/DrawerFilters";
 import useFavorites from "../hooks/useFavorites";
 import mockProducts from "../mockProducts";
 import { Content } from "antd/es/layout/layout";
 import "./CatalogPage.css";
+import useWindowWidth from "../hooks/useWindowWidth";
 
 const CatalogPage = () => {
   const [isSortDrawerVisible, setSortDrawerVisible] = useState(false);
@@ -18,11 +16,63 @@ const CatalogPage = () => {
   const [availableProducts, setAvailableProducts] = useState([]);
   const [allCategories, setAllCategories] = useState([]);
   const [hierarchyPath, setHierarchyPath] = useState([]);
+  const [selectedColors, setSelectedColors] = useState([]);
   const [minPrice, setMinPrice] = useState(0);
   const [maxPrice, setMaxPrice] = useState(0);
   const [tempMinValue, setTempMinValue] = useState(minPrice);
   const [tempMaxValue, setTempMaxValue] = useState(maxPrice);
   const { favorites, toggleFavorite } = useFavorites();
+  const width = useWindowWidth();
+
+  const findCategoryPath = (categories, targetCategory, path = []) => {
+    for (const category of categories) {
+      if (category.title === targetCategory) {
+        return [...path, category];
+      }
+      if (category.children) {
+        const result = findCategoryPath(category.children, targetCategory, [
+          ...path,
+          category,
+        ]);
+        if (result) {
+          return result;
+        }
+      }
+    }
+    return null;
+  };
+
+  const handleTreeCategoryClick = (category) => {
+    const categoryPath = findCategoryPath(allCategories, category);
+    setHierarchyPath(categoryPath.map((node) => node.title));
+
+    const filteredProducts = mockProducts.filter((product) =>
+      categoryPath.some((node) => product.category.includes(node.title))
+    );
+
+    setAvailableProducts(filteredProducts);
+  };
+
+  const colorsWithCounts = useMemo(() => {
+    const colorCounts = {};
+    availableProducts.forEach((product) => {
+      if (product.color) {
+        colorCounts[product.color] = (colorCounts[product.color] || 0) + 1;
+      }
+    });
+    return Object.entries(colorCounts).map(([color, count]) => ({
+      color,
+      count,
+    }));
+  }, [availableProducts]);
+
+  const handleColorChange = (color) => {
+    setSelectedColors((prev) =>
+      prev.includes(color)
+        ? prev.filter((selectedColor) => selectedColor !== color)
+        : [...prev, color]
+    );
+  };
 
   const handleCategoryClick = (category) => {
     setHierarchyPath((prev) => [...prev, category]);
@@ -60,16 +110,18 @@ const CatalogPage = () => {
     toggleSortDrawer();
   };
 
-  const sortedProducts = [...availableProducts].sort((a, b) => {
-    switch (sortOrder) {
-      case "asc":
-        return a.unitPrice - b.unitPrice;
-      case "desc":
-        return b.unitPrice - a.unitPrice;
-      default:
-        return 0;
-    }
-  });
+  const sortedProducts = useMemo(() => {
+    return [...availableProducts].sort((a, b) => {
+      switch (sortOrder) {
+        case "asc":
+          return a.unitPrice - b.unitPrice;
+        case "desc":
+          return b.unitPrice - a.unitPrice;
+        default:
+          return 0;
+      }
+    });
+  }, [availableProducts, sortOrder]);
 
   const getCategoryTitle = () => {
     return hierarchyPath.length === 0
@@ -83,13 +135,13 @@ const CatalogPage = () => {
   };
 
   const handleTempMinChange = (value) => {
-    const min = Math.min(Number(value), tempMaxValue); // Убедиться, что min <= max
+    const min = Math.min(Number(value), tempMaxValue);
     setTempMinValue(min);
   };
 
   const handleTempMaxChange = (value) => {
-    const max = Math.min(Number(value), maxPrice); // Ограничиваем максимум
-    setTempMaxValue(max >= tempMinValue ? max : tempMinValue); // Убедиться, что max >= min
+    const max = Math.min(Number(value), maxPrice);
+    setTempMaxValue(max >= tempMinValue ? max : tempMinValue);
   };
 
   const handlePriceApply = () => {
@@ -138,13 +190,16 @@ const CatalogPage = () => {
     }
 
     const filteredProducts = filteredByCategory.filter((product) => {
-      return (
-        product.unitPrice >= tempMinValue && product.unitPrice <= tempMaxValue
-      );
+      const matchesPrice =
+        product.unitPrice >= tempMinValue && product.unitPrice <= tempMaxValue;
+      const matchesColor =
+        selectedColors.length === 0 || selectedColors.includes(product.color);
+
+      return matchesPrice && matchesColor;
     });
 
     setAvailableProducts(filteredProducts);
-  }, [hierarchyPath, tempMinValue, tempMaxValue]);
+  }, [hierarchyPath, tempMinValue, tempMaxValue, selectedColors]);
 
   useEffect(() => {
     const hierarchy = {};
@@ -156,9 +211,11 @@ const CatalogPage = () => {
         if (!current[cat]) {
           current[cat] = {
             title: cat,
+            count: 0,
             children: index === product.category.length - 1 ? null : {},
           };
         }
+        current[cat].count += 1; // Увеличиваем счётчик товаров в категории
         current = current[cat].children;
       });
     });
@@ -166,6 +223,8 @@ const CatalogPage = () => {
     const convertToTree = (node) =>
       Object.entries(node).map(([key, value]) => ({
         title: key,
+        count: value.count,
+        key,
         children: value.children ? convertToTree(value.children) : null,
       }));
 
@@ -175,131 +234,61 @@ const CatalogPage = () => {
   return (
     <>
       <Content>
-        <div className="nav-wrapper">
-          <div className="nav-item" onClick={handleBackClick}>
-            <LeftOutlined className="icon" />
-          </div>
-          <div className="category-info">
-            <div className="category-title">{getCategoryTitle()}</div>
-            <div>{availableProducts.length}</div>
-          </div>
-          <div className="nav-item">
-            <OrderedListOutlined className="icon" onClick={toggleSortDrawer} />
-          </div>
-          <div className="nav-item">
-            <ControlOutlined className="icon" onClick={togglePriceDrawer} />
-          </div>
-        </div>
-        {currentHierarchy.length > 0 && (
-          <div className="scrollable-row">
-            {currentHierarchy.map((node) => (
-              <Button
-                key={node.title}
-                type="primary"
-                onClick={() => {
-                  handleCategoryClick(node.title);
-                }}
-              >
-                {node.title}
-              </Button>
-            ))}
-          </div>
-        )}
-        <ProductList
-          products={sortedProducts}
-          favorites={favorites}
-          toggleFavorite={toggleFavorite}
+        <CategoryNavigation
+          currentHierarchy={currentHierarchy}
+          availableProducts={availableProducts}
+          handleBackClick={handleBackClick}
+          handleCategoryClick={handleCategoryClick}
+          getCategoryTitle={getCategoryTitle}
+          toggleSortDrawer={toggleSortDrawer}
+          togglePriceDrawer={togglePriceDrawer}
         />
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: width > 964 ? "1fr 2fr" : "1fr",
+            padding: " 10px",
+          }}
+        >
+          <Filters
+            minPrice={minPrice}
+            maxPrice={maxPrice}
+            tempMinValue={tempMinValue}
+            tempMaxValue={tempMaxValue}
+            colorsWithCounts={colorsWithCounts}
+            selectedColors={selectedColors}
+            handleTempMinChange={handleTempMinChange}
+            handleTempMaxChange={handleTempMaxChange}
+            handleColorChange={handleColorChange}
+            handlePriceApply={handlePriceApply}
+            handlePriceReset={handlePriceReset}
+            currentHierarchy={allCategories}
+            handleCategoryClick={handleCategoryClick}
+            handleTreeCategoryClick={handleTreeCategoryClick}
+          />
+          <ProductList
+            products={sortedProducts}
+            favorites={favorites}
+            toggleFavorite={toggleFavorite}
+          />
+        </div>
       </Content>
-      <Drawer
-        title="Сортировка"
-        placement="bottom"
-        onClose={() => toggleSortDrawer(false)}
-        open={isSortDrawerVisible}
-      >
-        <Radio.Group
-          onChange={(e) => handleSortChange(e.target.value)}
-          defaultValue="asc"
-          className="radio-group"
-        >
-          {[
-            { value: "asc", label: "Сначала дешевые" },
-            { value: "desc", label: "Сначала дорогие" },
-            { value: "new", label: "Новинки" },
-          ].map((option) => (
-            <Radio
-              key={option.value}
-              className="radio-option"
-              value={option.value}
-            >
-              {option.label}
-            </Radio>
-          ))}
-        </Radio.Group>
-      </Drawer>
-      <Drawer
-        title="Цена"
-        placement="bottom"
-        onClose={() => togglePriceDrawer(false)}
-        open={isPriceDrawerVisible}
-      >
-        <div
-          style={{
-            display: "flex",
-            gap: "20px",
-            justifyContent: "space-between",
-          }}
-        >
-          <Input
-            size="large"
-            value={tempMinValue}
-            onChange={(e) => handleTempMinChange(e.target.value)}
-            min={minPrice}
-            max={maxPrice}
-            type="tel"
-            prefix="от"
-          />
-          <Input
-            size="large"
-            value={tempMaxValue}
-            onChange={(e) => handleTempMaxChange(e.target.value)}
-            min={minPrice}
-            max={maxPrice}
-            type="tel"
-            prefix="до"
-          />
-        </div>
-        <Slider
-          range
-          value={[tempMinValue, tempMaxValue]}
-          min={minPrice}
-          max={maxPrice}
-          onChange={handleSliderChange}
-        />
-        <div
-          style={{
-            display: "flex",
-            gap: "10px",
-            justifyContent: "space-between",
-          }}
-        >
-          <Button
-            size="large"
-            style={{ width: "100%" }}
-            onClick={handlePriceReset}
-          >
-            Сбросить
-          </Button>
-          <Button
-            size="large"
-            type="primary"
-            style={{ width: "100%" }}
-            onClick={handlePriceApply}
-          >
-            Применить
-          </Button>
-        </div>
-      </Drawer>
+      <DrawerFilters
+        isSortDrawerVisible={isSortDrawerVisible}
+        isPriceDrawerVisible={isPriceDrawerVisible}
+        toggleSortDrawer={toggleSortDrawer}
+        togglePriceDrawer={togglePriceDrawer}
+        tempMinValue={tempMinValue}
+        tempMaxValue={tempMaxValue}
+        minPrice={minPrice}
+        maxPrice={maxPrice}
+        handleTempMinChange={handleTempMinChange}
+        handleTempMaxChange={handleTempMaxChange}
+        handleSliderChange={handleSliderChange}
+        handlePriceReset={handlePriceReset}
+        handlePriceApply={handlePriceApply}
+        handleSortChange={handleSortChange}
+      />
     </>
   );
 };

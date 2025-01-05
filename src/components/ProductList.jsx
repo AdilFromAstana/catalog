@@ -5,11 +5,20 @@ import useWindowWidth from "../hooks/useWindowWidth";
 
 const ProductList = ({ products, favorites, toggleFavorite }) => {
   const width = useWindowWidth();
-  console.log("width: ", width);
+  const getColumnCount = () => {
+    if (width < 448) {
+      return 1;
+    } else if (width >= 449 && width < 768) {
+      return 2;
+    } else if (width > 768) {
+      return 3;
+    }
+  };
   return (
     <List
       grid={{
-        column: width > 429 ? 2 : 1,
+        gutter: 16,
+        column: getColumnCount(),
       }}
       dataSource={products}
       renderItem={(item) => (
