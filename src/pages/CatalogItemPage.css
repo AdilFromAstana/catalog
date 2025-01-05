@@ -5,6 +5,11 @@
 .wrapper {
   display: flex;
   flex-direction: column;
+}
+
+.content-wrapper {
+  display: flex;
+  flex-direction: column;
   gap: 10px;
 }
 
@@ -13,14 +18,25 @@
   font-size: 16px;
 }
 
-.main-image-container {
+.mobile-image-container {
   height: 320px;
   width: 320px;
   align-self: center;
   text-align: center;
 }
 
+.main-image-container {
+  height: 400px;
+  width: 400px;
+  align-self: center;
+  text-align: center;
+}
+
 .item-gallery {
+  display: none;
+}
+
+.mobile-item-gallery {
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -33,6 +49,12 @@
 }
 
 .main-image {
+  max-width: 100%;
+  max-height: 400px;
+  margin: auto;
+}
+
+.mobile-image {
   max-width: 100%;
   max-height: 320px;
   margin: auto;
@@ -49,16 +71,17 @@
 }
 
 .thumbnail-container::-webkit-scrollbar {
-  height: 8px; /* Высота горизонтального скроллбара */
+  height: 2px;
+  width: 4px;
 }
 
 .thumbnail-container::-webkit-scrollbar-thumb {
-  background-color: #ccc; /* Цвет "ползунка" */
+  background-color: #ccc;
   border-radius: 4px;
 }
 
 .thumbnail-container::-webkit-scrollbar-track {
-  background: #f0f0f0; /* Цвет фона трека */
+  background: #f0f0f0;
 }
 
 .thumbnail {
@@ -132,4 +155,28 @@
 .specifications h3 {
   margin: 0;
   margin-bottom: 10px;
+}
+
+@media (min-width: 964px) {
+  .mobile-item-gallery {
+    display: none;
+  }
+  .wrapper {
+    width: 900px;
+    display: grid;
+    grid-template-columns: 50% 50%;
+    margin: 0 auto;
+    margin-top: 10vh;
+  }
+  .item-gallery {
+    height: 400px;
+    width: auto;
+    gap: 10px;
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: center;
+  }
+  .thumbnail-container {
+    flex-direction: column;
+  }
 }
