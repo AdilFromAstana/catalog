@@ -1,4 +1,4 @@
-import { Button, Drawer, Input, Radio, Slider } from "antd";
+import { Button, Drawer, Input, Radio } from "antd";
 
 const DrawerFilters = ({
   isSortDrawerVisible,
@@ -11,7 +11,6 @@ const DrawerFilters = ({
   maxPrice,
   handleTempMinChange,
   handleTempMaxChange,
-  handleSliderChange,
   handlePriceReset,
   handlePriceApply,
   handleSortChange,
@@ -54,58 +53,62 @@ const DrawerFilters = ({
         <div
           style={{
             display: "flex",
-            gap: "20px",
+            flexDirection: "column",
             justifyContent: "space-between",
+            height: "100%",
           }}
         >
-          <Input
-            size="large"
-            value={tempMinValue}
-            onChange={(e) => handleTempMinChange(e.target.value)}
-            min={minPrice}
-            max={maxPrice}
-            type="tel"
-            prefix="от"
-          />
-          <Input
-            size="large"
-            value={tempMaxValue}
-            onChange={(e) => handleTempMaxChange(e.target.value)}
-            min={minPrice}
-            max={maxPrice}
-            type="tel"
-            prefix="до"
-          />
-        </div>
-        <Slider
-          range
-          value={[tempMinValue, tempMaxValue]}
-          min={minPrice}
-          max={maxPrice}
-          onChange={handleSliderChange}
-        />
-        <div
-          style={{
-            display: "flex",
-            gap: "10px",
-            justifyContent: "space-between",
-          }}
-        >
-          <Button
-            size="large"
-            style={{ width: "100%" }}
-            onClick={handlePriceReset}
+          <div
+            style={{
+              display: "flex",
+              gap: "10px",
+              justifyContent: "space-between",
+            }}
           >
-            Сбросить
-          </Button>
-          <Button
-            size="large"
-            type="primary"
-            style={{ width: "100%" }}
-            onClick={handlePriceApply}
+            <Input
+              size="large"
+              value={tempMinValue}
+              onChange={(e) => handleTempMinChange(e.target.value)}
+              min={minPrice}
+              max={maxPrice}
+              type="tel"
+              prefix="от"
+            />
+            <Input
+              size="large"
+              value={tempMaxValue}
+              onChange={(e) => handleTempMaxChange(e.target.value)}
+              min={minPrice}
+              max={maxPrice}
+              type="tel"
+              prefix="до"
+            />
+          </div>
+          <div
+            style={{
+              display: "flex",
+              gap: "10px",
+              justifyContent: "space-between",
+              paddingTop: "10px",
+              borderTop: "2px solid black",
+            }}
           >
-            Применить
-          </Button>
+            <Button
+              size="large"
+              style={{ width: "100%" }}
+              onClick={handlePriceReset}
+            >
+              Сбросить
+            </Button>
+            <Button
+              size="large"
+              type="primary"
+              style={{ width: "100%" }}
+              onClick={handlePriceApply}
+            >
+              Применить
+            </Button>
+          </div>
         </div>
       </Drawer>
     </>

@@ -1,4 +1,4 @@
-import { Slider, Input, Button } from "antd";
+import { Input, Button } from "antd";
 
 const PriceFilter = ({
   minPrice,
@@ -10,11 +10,6 @@ const PriceFilter = ({
   handlePriceApply,
   handlePriceReset,
 }) => {
-  const handleSliderChange = ([min, max]) => {
-    setTempMinValue(min);
-    setTempMaxValue(max);
-  };
-
   return (
     <div>
       <div
@@ -43,13 +38,6 @@ const PriceFilter = ({
           prefix="до"
         />
       </div>
-      <Slider
-        range
-        value={[tempMinValue, tempMaxValue]}
-        min={minPrice}
-        max={maxPrice}
-        onChange={handleSliderChange}
-      />
       <div
         style={{
           display: "flex",

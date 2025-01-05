@@ -2,7 +2,7 @@ import { Content } from "antd/es/layout/layout";
 import { useEffect, useState } from "react";
 import "./CatalogItemPage.css";
 import { useParams } from "react-router-dom";
-import mockProducts from "../mockProducts";
+import mockProducts from "../../mockProducts";
 import { Button, Spin } from "antd";
 
 const CatalogItemPage = () => {
