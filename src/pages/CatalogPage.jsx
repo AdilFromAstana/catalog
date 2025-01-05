@@ -7,7 +7,6 @@ import useFavorites from "../hooks/useFavorites";
 import mockProducts from "../mockProducts";
 import { Content } from "antd/es/layout/layout";
 import "./CatalogPage.css";
-import useWindowWidth from "../hooks/useWindowWidth";
 
 const CatalogPage = () => {
   const [isSortDrawerVisible, setSortDrawerVisible] = useState(false);
@@ -22,7 +21,6 @@ const CatalogPage = () => {
   const [tempMinValue, setTempMinValue] = useState(minPrice);
   const [tempMaxValue, setTempMaxValue] = useState(maxPrice);
   const { favorites, toggleFavorite } = useFavorites();
-  const width = useWindowWidth();
 
   const findCategoryPath = (categories, targetCategory, path = []) => {
     for (const category of categories) {
@@ -243,13 +241,7 @@ const CatalogPage = () => {
           toggleSortDrawer={toggleSortDrawer}
           togglePriceDrawer={togglePriceDrawer}
         />
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: width > 964 ? "1fr 2fr" : "1fr",
-            padding: " 10px",
-          }}
-        >
+        <div className="catalog-container">
           <Filters
             minPrice={minPrice}
             maxPrice={maxPrice}
@@ -270,6 +262,8 @@ const CatalogPage = () => {
             products={sortedProducts}
             favorites={favorites}
             toggleFavorite={toggleFavorite}
+            handleSortChange={handleSortChange}
+            sortOrder={sortOrder}
           />
         </div>
       </Content>

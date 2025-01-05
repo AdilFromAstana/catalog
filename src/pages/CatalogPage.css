@@ -133,6 +133,18 @@
   display: block;
 }
 
+.catalog-container {
+  display: grid;
+  grid-template-columns: 1fr; /* Для маленьких экранов */
+  padding: 10px;
+}
+
+.sort-buttons {
+  display: none;
+  flex-direction: row;
+  gap: 16px;
+}
+
 @media (max-width: 448px) {
   .product-details,
   .product-info {
@@ -183,10 +195,22 @@
 }
 
 @media (min-width: 964px) {
+  .sort-buttons {
+    display: flex;
+  }
   .filter-component {
     display: block;
   }
   .category-navigation {
     display: none;
+  }
+  .catalog-container {
+    grid-template-columns: 1fr 2fr; /* Для экранов шире 964px */
+  }
+}
+@media (min-width: 1176px) {
+  .catalog-container {
+    margin: 0 auto;
+    width: 1176px;
   }
 }

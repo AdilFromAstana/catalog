@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import "./CatalogItemPage.css";
 import { useParams } from "react-router-dom";
 import mockProducts from "../mockProducts";
-import { Spin } from "antd";
+import { Button, Spin } from "antd";
 
 const CatalogItemPage = () => {
   const { id } = useParams();
@@ -76,7 +76,9 @@ const CatalogItemPage = () => {
             <div className="item-info">
               <div className="item-price">{catalogItem?.priceFormatted}</div>
               <div className="buttons">
-                <button className="add-to-cart">Узнать наличие товара</button>
+                <Button className="add-to-cart" type="primary" size="large">
+                  Узнать наличие товара
+                </Button>
               </div>
             </div>
 

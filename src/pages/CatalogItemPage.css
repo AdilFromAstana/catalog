@@ -95,7 +95,7 @@
 }
 
 .active-thumbnail {
-  border: 2px solid #007bff;
+  border: 1px solid black;
 }
 
 .item-title {
@@ -120,14 +120,7 @@
 }
 
 .add-to-cart {
-  flex: 1;
-  padding: 10px;
-  border: none;
-  border-radius: 4px;
-  font-size: 20px;
-  cursor: pointer;
-  background: #007bff;
-  color: white;
+  width: 100%;
 }
 
 /* Описание */
