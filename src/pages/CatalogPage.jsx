@@ -29,35 +29,6 @@ const CatalogPage = () => {
     setCurrentPage(page);
   };
 
-  const findCategoryPath = (categories, targetCategory, path = []) => {
-    for (const category of categories) {
-      if (category.title === targetCategory) {
-        return [...path, category];
-      }
-      if (category.children) {
-        const result = findCategoryPath(category.children, targetCategory, [
-          ...path,
-          category,
-        ]);
-        if (result) {
-          return result;
-        }
-      }
-    }
-    return null;
-  };
-
-  const handleTreeCategoryClick = (category) => {
-    const categoryPath = findCategoryPath(allCategories, category);
-    setHierarchyPath(categoryPath.map((node) => node.title));
-
-    const filteredProducts = mockProducts.filter((product) =>
-      categoryPath.some((node) => product.category.includes(node.title))
-    );
-
-    setAvailableProducts(filteredProducts);
-  };
-
   const colorsWithCounts = useMemo(() => {
     const colorCounts = {};
     availableProducts.forEach((product) => {
@@ -122,6 +93,10 @@ const CatalogPage = () => {
           return a.unitPrice - b.unitPrice;
         case "desc":
           return b.unitPrice - a.unitPrice;
+        case "newest":
+          return new Date(b.createdTime) - new Date(a.createdTime);
+        case "oldest":
+          return new Date(a.createdTime) - new Date(b.createdTime);
         default:
           return 0;
       }
@@ -269,7 +244,6 @@ const CatalogPage = () => {
             handlePriceReset={handlePriceReset}
             currentHierarchy={allCategories}
             handleCategoryClick={handleCategoryClick}
-            handleTreeCategoryClick={handleTreeCategoryClick}
           />
           <ProductList
             products={paginatedProducts} // Продукты текущей страницы

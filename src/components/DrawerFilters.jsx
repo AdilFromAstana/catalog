@@ -32,6 +32,8 @@ const DrawerFilters = ({
           {[
             { value: "asc", label: "Сначала дешевые" },
             { value: "desc", label: "Сначала дорогие" },
+            { value: "newest", label: "Новинки" },
+            { value: "oldest", label: "Старые" },
           ].map((option) => (
             <Radio
               key={option.value}
