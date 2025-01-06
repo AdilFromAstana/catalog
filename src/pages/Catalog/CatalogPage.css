@@ -73,6 +73,12 @@
 .product-title {
   font-size: 16px;
   color: black;
+  display: -webkit-box; /* Используем flexbox для текстового контейнера */
+  -webkit-box-orient: vertical; /* Указываем вертикальную ориентацию */
+  overflow: hidden; /* Скрываем текст, выходящий за пределы */
+  text-overflow: ellipsis; /* Добавляем многоточие */
+  -webkit-line-clamp: 2; /* Обрезаем текст после 2 строк */
+  line-clamp: 2; /* Для современных браузеров */
 }
 .product-title:hover {
   color: black;
@@ -188,8 +194,15 @@
   }
 
   .product-favorite {
-    top: 10px;
-    right: 10px;
+    background: white;
+    border-radius: 50%;
+    border: 1px solid black;
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    padding: 8px;
+    top: 16px;
+    right: 16px;
     position: absolute;
   }
 }

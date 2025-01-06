@@ -8,7 +8,7 @@ import {
 
 const CategoryNavigation = ({
   currentHierarchy,
-  availableProducts,
+  products,
   handleBackClick,
   handleCategoryClick,
   getCategoryTitle,
@@ -23,7 +23,7 @@ const CategoryNavigation = ({
         </div>
         <div className="category-info">
           <div className="category-title">{getCategoryTitle()}</div>
-          <div>{availableProducts.length}</div>
+          <div>{products.length}</div>
         </div>
         <div className="nav-item">
           <OrderedListOutlined className="icon" onClick={toggleSortDrawer} />

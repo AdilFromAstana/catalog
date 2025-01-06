@@ -115,11 +115,28 @@ const CreateItemPage = () => {
   };
 
   const handleSubmit = async () => {
+    // const data = {
+    //   title: form.getFieldValue("title"),
+    //   description: form.getFieldValue("description"),
+    //   categoryId: form.getFieldValue("categoryId"),
+    //   price: form.getFieldValue("price"),
+    //   createdAt: new Date(),
+    // };
+
     const data = {
-      title: form.getFieldValue("title"),
-      description: form.getFieldValue("description"),
-      categoryId: form.getFieldValue("categoryId"),
-      createdAt: new Date(),
+      categoryRu: "Что-то там категория",
+      description: "Винил на заказ йоу",
+      categoryKz: "Бырбале",
+      images: [
+        "https://firebasestorage.googleapis.com/v0/b/test-backend-fbf6b.appspot.com/o/images%2Fsvistki.png?alt=media&token=0664707d-e242-45d0-8845-774d8880de13",
+        "https://firebasestorage.googleapis.com/v0/b/test-backend-fbf6b.appspot.com/o/images%2Fodno.jpg?alt=media&token=401bacaa-e857-450a-a10b-4e8cb46a79f6",
+        "https://firebasestorage.googleapis.com/v0/b/test-backend-fbf6b.appspot.com/o/images%2Fcruiser-aurora.jpg?alt=media&token=8f713dbb-5e48-48ec-a7a1-d1917a59128c",
+        "https://firebasestorage.googleapis.com/v0/b/test-backend-fbf6b.appspot.com/o/images%2Fgraduation.jpg?alt=media&token=41975c6d-4d41-4b30-9c68-d46e91a93eff",
+        "https://firebasestorage.googleapis.com/v0/b/test-backend-fbf6b.appspot.com/o/images%2Fcristofer.jpg?alt=media&token=2460d827-3ccb-4bd1-917b-1d032426bd3d",
+      ],
+      title: "Винил есть же ",
+      price: 10000,
+      categoryId: 3,
     };
 
     try {
@@ -134,7 +151,7 @@ const CreateItemPage = () => {
         })
       );
 
-      data.images = uploadedImageURLs;
+      // data.images = uploadedImageURLs;
 
       await addData("items", data);
       message.success("Данные успешно сохранены!");
@@ -172,12 +189,12 @@ const CreateItemPage = () => {
         <Form.Item
           name="title"
           label="Название товара"
-          rules={[{ required: true, message: "Введите название товара" }]}
+          // rules={[{ required: true, message: "Введите название товара" }]}
         >
           <Input placeholder="Введите название" />
         </Form.Item>
 
-        <Form.Item label="Категория" required={true} name="categoryId">
+        <Form.Item label="Категория" name="categoryId">
           <List
             bordered
             dataSource={[...selectedPath, ...currentItems]}
@@ -211,7 +228,7 @@ const CreateItemPage = () => {
         <Form.Item
           name="description"
           label="Описание товара"
-          rules={[{ required: true, message: "Введите описание товара" }]}
+          // rules={[{ required: true, message: "Введите описание товара" }]}
         >
           <Input.TextArea rows={4} placeholder="Введите описание" />
         </Form.Item>
@@ -219,23 +236,25 @@ const CreateItemPage = () => {
         <Form.Item
           name="price"
           label="Цена товара"
-          rules={[
-            { required: true, message: "Введите цену товара" },
-            {
-              type: "number",
-              message: "Цена должна быть числом",
-              transform: (value) => Number(value),
-            },
-          ]}
+          // rules={[
+          // { required: true, message: "Введите цену товара" },
+          // {
+          //   type: "number",
+          //   message: "Цена должна быть числом",
+          //   transform: (value) => Number(value),
+          // },
+          // ]}
         >
           <Input placeholder="Введите цену" type="tel" />
         </Form.Item>
 
         <Form.Item
           label="Изображения товара"
-          rules={[
-            { required: true, message: "Загрузите хотя бы одно изображение" },
-          ]}
+          rules={
+            [
+              // { required: true, message: "Загрузите хотя бы одно изображение" },
+            ]
+          }
         >
           <List
             className="image-list"

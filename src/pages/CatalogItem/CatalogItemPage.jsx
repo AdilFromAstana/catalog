@@ -2,8 +2,8 @@ import { Content } from "antd/es/layout/layout";
 import { useEffect, useState } from "react";
 import "./CatalogItemPage.css";
 import { useParams } from "react-router-dom";
-import mockProducts from "../../mockProducts";
 import { Button, Spin } from "antd";
+import { getDataById } from "../../firestoreService";
 
 const CatalogItemPage = () => {
   const { id } = useParams();
@@ -14,13 +14,21 @@ const CatalogItemPage = () => {
     setCurrentImage(index);
   };
 
+  console.log("id: ", id);
+  console.log(id);
+
   useEffect(() => {
-    const item = mockProducts.find((product) => product.id === id);
-    setCatalogItem(item);
-    window.scrollTo({
-      top: 0,
-    });
+    const fetchData = async () => {
+      const item = await getDataById("items", id);
+      setCatalogItem(item);
+      window.scrollTo({
+        top: 0,
+      });
+    };
+    fetchData();
   }, [id]);
+
+  console.log("catalogItem: ", catalogItem);
 
   return (
     <Content className="content">
@@ -30,15 +38,15 @@ const CatalogItemPage = () => {
             <div className="main-image-container">
               <img
                 className="main-image"
-                src={catalogItem?.previewImages[currentImage].large}
+                src={catalogItem?.images[currentImage]}
                 alt="product"
               />
             </div>
             <div className="thumbnail-container">
-              {catalogItem?.previewImages.map((image, index) => (
+              {catalogItem?.images.map((image, index) => (
                 <img
-                  key={image.large}
-                  src={image.large}
+                  key={image}
+                  src={image}
                   alt={`Thumbnail ${index}`}
                   className={`thumbnail ${
                     currentImage === index ? "active-thumbnail" : ""
@@ -54,15 +62,15 @@ const CatalogItemPage = () => {
               <div className="mobile-image-container">
                 <img
                   className="mobile-image"
-                  src={catalogItem?.previewImages[currentImage].large}
+                  src={catalogItem?.images[currentImage]}
                   alt="product"
                 />
               </div>
               <div className="thumbnail-container">
-                {catalogItem?.previewImages.map((image, index) => (
+                {catalogItem?.images.map((image, index) => (
                   <img
-                    key={image.large}
-                    src={image.large}
+                    key={image}
+                    src={image}
                     alt={`Thumbnail ${index}`}
                     className={`thumbnail ${
                       currentImage === index ? "active-thumbnail" : ""
@@ -74,7 +82,7 @@ const CatalogItemPage = () => {
             </div>
 
             <div className="item-info">
-              <div className="item-price">{catalogItem?.priceFormatted}</div>
+              <div className="item-price">{catalogItem?.price}</div>
               <div className="buttons">
                 <Button className="add-to-cart" type="primary" size="large">
                   Узнать наличие товара
@@ -84,12 +92,7 @@ const CatalogItemPage = () => {
 
             <div className="description">
               <h3>Описание</h3>
-              <p>
-                Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ipsa
-                nihil rem quasi accusamus perferendis iure laborum, accusantium
-                libero nam ullam suscipit labore temporibus illo tenetur magni
-                totam rerum debitis inventore.
-              </p>
+              <p>{catalogItem?.description}</p>
             </div>
 
             <div className="specifications">

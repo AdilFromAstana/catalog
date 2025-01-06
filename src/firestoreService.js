@@ -6,6 +6,11 @@ import {
   getDocs,
   deleteDoc,
   getDoc,
+  query,
+  orderBy,
+  limit,
+  startAfter,
+  getCountFromServer,
 } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { db, storage } from "./firebaseConfig";
@@ -42,9 +47,43 @@ export const getData = async (collectionName) => {
   return querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
 };
 
-/**
- * Deletes a document from a Firestore collection.
- */
+export const getPaginatedData = async (
+  collectionName,
+  pageSize,
+  currentPage = 1,
+  lastVisible = null,
+  sort
+) => {
+  try {
+    const collectionRef = collection(db, collectionName);
+    const countSnapshot = await getCountFromServer(collectionRef);
+    const totalSize = countSnapshot.data().count;
+
+    let queryRef = query(
+      collectionRef,
+      orderBy(sort.by, sort.order),
+      limit(pageSize)
+    );
+
+    if (currentPage > 1 && lastVisible) {
+      queryRef = query(queryRef, startAfter(lastVisible));
+    }
+
+    const querySnapshot = await getDocs(queryRef);
+
+    const data = querySnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+    const newLastVisible = querySnapshot.docs[querySnapshot.docs.length - 1];
+
+    return { data, lastVisible: newLastVisible, totalSize };
+  } catch (error) {
+    console.error("Ошибка при загрузке данных:", error);
+    throw error;
+  }
+};
+
 export const deleteData = async (collectionName, docId) => {
   await deleteDoc(doc(db, collectionName, docId));
 };

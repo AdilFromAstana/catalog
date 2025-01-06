@@ -23,18 +23,37 @@ const DrawerFilters = ({
         onClose={() => toggleSortDrawer(false)}
         open={isSortDrawerVisible}
       >
-        <Radio.Group
-          onChange={(e) => handleSortChange(e.target.value)}
-          defaultValue="asc"
-          className="radio-group"
-        >
+        <Radio.Group defaultValue="priceasc" className="radio-group">
           {[
-            { value: "asc", label: "Сначала дешевые" },
-            { value: "desc", label: "Сначала дорогие" },
-            { value: "newest", label: "Новинки" },
-            { value: "oldest", label: "Старые" },
+            {
+              value: "priceasc",
+              by: "price",
+              order: "asc",
+              label: "Сначала дешевые",
+            },
+            {
+              value: "pricedesc",
+              by: "price",
+              order: "desc",
+              label: "Сначала дорогие",
+            },
+            {
+              value: "createAtasc",
+              by: "createAt",
+              order: "asc",
+              label: "Новинки",
+            },
+            {
+              value: "createAtdesc",
+              by: "createAt",
+              order: "desc",
+              label: "Старые",
+            },
           ].map((option) => (
             <Radio
+              onClick={() =>
+                handleSortChange({ by: option.by, order: option.order })
+              }
               key={option.value}
               className="radio-option"
               value={option.value}

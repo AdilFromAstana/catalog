@@ -4,15 +4,20 @@ import CategoryNavigation from "../../components/CategoryNavigation";
 import Filters from "../../components/Filters";
 import DrawerFilters from "../../components/DrawerFilters";
 import useFavorites from "../../hooks/useFavorites";
-import mockProducts from "../../mockProducts";
 import { Content } from "antd/es/layout/layout";
 import "./CatalogPage.css";
+import { getPaginatedData } from "../../firestoreService";
+import { Spin } from "antd";
 
 const CatalogPage = () => {
   const [isSortDrawerVisible, setSortDrawerVisible] = useState(false);
   const [isPriceDrawerVisible, setPriceDrawerVisible] = useState(false);
-  const [sortOrder, setSortOrder] = useState("asc");
-  const [availableProducts, setAvailableProducts] = useState([]);
+  const [sort, setSort] = useState({
+    by: "price",
+    order: "asc",
+    value: "priceasc",
+  });
+  const [products, setProducts] = useState([]);
   const [allCategories, setAllCategories] = useState([]);
   const [hierarchyPath, setHierarchyPath] = useState([]);
   const [selectedColors, setSelectedColors] = useState([]);
@@ -22,7 +27,10 @@ const CatalogPage = () => {
   const [tempMaxValue, setTempMaxValue] = useState(maxPrice);
   const { favorites, toggleFavorite } = useFavorites();
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 9;
+  const [productsTotalSize, setProductsTotalSize] = useState(1);
+  const [lastVisible, setLastVisible] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const itemsPerPage = 12;
 
   const handlePageChange = (page) => {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -31,7 +39,7 @@ const CatalogPage = () => {
 
   const colorsWithCounts = useMemo(() => {
     const colorCounts = {};
-    availableProducts.forEach((product) => {
+    products.forEach((product) => {
       if (product.color) {
         colorCounts[product.color] = (colorCounts[product.color] || 0) + 1;
       }
@@ -40,7 +48,7 @@ const CatalogPage = () => {
       color,
       count,
     }));
-  }, [availableProducts]);
+  }, [products]);
 
   const handleColorChange = (color) => {
     setSelectedColors((prev) =>
@@ -82,26 +90,9 @@ const CatalogPage = () => {
   };
 
   const handleSortChange = (value) => {
-    setSortOrder(value);
+    setSort(value);
     toggleSortDrawer();
   };
-
-  const sortedProducts = useMemo(() => {
-    return [...availableProducts].sort((a, b) => {
-      switch (sortOrder) {
-        case "asc":
-          return a.unitPrice - b.unitPrice;
-        case "desc":
-          return b.unitPrice - a.unitPrice;
-        case "newest":
-          return new Date(b.createdTime) - new Date(a.createdTime);
-        case "oldest":
-          return new Date(a.createdTime) - new Date(b.createdTime);
-        default:
-          return 0;
-      }
-    });
-  }, [availableProducts, sortOrder]);
 
   const getCategoryTitle = () => {
     return hierarchyPath.length === 0
@@ -125,11 +116,11 @@ const CatalogPage = () => {
   };
 
   const handlePriceApply = () => {
-    setAvailableProducts(
-      mockProducts.filter(
+    setProducts(
+      products.filter(
         (product) =>
-          product.unitPrice >= tempMinValue &&
-          product.unitPrice <= tempMaxValue &&
+          product.price >= tempMinValue &&
+          product.price <= tempMaxValue &&
           (!hierarchyPath.length ||
             product.category.includes(hierarchyPath[hierarchyPath.length - 1]))
       )
@@ -143,120 +134,122 @@ const CatalogPage = () => {
     setPriceDrawerVisible(false);
   };
 
-  const paginatedProducts = useMemo(() => {
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
-    return sortedProducts.slice(startIndex, endIndex);
-  }, [currentPage, sortedProducts]);
+  // useEffect(() => {
+  //   const currentCategory = hierarchyPath[hierarchyPath.length - 1];
+
+  //   const filteredByCategory = products.filter((product) => {
+  //     return !currentCategory || product.category.includes(currentCategory);
+  //   });
+
+  //   if (filteredByCategory.length > 0) {
+  //     const prices = filteredByCategory.map((product) => product.price);
+  //     const min = Math.min(...prices);
+  //     const max = Math.max(...prices);
+
+  //     setMinPrice(min);
+  //     setMaxPrice(max);
+
+  //     if (tempMinValue === 0 && tempMaxValue === 0) {
+  //       setTempMinValue(min);
+  //       setTempMaxValue(max);
+  //     }
+  //   } else {
+  //     setMinPrice(0);
+  //     setMaxPrice(0);
+  //     setTempMinValue(0);
+  //     setTempMaxValue(0);
+  //   }
+
+  //   const filteredProducts = filteredByCategory.filter((product) => {
+  //     const matchesPrice =
+  //       product.price >= tempMinValue && product.price <= tempMaxValue;
+  //     const matchesColor =
+  //       selectedColors.length === 0 || selectedColors.includes(product.color);
+
+  //     return matchesPrice && matchesColor;
+  //   });
+
+  //   setProducts(filteredProducts);
+  // }, [hierarchyPath, tempMinValue, tempMaxValue, selectedColors]);
 
   useEffect(() => {
-    const currentCategory = hierarchyPath[hierarchyPath.length - 1];
+    const fetchProducts = async () => {
+      try {
+        setIsLoading(true);
+        const {
+          data,
+          lastVisible: newLastVisible,
+          totalSize,
+        } = await getPaginatedData(
+          "items",
+          itemsPerPage,
+          currentPage,
+          lastVisible,
+          sort
+        );
+        setProductsTotalSize(totalSize);
+        setProducts(data);
+        setLastVisible(newLastVisible);
 
-    const filteredByCategory = mockProducts.filter((product) => {
-      return !currentCategory || product.category.includes(currentCategory);
-    });
-
-    if (filteredByCategory.length > 0) {
-      const prices = filteredByCategory.map((product) => product.unitPrice);
-      const min = Math.min(...prices);
-      const max = Math.max(...prices);
-
-      setMinPrice(min);
-      setMaxPrice(max);
-
-      if (tempMinValue === 0 && tempMaxValue === 0) {
+        const prices = data.map((product) => product.price);
+        const min = Math.min(...prices);
+        const max = Math.max(...prices);
+        setMinPrice(min);
+        setMaxPrice(max);
         setTempMinValue(min);
         setTempMaxValue(max);
+      } catch (error) {
+        console.error("Ошибка при загрузке данных:", error);
+      } finally {
+        setIsLoading(false);
       }
-    } else {
-      setMinPrice(0);
-      setMaxPrice(0);
-      setTempMinValue(0);
-      setTempMaxValue(0);
-    }
+    };
 
-    const filteredProducts = filteredByCategory.filter((product) => {
-      const matchesPrice =
-        product.unitPrice >= tempMinValue && product.unitPrice <= tempMaxValue;
-      const matchesColor =
-        selectedColors.length === 0 || selectedColors.includes(product.color);
-
-      return matchesPrice && matchesColor;
-    });
-
-    setAvailableProducts(filteredProducts);
-  }, [hierarchyPath, tempMinValue, tempMaxValue, selectedColors]);
-
-  useEffect(() => {
-    const hierarchy = {};
-
-    mockProducts.forEach((product) => {
-      let current = hierarchy;
-
-      product.category.forEach((cat, index) => {
-        if (!current[cat]) {
-          current[cat] = {
-            title: cat,
-            count: 0,
-            children: index === product.category.length - 1 ? null : {},
-          };
-        }
-        current[cat].count += 1; // Увеличиваем счётчик товаров в категории
-        current = current[cat].children;
-      });
-    });
-
-    const convertToTree = (node) =>
-      Object.entries(node).map(([key, value]) => ({
-        title: key,
-        count: value.count,
-        key,
-        children: value.children ? convertToTree(value.children) : null,
-      }));
-
-    setAllCategories(convertToTree(hierarchy));
-  }, []);
+    fetchProducts();
+  }, [currentPage, sort]);
 
   return (
     <>
       <Content>
-        <CategoryNavigation
-          currentHierarchy={currentHierarchy}
-          availableProducts={availableProducts}
-          handleBackClick={handleBackClick}
-          handleCategoryClick={handleCategoryClick}
-          getCategoryTitle={getCategoryTitle}
-          toggleSortDrawer={toggleSortDrawer}
-          togglePriceDrawer={togglePriceDrawer}
-        />
-        <div className="catalog-container">
-          <Filters
-            minPrice={minPrice}
-            maxPrice={maxPrice}
-            tempMinValue={tempMinValue}
-            tempMaxValue={tempMaxValue}
-            colorsWithCounts={colorsWithCounts}
-            selectedColors={selectedColors}
-            handleTempMinChange={handleTempMinChange}
-            handleTempMaxChange={handleTempMaxChange}
-            handleColorChange={handleColorChange}
-            handlePriceApply={handlePriceApply}
-            handlePriceReset={handlePriceReset}
-            currentHierarchy={allCategories}
+        <Spin spinning={isLoading}>
+          <CategoryNavigation
+            currentHierarchy={currentHierarchy}
+            products={products}
+            handleBackClick={handleBackClick}
             handleCategoryClick={handleCategoryClick}
+            getCategoryTitle={getCategoryTitle}
+            toggleSortDrawer={toggleSortDrawer}
+            togglePriceDrawer={togglePriceDrawer}
           />
-          <ProductList
-            products={paginatedProducts} // Продукты текущей страницы
-            favorites={favorites}
-            toggleFavorite={toggleFavorite}
-            handleSortChange={handleSortChange}
-            sortOrder={sortOrder}
-            currentPage={currentPage}
-            handlePageChange={handlePageChange}
-            itemsPerPage={itemsPerPage}
-            totalProducts={sortedProducts.length} // Общее количество продуктов
-          />
-        </div>
+          <div className="catalog-container">
+            <Filters
+              minPrice={minPrice}
+              maxPrice={maxPrice}
+              tempMinValue={tempMinValue}
+              tempMaxValue={tempMaxValue}
+              colorsWithCounts={colorsWithCounts}
+              selectedColors={selectedColors}
+              handleTempMinChange={handleTempMinChange}
+              handleTempMaxChange={handleTempMaxChange}
+              handleColorChange={handleColorChange}
+              handlePriceApply={handlePriceApply}
+              handlePriceReset={handlePriceReset}
+              currentHierarchy={allCategories}
+              handleCategoryClick={handleCategoryClick}
+            />
+            <ProductList
+              products={products}
+              favorites={favorites}
+              toggleFavorite={toggleFavorite}
+              handleSortChange={handleSortChange}
+              sort={sort}
+              currentPage={currentPage}
+              handlePageChange={handlePageChange}
+              itemsPerPage={itemsPerPage}
+              totalProducts={productsTotalSize} // Общее количество продуктов
+            />
+          </div>
+        </Spin>
       </Content>
       <DrawerFilters
         isSortDrawerVisible={isSortDrawerVisible}

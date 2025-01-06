@@ -8,7 +8,7 @@ const ProductList = ({
   favorites,
   toggleFavorite,
   handleSortChange,
-  sortOrder,
+  sort,
   currentPage,
   handlePageChange,
   itemsPerPage,
@@ -30,15 +30,35 @@ const ProductList = ({
     <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
       <div className="sort-buttons">
         {[
-          { value: "asc", label: "Сначала дешевые" },
-          { value: "desc", label: "Сначала дорогие" },
-          { value: "newest", label: "Новинки" },
-          { value: "oldest", label: "Старые" },
+          {
+            value: "priceasc",
+            by: "price",
+            order: "asc",
+            label: "Сначала дешевые",
+          },
+          {
+            value: "pricedesc",
+            by: "price",
+            order: "desc",
+            label: "Сначала дорогие",
+          },
+          {
+            value: "createAtasc",
+            by: "createAt",
+            order: "asc",
+            label: "Новинки",
+          },
+          {
+            value: "createAtdesc",
+            by: "createAt",
+            order: "desc",
+            label: "Старые",
+          },
         ].map((option) => (
           <Button
             key={option.value}
-            type={sortOrder === option.value ? "primary" : "default"}
-            onClick={() => handleSortChange(option.value)}
+            type={sort.value === option.value ? "primary" : "default"}
+            onClick={() => handleSortChange(option)}
           >
             {option.label}
           </Button>
@@ -52,53 +72,52 @@ const ProductList = ({
             column: getColumnCount(),
           }}
           dataSource={products}
-          renderItem={(item) => (
-            <List.Item className="list-item">
-              <img
-                src={item.previewImages[0]?.small}
-                alt={item.previewImages[0]?.small || "Продукт"}
-                className="product-image"
-              />
-              <div className="product-details">
-                <div className="product-info">
-                  <Link className="product-title" to={`/${item.id}`}>
-                    {item.title}
-                  </Link>
-                  <div className="product-category">
-                    {item.category?.[item.category.length - 1] || "Не указано"}
+          renderItem={(item) => {
+            return (
+              <List.Item className="list-item">
+                <img
+                  src={item.images[0]}
+                  alt={item.images[0] || "Продукт"}
+                  className="product-image"
+                />
+                <div className="product-details">
+                  <div className="product-info">
+                    <Link className="product-title" to={`/${item.id}`}>
+                      {item.title}
+                    </Link>
+                    <div className="product-category">
+                      {item.categoryRu || "Не указано"}
+                    </div>
+                    <div className="product-price">
+                      {item.price || "Цена не указана"}
+                    </div>
                   </div>
-                  <div className="product-price">
-                    {item.priceFormatted || "Цена не указана"}
+                  <div
+                    className="product-favorite"
+                    onClick={() => toggleFavorite(item.id)}
+                  >
+                    {favorites.includes(item.id) ? (
+                      <HeartFilled style={{ color: "red", fontSize: "24px" }} />
+                    ) : (
+                      <HeartOutlined style={{ fontSize: "24px" }} />
+                    )}
                   </div>
                 </div>
-                <div
-                  className="product-favorite"
-                  onClick={() => toggleFavorite(item.id)}
-                >
-                  {favorites.includes(item.id) ? (
-                    <HeartFilled style={{ color: "red", fontSize: "24px" }} />
-                  ) : (
-                    <HeartOutlined style={{ fontSize: "24px" }} />
-                  )}
-                </div>
-              </div>
-            </List.Item>
-          )}
+              </List.Item>
+            );
+          }}
         />
       ) : (
         <div style={{ textAlign: "center", padding: "20px" }}>
           Нет доступных продуктов
         </div>
       )}
-
-      {totalProducts > itemsPerPage && (
-        <Pagination
-          current={currentPage}
-          pageSize={itemsPerPage}
-          total={totalProducts}
-          onChange={handlePageChange}
-        />
-      )}
+      <Pagination
+        current={currentPage}
+        pageSize={itemsPerPage}
+        total={totalProducts}
+        onChange={handlePageChange}
+      />
     </div>
   );
 };
