@@ -14,6 +14,8 @@ const ProductList = ({
   itemsPerPage,
   totalProducts,
 }) => {
+  console.log("products: ", products);
+
   const width = useWindowWidth();
 
   const getColumnCount = () => {
@@ -76,8 +78,8 @@ const ProductList = ({
             return (
               <List.Item className="list-item">
                 <img
-                  src={item.images[0]}
-                  alt={item.images[0] || "Продукт"}
+                  src={item.images[0].url}
+                  alt={item.images[0].url || "Продукт"}
                   className="product-image"
                 />
                 <div className="product-details">
@@ -88,9 +90,7 @@ const ProductList = ({
                     <div className="product-category">
                       {item.categoryRu || "Не указано"}
                     </div>
-                    <div className="product-price">
-                      {item.price || "Цена не указана"}
-                    </div>
+                    <div className="product-price">{item.price || 0} ₸</div>
                   </div>
                   <div
                     className="product-favorite"

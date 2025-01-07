@@ -10,61 +10,129 @@ import {
   orderBy,
   limit,
   startAfter,
-  getCountFromServer,
+  where,
 } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { db, storage } from "./firebaseConfig";
 
-/**
- * Uploads a file to Firebase Storage and returns the file's download URL.
- */
 export const uploadFile = async (file, folder = "uploads") => {
   const storageRef = ref(storage, `images/${file.name}`);
   await uploadBytes(storageRef, file);
   return await getDownloadURL(storageRef);
 };
 
-/**
- * Adds a document to a Firestore collection.
- */
-export const addData = async (collectionName, data) => {
-  const docRef = await addDoc(collection(db, collectionName), data);
+export const addData = async ({
+  collectionName,
+  data,
+  storeCode = "cool-store",
+}) => {
+  console.log("data: ", data);
+  const docRef = await addDoc(collection(db, collectionName), {
+    ...data,
+    storeCode,
+  });
   return docRef.id;
 };
 
-/**
- * Updates a document in a Firestore collection.
- */
 export const updateData = async (collectionName, docId, data) => {
   await setDoc(doc(db, collectionName, docId), data, { merge: true });
 };
 
-/**
- * Retrieves all documents from a Firestore collection.
- */
-export const getData = async (collectionName) => {
-  const querySnapshot = await getDocs(collection(db, collectionName));
-  return querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+export const itemToArchive = async ({ collectionName, id, status }) => {
+  try {
+    await setDoc(
+      doc(db, collectionName, id),
+      { status: status },
+      { merge: true }
+    );
+  } catch (error) {
+    console.error(`Ошибка при обновлении статуса документа ${id}:`, error);
+    throw error;
+  }
 };
 
-export const getPaginatedData = async (
+export const getData = async ({
+  collectionName = "items",
+  storeCode = "cool-store",
+}) => {
+  try {
+    const queryRef = query(
+      collection(db, collectionName),
+      where("storeCode", "==", storeCode)
+    );
+
+    const querySnapshot = await getDocs(queryRef);
+
+    return querySnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+  } catch (error) {
+    console.error("Ошибка при загрузке данных:", error);
+    throw error;
+  }
+};
+
+export const getPaginatedData = async ({
   collectionName,
   pageSize,
   currentPage = 1,
   lastVisible = null,
-  sort
-) => {
+  sort = {
+    by: "price",
+    order: "asc",
+  },
+  storeCode = "cool-store",
+  minPriceFilter = null,
+  maxPriceFilter = null,
+}) => {
   try {
     const collectionRef = collection(db, collectionName);
-    const countSnapshot = await getCountFromServer(collectionRef);
-    const totalSize = countSnapshot.data().count;
 
-    let queryRef = query(
+    let countQueryRef = query(collectionRef);
+
+    if (minPriceFilter !== null) {
+      countQueryRef = query(
+        countQueryRef,
+        where("price", ">=", minPriceFilter)
+      );
+    }
+    if (maxPriceFilter !== null) {
+      countQueryRef = query(
+        countQueryRef,
+        where("price", "<=", maxPriceFilter)
+      );
+    }
+
+    const countSnapshot = await getDocs(countQueryRef);
+    const totalSize = countSnapshot.size;
+
+    const minQueryRef = query(collectionRef, orderBy("price", "asc"), limit(1));
+    const minSnapshot = await getDocs(minQueryRef);
+    const minPrice = minSnapshot.docs.length
+      ? minSnapshot.docs[0].data().price
+      : null;
+
+    const maxQueryRef = query(
       collectionRef,
-      orderBy(sort.by, sort.order),
-      limit(pageSize)
+      orderBy("price", "desc"),
+      limit(1)
     );
+    const maxSnapshot = await getDocs(maxQueryRef);
+    const maxPrice = maxSnapshot.docs.length
+      ? maxSnapshot.docs[0].data().price
+      : null;
 
+    let queryRef = query(collectionRef, orderBy(sort.by, sort.order));
+
+    if (minPriceFilter !== null) {
+      queryRef = query(queryRef, where("price", ">=", minPriceFilter));
+    }
+    if (maxPriceFilter !== null) {
+      queryRef = query(queryRef, where("price", "<=", maxPriceFilter));
+    }
+
+    queryRef = query(queryRef, limit(pageSize));
     if (currentPage > 1 && lastVisible) {
       queryRef = query(queryRef, startAfter(lastVisible));
     }
@@ -77,7 +145,13 @@ export const getPaginatedData = async (
     }));
     const newLastVisible = querySnapshot.docs[querySnapshot.docs.length - 1];
 
-    return { data, lastVisible: newLastVisible, totalSize };
+    return {
+      data,
+      lastVisible: newLastVisible,
+      totalSize,
+      minPrice,
+      maxPrice,
+    };
   } catch (error) {
     console.error("Ошибка при загрузке данных:", error);
     throw error;
@@ -101,6 +175,43 @@ export const getDataById = async (collectionName, id) => {
     }
   } catch (error) {
     console.error("Ошибка при получении документа:", error);
+    throw error;
+  }
+};
+
+export const getDataByIds = async ({
+  collectionName,
+  ids,
+  storeCode = "cool-store",
+}) => {
+  try {
+    if (!Array.isArray(ids)) {
+      throw new Error("Аргумент ids должен быть массивом");
+    }
+
+    const data = await Promise.all(
+      ids.map(async (id) => {
+        const docRef = doc(db, collectionName, id);
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+          const docData = docSnap.data();
+          if (docData.storeCode === storeCode) {
+            return { id: docSnap.id, ...docData };
+          } else {
+            console.warn(`Документ с id ${id} не соответствует storeCode`);
+            return null;
+          }
+        } else {
+          console.warn(`Документ с id ${id} не найден`);
+          return null;
+        }
+      })
+    );
+
+    return data.filter((doc) => doc !== null);
+  } catch (error) {
+    console.error("Ошибка при получении документов:", error);
     throw error;
   }
 };

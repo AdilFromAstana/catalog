@@ -1,5 +1,5 @@
 import React from "react";
-import { Button } from "antd";
+import { Badge, Button } from "antd";
 import {
   ControlOutlined,
   LeftOutlined,
@@ -8,13 +8,16 @@ import {
 
 const CategoryNavigation = ({
   currentHierarchy,
-  products,
   handleBackClick,
   handleCategoryClick,
   getCategoryTitle,
   toggleSortDrawer,
   togglePriceDrawer,
+  productsTotalSize,
+  isFilterSelected,
 }) => {
+  console.log("isFilterSelected: ", isFilterSelected);
+
   return (
     <div className="category-navigation">
       <div className="nav-wrapper">
@@ -23,13 +26,15 @@ const CategoryNavigation = ({
         </div>
         <div className="category-info">
           <div className="category-title">{getCategoryTitle()}</div>
-          <div>{products.length}</div>
+          <div>{productsTotalSize}</div>
         </div>
         <div className="nav-item">
           <OrderedListOutlined className="icon" onClick={toggleSortDrawer} />
         </div>
         <div className="nav-item">
-          <ControlOutlined className="icon" onClick={togglePriceDrawer} />
+          <Badge dot={!isFilterSelected}>
+            <ControlOutlined className="icon" onClick={togglePriceDrawer} />
+          </Badge>
         </div>
       </div>
       {currentHierarchy.length > 0 && (

@@ -41,9 +41,9 @@
 
 .ant-list .ant-list-item.list-item {
   display: grid;
-  grid-template-columns: 25% 1fr;
-  height: 170px;
-  gap: 20px;
+  grid-template-columns: 30% 1fr;
+  height: 150px;
+  gap: 10px;
   box-sizing: border-box;
   align-items: flex-start;
   padding: 10px;
@@ -53,7 +53,7 @@
 
 .product-image {
   max-width: 100%;
-  max-height: 150px;
+  max-height: 130px;
   margin: auto;
 }
 

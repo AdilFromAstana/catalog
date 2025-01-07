@@ -23,8 +23,8 @@ const CatalogPage = () => {
   const [selectedColors, setSelectedColors] = useState([]);
   const [minPrice, setMinPrice] = useState(0);
   const [maxPrice, setMaxPrice] = useState(0);
-  const [tempMinValue, setTempMinValue] = useState(minPrice);
-  const [tempMaxValue, setTempMaxValue] = useState(maxPrice);
+  const [tempMinValue, setTempMinValue] = useState(null);
+  const [tempMaxValue, setTempMaxValue] = useState(null);
   const { favorites, toggleFavorite } = useFavorites();
   const [currentPage, setCurrentPage] = useState(1);
   const [productsTotalSize, setProductsTotalSize] = useState(1);
@@ -134,6 +134,8 @@ const CatalogPage = () => {
     setPriceDrawerVisible(false);
   };
 
+  const isFilterSelected = !tempMaxValue && !tempMinValue;
+
   // useEffect(() => {
   //   const currentCategory = hierarchyPath[hierarchyPath.length - 1];
 
@@ -180,24 +182,22 @@ const CatalogPage = () => {
           data,
           lastVisible: newLastVisible,
           totalSize,
-        } = await getPaginatedData(
-          "items",
-          itemsPerPage,
-          currentPage,
-          lastVisible,
-          sort
-        );
+          maxPrice,
+          minPrice,
+        } = await getPaginatedData({
+          collectionName: "items",
+          pageSize: itemsPerPage,
+          currentPage: currentPage,
+          lastVisible: lastVisible,
+          sort: sort,
+          maxPriceFilter: tempMaxValue,
+          minPriceFilter: tempMinValue,
+        });
         setProductsTotalSize(totalSize);
         setProducts(data);
         setLastVisible(newLastVisible);
-
-        const prices = data.map((product) => product.price);
-        const min = Math.min(...prices);
-        const max = Math.max(...prices);
-        setMinPrice(min);
-        setMaxPrice(max);
-        setTempMinValue(min);
-        setTempMaxValue(max);
+        setMinPrice(minPrice);
+        setMaxPrice(maxPrice);
       } catch (error) {
         console.error("Ошибка при загрузке данных:", error);
       } finally {
@@ -206,15 +206,16 @@ const CatalogPage = () => {
     };
 
     fetchProducts();
-  }, [currentPage, sort]);
+  }, [currentPage, sort, tempMaxValue, tempMinValue]);
 
   return (
     <>
       <Content>
         <Spin spinning={isLoading}>
           <CategoryNavigation
+            isFilterSelected={isFilterSelected}
             currentHierarchy={currentHierarchy}
-            products={products}
+            productsTotalSize={productsTotalSize}
             handleBackClick={handleBackClick}
             handleCategoryClick={handleCategoryClick}
             getCategoryTitle={getCategoryTitle}
@@ -246,7 +247,7 @@ const CatalogPage = () => {
               currentPage={currentPage}
               handlePageChange={handlePageChange}
               itemsPerPage={itemsPerPage}
-              totalProducts={productsTotalSize} // Общее количество продуктов
+              totalProducts={productsTotalSize}
             />
           </div>
         </Spin>
@@ -256,15 +257,10 @@ const CatalogPage = () => {
         isPriceDrawerVisible={isPriceDrawerVisible}
         toggleSortDrawer={toggleSortDrawer}
         togglePriceDrawer={togglePriceDrawer}
-        tempMinValue={tempMinValue}
-        tempMaxValue={tempMaxValue}
+        setTempMinValue={setTempMinValue}
+        setTempMaxValue={setTempMaxValue}
         minPrice={minPrice}
         maxPrice={maxPrice}
-        handleTempMinChange={handleTempMinChange}
-        handleTempMaxChange={handleTempMaxChange}
-        handleSliderChange={handleSliderChange}
-        handlePriceReset={handlePriceReset}
-        handlePriceApply={handlePriceApply}
         handleSortChange={handleSortChange}
       />
     </>

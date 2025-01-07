@@ -6,13 +6,12 @@ import useWindowWidth from "../../hooks/useWindowWidth";
 import { Link } from "react-router-dom";
 import useFavorites from "../../hooks/useFavorites";
 import { HeartOutlined, HeartFilled } from "@ant-design/icons";
-import mockProducts from "../../mockProducts";
+import { getDataByIds } from "../../firestoreService";
 
 const FavorietsPage = () => {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(false);
   const { favorites, toggleFavorite } = useFavorites();
-
   const width = useWindowWidth();
 
   const getColumnCount = () => {
@@ -26,14 +25,25 @@ const FavorietsPage = () => {
   };
 
   useEffect(() => {
-    setLoading(true);
-    const savedItems = localStorage.getItem("favorites");
-    const parsedItems = JSON.parse(savedItems);
-    const needItems = mockProducts.filter((product) =>
-      parsedItems.includes(product.id)
-    );
-    setItems(needItems);
-    setLoading(false);
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        const savedItems = localStorage.getItem("favorites");
+        const parsedItems = JSON.parse(savedItems) || [];
+        const needItems = await getDataByIds({
+          ids: parsedItems,
+          collectionName: "items",
+          storeCode: "cool-store",
+        });
+        setItems(needItems);
+      } catch (error) {
+        console.error("Ошибка при загрузке данных:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
   }, []);
 
   return (
@@ -50,8 +60,8 @@ const FavorietsPage = () => {
             renderItem={(item) => (
               <List.Item className="list-item">
                 <img
-                  src={item.previewImages[0]?.small}
-                  alt={item.previewImages[0]?.small || "Продукт"}
+                  src={item.images[0]?.url}
+                  alt={item.images[0]?.url || "Продукт"}
                   className="product-image"
                 />
                 <div className="product-details">
@@ -60,12 +70,9 @@ const FavorietsPage = () => {
                       {item.title}
                     </Link>
                     <div className="product-category">
-                      {item.category?.[item.category.length - 1] ||
-                        "Не указано"}
+                      {item?.categoryRu || "Не указано"}
                     </div>
-                    <div className="product-price">
-                      {item.priceFormatted || "Цена не указана"}
-                    </div>
+                    <div className="product-price">{item.price || 0} ₸</div>
                   </div>
                   <div
                     className="product-favorite"

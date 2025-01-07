@@ -21,10 +21,10 @@ const menuItems = [
     path: "/favorites",
   },
   {
-    key: "/my-products",
+    key: "/my-catalog",
     icon: <ShopOutlined />,
     label: "Мои товары",
-    path: "/my-products",
+    path: "/my-catalog",
   },
   {
     key: "/profile",

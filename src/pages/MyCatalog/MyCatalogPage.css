@@ -1,0 +1,66 @@
+.ant-list .ant-list-item.my-catalog-item-wrapper {
+  width: 100%;
+  height: 220px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  border-radius: 10px;
+  padding: 10px;
+  border: 1px solid black;
+  gap: 10px;
+}
+.my-catalog-item {
+  flex-grow: 1;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 25% 1fr;
+  gap: 20px;
+  box-sizing: border-box;
+}
+
+.my-catalog-item-image {
+  max-width: 100%;
+  max-height: 150px;
+  margin: auto;
+}
+
+.my-catalog-item-details {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.my-catalog-item-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.my-catalog-item-title {
+  font-size: 16px;
+  color: black;
+  display: -webkit-box; /* Используем flexbox для текстового контейнера */
+  -webkit-box-orient: vertical; /* Указываем вертикальную ориентацию */
+  overflow: hidden; /* Скрываем текст, выходящий за пределы */
+  text-overflow: ellipsis; /* Добавляем многоточие */
+  -webkit-line-clamp: 2; /* Обрезаем текст после 2 строк */
+  line-clamp: 2; /* Для современных браузеров */
+}
+.my-catalog-item-title:hover {
+  color: black;
+}
+
+.my-catalog-item-category {
+  font-size: 12px;
+  opacity: 0.7;
+}
+
+.my-catalog-item-price {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.ant-segmented-item {
+  width: 100%;
+}

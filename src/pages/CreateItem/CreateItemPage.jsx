@@ -1,12 +1,13 @@
-import { Button, Form, Input, List, message, Modal } from "antd";
+import { Button, Form, Input, List, message, Modal, Spin } from "antd";
 import { useEffect, useState } from "react";
+import { addData, getDataById, uploadFile } from "../../firestoreService";
 import {
-  addData,
-  getData,
-  getDataById,
-  uploadFile,
-} from "../../firestoreService";
-import { DownCircleOutlined, CheckCircleOutlined } from "@ant-design/icons";
+  DownCircleOutlined,
+  CheckCircleOutlined,
+  CloseOutlined,
+} from "@ant-design/icons";
+import { Content } from "antd/es/layout/layout";
+import { useNavigate } from "react-router-dom";
 import "./CreateItemPage.css";
 
 function findCategoryByKey(categories, key) {
@@ -40,24 +41,23 @@ function getNestedItems(categories, keys) {
 const CreateItemPage = () => {
   const [uploadedImages, setUploadedImages] = useState([]);
   const [previewVisible, setPreviewVisible] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [isProductCreated, setIsProductCreated] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
   const [categories, setCategories] = useState([]);
   const language = localStorage.getItem("language") || "ru";
   const [form] = Form.useForm();
+  const nav = useNavigate();
 
   const [selectedKeys, setSelectedKeys] = useState([]);
+  const selectedPath = getSelectedPath(categories, selectedKeys);
 
   const currentItems = selectedKeys.length
     ? getNestedItems(categories, selectedKeys)
     : categories;
 
-  const selectedPath = getSelectedPath(categories, selectedKeys);
-
   const handleClick = (key) => {
-    console.log("key: ", key);
     const clickedItem = findCategoryByKey(categories, key);
-    console.log("clickedItem: ", clickedItem);
 
     if (!clickedItem?.children) {
       form.setFieldValue("categoryId", key);
@@ -115,196 +115,246 @@ const CreateItemPage = () => {
   };
 
   const handleSubmit = async () => {
-    // const data = {
-    //   title: form.getFieldValue("title"),
-    //   description: form.getFieldValue("description"),
-    //   categoryId: form.getFieldValue("categoryId"),
-    //   price: form.getFieldValue("price"),
-    //   createdAt: new Date(),
-    // };
-
+    const categoryId = form.getFieldValue("categoryId");
+    const categoryRu = selectedPath.find(
+      (path) => path.key === categoryId
+    )?.title;
     const data = {
-      categoryRu: "Что-то там категория",
-      description: "Винил на заказ йоу",
-      categoryKz: "Бырбале",
-      images: [
-        "https://firebasestorage.googleapis.com/v0/b/test-backend-fbf6b.appspot.com/o/images%2Fsvistki.png?alt=media&token=0664707d-e242-45d0-8845-774d8880de13",
-        "https://firebasestorage.googleapis.com/v0/b/test-backend-fbf6b.appspot.com/o/images%2Fodno.jpg?alt=media&token=401bacaa-e857-450a-a10b-4e8cb46a79f6",
-        "https://firebasestorage.googleapis.com/v0/b/test-backend-fbf6b.appspot.com/o/images%2Fcruiser-aurora.jpg?alt=media&token=8f713dbb-5e48-48ec-a7a1-d1917a59128c",
-        "https://firebasestorage.googleapis.com/v0/b/test-backend-fbf6b.appspot.com/o/images%2Fgraduation.jpg?alt=media&token=41975c6d-4d41-4b30-9c68-d46e91a93eff",
-        "https://firebasestorage.googleapis.com/v0/b/test-backend-fbf6b.appspot.com/o/images%2Fcristofer.jpg?alt=media&token=2460d827-3ccb-4bd1-917b-1d032426bd3d",
-      ],
-      title: "Винил есть же ",
-      price: 10000,
-      categoryId: 3,
+      title: form.getFieldValue("title"),
+      description: form.getFieldValue("description"),
+      categoryId: categoryId,
+      categoryRu: categoryRu,
+      status: "archive",
+      price: Number(form.getFieldValue("price")),
+      createdAt: new Date(),
     };
 
     try {
-      setLoading(true);
+      setIsLoading(true);
 
       const uploadedImageURLs = await Promise.all(
-        uploadedImages.map(async (image) => {
-          if (image.file) {
-            return await uploadFile(image.file);
-          }
-          return image.previewURL; // Если URL уже существует, просто возвращаем его
+        uploadedImages.map(async (image, index) => {
+          const url = image.file
+            ? await uploadFile(image.file)
+            : image.previewURL;
+          return { url, priority: index };
         })
       );
 
-      // data.images = uploadedImageURLs;
+      data.images = uploadedImageURLs;
 
-      await addData("items", data);
+      await addData({ collectionName: "items", data: data });
       message.success("Данные успешно сохранены!");
-      setUploadedImages([]);
+      setIsProductCreated(true);
     } catch (error) {
       message.error("Ошибка при сохранении данных.");
       console.error(error);
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
   useEffect(() => {
     const fetchItems = async () => {
-      const data = await getDataById("category", "AyZb1AB6NzYmh0YIfu8G");
-      setCategories([
-        {
-          key: 0,
-          children: transformData(JSON.parse(data.scheme)),
-          title: "Все категории",
-        },
-      ]);
+      try {
+        setIsLoading(true); // Устанавливаем индикатор загрузки
+        const data = await getDataById("category", "AyZb1AB6NzYmh0YIfu8G");
+
+        if (data && data.scheme) {
+          setCategories([
+            {
+              key: 0,
+              children: transformData(JSON.parse(data.scheme)),
+              title: "Все категории",
+            },
+          ]);
+        } else {
+          console.error("Схема данных отсутствует или неверна");
+          setCategories([]);
+        }
+      } catch (error) {
+        console.error("Ошибка при загрузке данных:", error);
+      } finally {
+        setIsLoading(false); // Отключаем индикатор загрузки
+      }
     };
+
     fetchItems();
   }, []);
 
+  const isButtonDisabled =
+    form.getFieldValue("title") &&
+    form.getFieldValue("description") &&
+    form.getFieldValue("categoryId") &&
+    form.getFieldValue("price");
+
   return (
-    <div className="form-container">
-      <Form
-        form={form}
-        layout="vertical"
-        onFinish={handleSubmit}
-        className="form"
-      >
-        <Form.Item
-          name="title"
-          label="Название товара"
-          // rules={[{ required: true, message: "Введите название товара" }]}
+    <Content className="content">
+      <Spin size="large" spinning={isLoading}>
+        <h1>Новый товар</h1>
+        <Form
+          form={form}
+          layout="vertical"
+          onFinish={handleSubmit}
+          className="form"
         >
-          <Input placeholder="Введите название" />
-        </Form.Item>
+          <Form.Item
+            name="title"
+            label="Название товара"
+            rules={[{ required: true, message: "Введите название товара" }]}
+          >
+            <Input placeholder="Введите название" size="large" />
+          </Form.Item>
 
-        <Form.Item label="Категория" name="categoryId">
-          <List
-            bordered
-            dataSource={[...selectedPath, ...currentItems]}
-            className="category-list"
-            renderItem={(item, index) => {
-              const isSelected = index < selectedPath.length;
-              const isThislastItem =
-                currentItems.length === 0 && selectedPath.length - 1 === index;
-              return (
-                <List.Item
-                  onClick={() => {
-                    if (isSelected) {
-                      handleBackToLevel(index);
-                    } else {
-                      handleClick(item.key);
-                    }
-                  }}
-                  className={`category-list-item ${
-                    isSelected ? "selected" : ""
-                  } ${isThislastItem ? "last-item" : ""}`}
-                >
-                  {item.title}
-                  {isSelected && !isThislastItem && <DownCircleOutlined />}
-                  {isSelected && isThislastItem && <CheckCircleOutlined />}
-                </List.Item>
-              );
-            }}
-          />
-        </Form.Item>
+          <Form.Item label="Категория" name="categoryId">
+            <List
+              bordered
+              dataSource={[...selectedPath, ...currentItems]}
+              className="category-list"
+              renderItem={(item, index) => {
+                const isSelected = index < selectedPath.length;
+                const isThislastItem =
+                  currentItems.length === 0 &&
+                  selectedPath.length - 1 === index;
+                return (
+                  <List.Item
+                    onClick={() => {
+                      if (isSelected) {
+                        handleBackToLevel(index);
+                      } else {
+                        handleClick(item.key);
+                      }
+                    }}
+                    className={`category-list-item ${
+                      isSelected ? "selected" : ""
+                    } ${isThislastItem ? "last-item" : ""}`}
+                  >
+                    {item.title}
+                    {isSelected && !isThislastItem && <DownCircleOutlined />}
+                    {isSelected && isThislastItem && <CheckCircleOutlined />}
+                  </List.Item>
+                );
+              }}
+            />
+          </Form.Item>
 
-        <Form.Item
-          name="description"
-          label="Описание товара"
-          // rules={[{ required: true, message: "Введите описание товара" }]}
+          <Form.Item
+            name="description"
+            label="Описание"
+            rules={[{ required: true, message: "Введите описание товара" }]}
+          >
+            <Input.TextArea
+              rows={4}
+              placeholder="Введите описание"
+              autoSize={{ minRows: 2 }}
+              showCount
+              maxLength={1000}
+            />
+          </Form.Item>
+
+          <Form.Item
+            name="price"
+            label="Цена товара"
+            rules={[
+              { required: true, message: "Введите цену товара" },
+              {
+                type: "number",
+                message: "Цена должна быть числом",
+                transform: (value) => Number(value),
+              },
+            ]}
+          >
+            <Input placeholder="Введите цену" type="tel" size="large" />
+          </Form.Item>
+
+          <Form.Item label="Изображения товара">
+            <List
+              className="image-list"
+              grid={{ gutter: 16, column: 2 }}
+              dataSource={[...uploadedImages, { isUploadButton: true }]}
+              renderItem={(item, i) =>
+                item.isUploadButton ? (
+                  <List.Item>
+                    <label htmlFor="file-upload" className="upload-button">
+                      <div className="upload-text">Загрузить изображение</div>
+                      <div className="upload-icon">+</div>
+                    </label>
+                    <input
+                      id="file-upload"
+                      type="file"
+                      accept="image/*"
+                      multiple
+                      onChange={(e) => handleFileChange(e, form)}
+                      className="file-input"
+                    />
+                  </List.Item>
+                ) : (
+                  <List.Item className="item-image-wrapper">
+                    <CloseOutlined
+                      className="item-delete-icon"
+                      onClick={() => handleDelete(i)}
+                    />
+                    <img
+                      src={item.previewURL}
+                      alt={item.previewURL || "Продукт"}
+                      className="create-item-image"
+                      onClick={() => handlePreview(item.previewURL)}
+                    />
+                  </List.Item>
+                )
+              }
+            />
+          </Form.Item>
+
+          <Form.Item>
+            <Button
+              type="primary"
+              htmlType="submit"
+              className="submit-button"
+              disabled={!isButtonDisabled}
+            >
+              Сохранить товар
+            </Button>
+          </Form.Item>
+        </Form>
+        <Modal
+          open={previewVisible}
+          footer={null}
+          onCancel={handleClosePreview}
+          className="image-preview-modal"
         >
-          <Input.TextArea rows={4} placeholder="Введите описание" />
-        </Form.Item>
-
-        <Form.Item
-          name="price"
-          label="Цена товара"
-          // rules={[
-          // { required: true, message: "Введите цену товара" },
-          // {
-          //   type: "number",
-          //   message: "Цена должна быть числом",
-          //   transform: (value) => Number(value),
-          // },
-          // ]}
-        >
-          <Input placeholder="Введите цену" type="tel" />
-        </Form.Item>
-
-        <Form.Item
-          label="Изображения товара"
-          rules={
-            [
-              // { required: true, message: "Загрузите хотя бы одно изображение" },
-            ]
-          }
-        >
-          <List
-            className="image-list"
-            grid={{ gutter: 16, column: 2 }}
-            dataSource={[...uploadedImages, { isUploadButton: true }]}
-            renderItem={(item) =>
-              item.isUploadButton ? (
-                <List.Item>
-                  <label htmlFor="file-upload" className="upload-button">
-                    <div className="upload-text">Загрузить изображение</div>
-                    <div className="upload-icon">+</div>
-                  </label>
-                  <input
-                    id="file-upload"
-                    type="file"
-                    accept="image/*"
-                    multiple
-                    onChange={(e) => handleFileChange(e, form)}
-                    className="file-input"
-                  />
-                </List.Item>
-              ) : (
-                <List.Item className="item-image-wrapper">
-                  <img
-                    src={item.previewURL}
-                    alt={item.previewURL || "Продукт"}
-                    className="item-image"
-                    onClick={() => handlePreview(item.previewURL)}
-                  />
-                </List.Item>
-              )
-            }
-          />
-        </Form.Item>
-
-        <Form.Item>
-          <Button type="primary" htmlType="submit" className="submit-button">
-            Сохранить товар
-          </Button>
-        </Form.Item>
-      </Form>
-      <Modal
-        open={previewVisible}
-        footer={null}
-        onCancel={handleClosePreview}
-        className="image-preview-modal"
-      >
-        <img alt="preview" className="preview-image" src={previewImage} />
-      </Modal>
-    </div>
+          <img alt="preview" className="preview-image" src={previewImage} />
+        </Modal>
+        <Modal open={isProductCreated} footer={null} maskClosable={false}>
+          <div style={{ textAlign: "center" }}>
+            <h2 style={{ marginTop: "20px" }}>Товар успешно создан!</h2>
+            <p>Вы можете вернуться на главную или просмотреть свои товары.</p>
+            <div
+              style={{
+                marginTop: "20px",
+                display: "flex",
+                justifyContent: "center",
+                gap: "10px",
+              }}
+            >
+              <Button
+                type="primary"
+                onClick={() => nav("/")}
+                style={{ minWidth: "120px" }}
+              >
+                На главную
+              </Button>
+              <Button
+                onClick={() => nav("/my-catalog")} // Переход на страницу "Мои товары"
+                style={{ minWidth: "120px" }}
+              >
+                Мои товары
+              </Button>
+            </div>
+          </div>
+        </Modal>
+      </Spin>
+    </Content>
   );
 };
 export default CreateItemPage;

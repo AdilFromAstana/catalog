@@ -1,20 +1,55 @@
 import { Button, Drawer, Input, Radio } from "antd";
+import { useEffect, useState } from "react";
 
 const DrawerFilters = ({
   isSortDrawerVisible,
   isPriceDrawerVisible,
   toggleSortDrawer,
   togglePriceDrawer,
-  tempMinValue,
-  tempMaxValue,
+  setTempMinValue,
+  setTempMaxValue,
   minPrice,
   maxPrice,
-  handleTempMinChange,
-  handleTempMaxChange,
-  handlePriceReset,
-  handlePriceApply,
   handleSortChange,
 }) => {
+  const [localMinPrice, setLocalMinPrice] = useState(minPrice);
+  const [localMaxPrice, setLocalMaxPrice] = useState(maxPrice);
+
+  const setMinPriceToInput = () => {
+    if (localMinPrice < minPrice) {
+      setLocalMinPrice(minPrice);
+    } else if (localMaxPrice < localMinPrice) {
+      setLocalMinPrice(localMaxPrice);
+    }
+  };
+
+  const setMaxPriceToInput = () => {
+    if (localMaxPrice > maxPrice) {
+      setLocalMaxPrice(maxPrice);
+    } else if (localMinPrice > localMaxPrice) {
+      setLocalMaxPrice(localMinPrice);
+    }
+  };
+
+  const submitPrices = () => {
+    setTempMinValue(localMinPrice);
+    setTempMaxValue(localMaxPrice);
+    togglePriceDrawer(false);
+  };
+
+  const resetPrices = () => {
+    setTempMinValue(null);
+    setTempMaxValue(null);
+    setLocalMinPrice(minPrice);
+    setLocalMaxPrice(maxPrice);
+    togglePriceDrawer(false);
+  };
+
+  useEffect(() => {
+    setLocalMinPrice(Number(minPrice));
+    setLocalMaxPrice(Number(maxPrice));
+  }, [minPrice, maxPrice]);
+
   return (
     <>
       <Drawer
@@ -51,9 +86,7 @@ const DrawerFilters = ({
             },
           ].map((option) => (
             <Radio
-              onClick={() =>
-                handleSortChange({ by: option.by, order: option.order })
-              }
+              onClick={() => handleSortChange(option)}
               key={option.value}
               className="radio-option"
               value={option.value}
@@ -86,17 +119,28 @@ const DrawerFilters = ({
           >
             <Input
               size="large"
-              value={tempMinValue}
-              onChange={(e) => handleTempMinChange(e.target.value)}
-              min={minPrice}
-              max={maxPrice}
+              value={localMinPrice}
+              onChange={(e) => {
+                const value = e.target.value;
+                if (/^\d*$/.test(value)) {
+                  setLocalMinPrice(Number(value));
+                }
+              }}
+              onBlur={setMinPriceToInput}
+              min={0}
               type="tel"
               prefix="от"
             />
             <Input
               size="large"
-              value={tempMaxValue}
-              onChange={(e) => handleTempMaxChange(e.target.value)}
+              value={localMaxPrice}
+              onChange={(e) => {
+                const value = e.target.value;
+                if (/^\d*$/.test(value)) {
+                  setLocalMaxPrice(Number(value));
+                }
+              }}
+              onBlur={setMaxPriceToInput}
               min={minPrice}
               max={maxPrice}
               type="tel"
@@ -115,7 +159,7 @@ const DrawerFilters = ({
             <Button
               size="large"
               style={{ width: "100%" }}
-              onClick={handlePriceReset}
+              onClick={resetPrices}
             >
               Сбросить
             </Button>
@@ -123,7 +167,7 @@ const DrawerFilters = ({
               size="large"
               type="primary"
               style={{ width: "100%" }}
-              onClick={handlePriceApply}
+              onClick={submitPrices}
             >
               Применить
             </Button>

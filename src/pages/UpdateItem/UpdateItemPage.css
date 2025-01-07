@@ -1,3 +1,7 @@
+.form-container {
+  padding: 10px;
+}
+
 .form {
   margin-bottom: 20px;
 }
@@ -67,25 +71,7 @@ input[type="file"].file-input {
   max-height: 50vh;
 }
 
-.item-delete-icon {
-  cursor: pointer;
-  position: absolute;
-  top: 5px;
-  right: 5px;
-  padding: 10px;
-  background-color: white;
-  border-radius: 50%;
-  border: 1px solid black;
-}
-
-.create-item-image {
-  max-height: 180px;
-  max-width: 100%;
-  margin: auto;
-}
-
 .ant-list .ant-list-item.item-image-wrapper {
-  position: relative;
   border: 1px solid black;
   width: 100%;
   height: 200px;
@@ -93,4 +79,22 @@ input[type="file"].file-input {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.item-image {
+  cursor: pointer;
+  height: 200px;
+  width: 180px;
+  margin: auto;
+}
+
+.image-list .item-image-wrapper {
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* Две колонки */
+  gap: 16px; /* Расстояние между элементами */
+  max-width: 100vw; /* Убедимся, что сетка занимает всю ширину */
 }

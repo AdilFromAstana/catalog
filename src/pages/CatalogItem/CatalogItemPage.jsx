@@ -14,9 +14,6 @@ const CatalogItemPage = () => {
     setCurrentImage(index);
   };
 
-  console.log("id: ", id);
-  console.log(id);
-
   useEffect(() => {
     const fetchData = async () => {
       const item = await getDataById("items", id);
@@ -28,8 +25,6 @@ const CatalogItemPage = () => {
     fetchData();
   }, [id]);
 
-  console.log("catalogItem: ", catalogItem);
-
   return (
     <Content className="content">
       <Spin size="large" spinning={!catalogItem}>
@@ -38,15 +33,15 @@ const CatalogItemPage = () => {
             <div className="main-image-container">
               <img
                 className="main-image"
-                src={catalogItem?.images[currentImage]}
+                src={catalogItem?.images[currentImage].url}
                 alt="product"
               />
             </div>
             <div className="thumbnail-container">
               {catalogItem?.images.map((image, index) => (
                 <img
-                  key={image}
-                  src={image}
+                  key={image.url}
+                  src={image.url}
                   alt={`Thumbnail ${index}`}
                   className={`thumbnail ${
                     currentImage === index ? "active-thumbnail" : ""
@@ -62,15 +57,15 @@ const CatalogItemPage = () => {
               <div className="mobile-image-container">
                 <img
                   className="mobile-image"
-                  src={catalogItem?.images[currentImage]}
+                  src={catalogItem?.images[currentImage].url}
                   alt="product"
                 />
               </div>
               <div className="thumbnail-container">
                 {catalogItem?.images.map((image, index) => (
                   <img
-                    key={image}
-                    src={image}
+                    key={image.url}
+                    src={image.url}
                     alt={`Thumbnail ${index}`}
                     className={`thumbnail ${
                       currentImage === index ? "active-thumbnail" : ""
@@ -82,7 +77,7 @@ const CatalogItemPage = () => {
             </div>
 
             <div className="item-info">
-              <div className="item-price">{catalogItem?.price}</div>
+              <div className="item-price">{catalogItem?.price}₸</div>
               <div className="buttons">
                 <Button className="add-to-cart" type="primary" size="large">
                   Узнать наличие товара
