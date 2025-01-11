@@ -1,4 +1,4 @@
-import { Button, List, Pagination } from "antd";
+import { Button, List, Pagination, Result, Skeleton } from "antd";
 import { HeartOutlined, HeartFilled } from "@ant-design/icons";
 import { Link } from "react-router-dom";
 import useWindowWidth from "../hooks/useWindowWidth";
@@ -13,9 +13,8 @@ const ProductList = ({
   handlePageChange,
   itemsPerPage,
   totalProducts,
+  isLoading = true,
 }) => {
-  console.log("products: ", products);
-
   const width = useWindowWidth();
 
   const getColumnCount = () => {
@@ -67,7 +66,50 @@ const ProductList = ({
         ))}
       </div>
 
-      {products.length > 0 ? (
+      {isLoading && (
+        <List
+          grid={{
+            gutter: 16,
+            column: getColumnCount(),
+          }}
+          dataSource={Array.from({ length: 12 }, (_, index) => index + 1)}
+          renderItem={(item) => {
+            return (
+              <List.Item className="list-item">
+                {/* <img
+                  src={item.images[0].url}
+                  alt={item.images[0].url || "Продукт"}
+                  className="product-image"
+                />
+                <div className="product-details">
+                  <div className="product-info">
+                    <Link className="product-title" to={`/${item.id}`}>
+                      {item.title}
+                    </Link>
+                    <div className="product-category">
+                      {item.categoryRu || "Не указано"}
+                    </div>
+                    <div className="product-price">{item.price || 0} ₸</div>
+                  </div>
+                  <div
+                    className="product-favorite"
+                    onClick={() => toggleFavorite(item.id)}
+                  >
+                    {favorites.includes(item.id) ? (
+                      <HeartFilled style={{ color: "red", fontSize: "24px" }} />
+                    ) : (
+                      <HeartOutlined style={{ fontSize: "24px" }} />
+                    )}
+                  </div>
+                </div> */}
+                <Skeleton active />
+              </List.Item>
+            );
+          }}
+        />
+      )}
+
+      {products.length > 0 && (
         <List
           grid={{
             gutter: 16,
@@ -107,17 +149,24 @@ const ProductList = ({
             );
           }}
         />
-      ) : (
-        <div style={{ textAlign: "center", padding: "20px" }}>
-          Нет доступных продуктов
-        </div>
       )}
-      <Pagination
-        current={currentPage}
-        pageSize={itemsPerPage}
-        total={totalProducts}
-        onChange={handlePageChange}
-      />
+
+      {products.length === 0 && !isLoading && (
+        <Result
+          status="404"
+          title="Товары не найдены"
+          subTitle="Извините, по вашим фильтрам товаров не нашлось"
+          extra={<Button type="primary">Сбросить</Button>}
+        />
+      )}
+      {totalProducts > 0 && (
+        <Pagination
+          current={currentPage}
+          pageSize={itemsPerPage}
+          total={totalProducts}
+          onChange={handlePageChange}
+        />
+      )}
     </div>
   );
 };

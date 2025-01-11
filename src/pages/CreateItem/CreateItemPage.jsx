@@ -312,6 +312,7 @@ const CreateItemPage = () => {
               htmlType="submit"
               className="submit-button"
               disabled={!isButtonDisabled}
+              size="large"
             >
               Сохранить товар
             </Button>

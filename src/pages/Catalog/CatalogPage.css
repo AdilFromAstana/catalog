@@ -103,14 +103,14 @@
   cursor: pointer;
 }
 
-.ant-slider .ant-slider-track,
+/* .ant-slider .ant-slider-track,
 .ant-slider .ant-slider-track:hover {
-  background-color: #1677ff;
-}
+  background-color: #1677ff !important;
+} */
 
-.ant-slider .ant-slider-handle::after {
+/* .ant-slider .ant-slider-handle::after {
   box-shadow: 0 0 0 2.5px #1677ff;
-}
+} */
 
 .ant-radio-wrapper::after {
   content: none;
@@ -218,12 +218,13 @@
     display: none;
   }
   .catalog-container {
+    gap: 20px;
     grid-template-columns: 1fr 2fr; /* Для экранов шире 964px */
   }
 }
 @media (min-width: 1176px) {
   .catalog-container {
     margin: 0 auto;
-    width: 1176px;
+    max-width: 1200px;
   }
 }

@@ -83,8 +83,8 @@ input[type="file"].file-input {
 
 .item-image {
   cursor: pointer;
-  height: 200px;
-  width: 180px;
+  max-width: 100%;
+  max-height: 180px;
   margin: auto;
 }
 

@@ -1,18 +1,21 @@
-import { Button, Form, Input, List, Modal, Spin } from "antd";
+import { Button, Form, Input, List, message, Modal, Spin } from "antd";
 import { useEffect, useState } from "react";
-import { getDataById } from "../../firestoreService";
+import { getDataById, updateData, uploadFile } from "../../firestoreService";
 import "./UpdateItemPage.css";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
+import { Content } from "antd/es/layout/layout";
+import { CloseOutlined } from "@ant-design/icons";
 
 const UpdateItemPage = () => {
   const [uploadedImages, setUploadedImages] = useState([]);
-  const [existingImages, setExistingImages] = useState([]);
   const [previewVisible, setPreviewVisible] = useState(false);
+  const [isProductUpdated, setIsProductUpdated] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
   const [form] = Form.useForm();
   const params = useParams();
   const id = params["my-item"];
+  const nav = useNavigate();
 
   const handleFileChange = (event) => {
     const files = Array.from(event.target.files);
@@ -35,16 +38,38 @@ const UpdateItemPage = () => {
     setPreviewImage("");
   };
 
-  const handleUpdate = () => {};
+  const handleDelete = (index) => {
+    setUploadedImages((prev) => prev.filter((_, i) => i !== index));
+  };
 
-  const allImages = [...existingImages, ...uploadedImages];
+  const handleUpdate = async () => {
+    try {
+      setIsLoading(true);
+      const uploadedImageURLs = await Promise.all(
+        uploadedImages.map(async (image, index) => {
+          const url = image.file
+            ? await uploadFile(image.file)
+            : image.previewURL;
+          return { url, priority: index };
+        })
+      );
+      const data = { ...form.getFieldsValue(), images: uploadedImageURLs };
+      await updateData("items", id, data);
+      message.success("Данные успешно сохранены!");
+      setIsProductUpdated(true);
+    } catch (e) {
+      message.error("Ошибка при сохранении данных.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true);
       const item = await getDataById("items", id);
       if (item.images) {
-        setExistingImages(
+        setUploadedImages(
           item.images.map((image) => ({
             previewURL: image.url,
             isNew: false,
@@ -56,14 +81,16 @@ const UpdateItemPage = () => {
       window.scrollTo({
         top: 0,
       });
+      console.log("item: ", item);
       setIsLoading(false);
     };
     fetchData();
   }, [id]);
 
   return (
-    <div className="form-container">
+    <Content className="content">
       <Spin spinning={isLoading}>
+        <h1>Редактирование товара</h1>
         <Form
           form={form}
           layout="vertical"
@@ -115,8 +142,8 @@ const UpdateItemPage = () => {
             <List
               className="image-list"
               grid={{ gutter: 16, column: 2 }}
-              dataSource={[...allImages, { isUploadButton: true }]}
-              renderItem={(item) =>
+              dataSource={[...uploadedImages, { isUploadButton: true }]}
+              renderItem={(item, i) =>
                 item.isUploadButton ? (
                   <List.Item>
                     <label htmlFor="file-upload" className="upload-button">
@@ -134,6 +161,10 @@ const UpdateItemPage = () => {
                   </List.Item>
                 ) : (
                   <List.Item className="item-image-wrapper">
+                    <CloseOutlined
+                      className="item-delete-icon"
+                      onClick={() => handleDelete(i)}
+                    />
                     <img
                       src={item.previewURL}
                       alt={item.previewURL || "Продукт"}
@@ -147,9 +178,27 @@ const UpdateItemPage = () => {
           </Form.Item>
 
           <Form.Item>
-            <Button type="primary" htmlType="submit" className="submit-button">
-              Сохранить товар
-            </Button>
+            <div
+              style={{ display: "flex", flexDirection: "column", gap: "10px" }}
+            >
+              <Button
+                type="primary"
+                htmlType="submit"
+                className="submit-button"
+                size="large"
+              >
+                Сохранить изменения
+              </Button>
+              <Button
+                type="primary"
+                danger
+                htmlType="button"
+                className="submit-button"
+                size="large"
+              >
+                Отменить
+              </Button>
+            </div>
           </Form.Item>
         </Form>
         <Modal
@@ -160,8 +209,36 @@ const UpdateItemPage = () => {
         >
           <img alt="preview" className="preview-image" src={previewImage} />
         </Modal>
+        <Modal open={isProductUpdated} footer={null} maskClosable={false}>
+          <div style={{ textAlign: "center" }}>
+            <h2 style={{ marginTop: "20px" }}>Товар успешно обновлен!</h2>
+            <p>Вы можете вернуться на главную или просмотреть свои товары.</p>
+            <div
+              style={{
+                marginTop: "20px",
+                display: "flex",
+                justifyContent: "center",
+                gap: "10px",
+              }}
+            >
+              <Button
+                type="primary"
+                onClick={() => nav("/")}
+                style={{ minWidth: "120px" }}
+              >
+                На главную
+              </Button>
+              <Button
+                onClick={() => nav("/my-catalog")} // Переход на страницу "Мои товары"
+                style={{ minWidth: "120px" }}
+              >
+                Мои товары
+              </Button>
+            </div>
+          </div>
+        </Modal>
       </Spin>
-    </div>
+    </Content>
   );
 };
 export default UpdateItemPage;

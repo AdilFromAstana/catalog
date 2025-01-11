@@ -6,8 +6,23 @@ import DrawerFilters from "../../components/DrawerFilters";
 import useFavorites from "../../hooks/useFavorites";
 import { Content } from "antd/es/layout/layout";
 import "./CatalogPage.css";
-import { getPaginatedData } from "../../firestoreService";
+import { getDataById, getPaginatedData } from "../../firestoreService";
 import { Spin } from "antd";
+
+function findCategoryByKey(categories, key) {
+  for (const category of categories) {
+    if (category.key === key) return category;
+    if (category.children) {
+      const found = findCategoryByKey(category.children, key);
+      if (found) return found;
+    }
+  }
+  return null;
+}
+
+function getSelectedPath(categories, keys) {
+  return keys.map((key) => findCategoryByKey(categories, key));
+}
 
 const CatalogPage = () => {
   const [isSortDrawerVisible, setSortDrawerVisible] = useState(false);
@@ -19,6 +34,7 @@ const CatalogPage = () => {
   });
   const [products, setProducts] = useState([]);
   const [allCategories, setAllCategories] = useState([]);
+  const [selectedKeys, setSelectedKeys] = useState([]);
   const [hierarchyPath, setHierarchyPath] = useState([]);
   const [selectedColors, setSelectedColors] = useState([]);
   const [minPrice, setMinPrice] = useState(0);
@@ -29,8 +45,28 @@ const CatalogPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [productsTotalSize, setProductsTotalSize] = useState(1);
   const [lastVisible, setLastVisible] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const itemsPerPage = 12;
+  const language = "ru";
+
+  const transformData = (items) => {
+    return items.map((item) => {
+      const title =
+        language === "kz"
+          ? item.titleKz
+          : language === "en"
+          ? item.titleEn
+          : item.titleRu;
+
+      const children = item.children ? transformData(item.children) : null;
+
+      return {
+        key: item.key,
+        title: title,
+        children: children,
+      };
+    });
+  };
 
   const handlePageChange = (page) => {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -66,10 +102,10 @@ const CatalogPage = () => {
     setHierarchyPath((prev) => prev.slice(0, -1));
   };
 
-  const currentHierarchy = hierarchyPath.reduce(
-    (acc, curr) => acc.find((node) => node.title === curr)?.children || [],
-    allCategories
-  );
+  // const currentHierarchy = hierarchyPath.reduce(
+  //   (acc, curr) => acc.find((node) => node.title === curr)?.children || [],
+  //   allCategories
+  // );
 
   const toggleSortDrawer = (open) => {
     setSortDrawerVisible(open);
@@ -100,21 +136,6 @@ const CatalogPage = () => {
       : hierarchyPath[hierarchyPath.length - 1];
   };
 
-  const handleSliderChange = ([min, max]) => {
-    setTempMinValue(min);
-    setTempMaxValue(max);
-  };
-
-  const handleTempMinChange = (value) => {
-    const min = Math.min(Number(value), tempMaxValue);
-    setTempMinValue(min);
-  };
-
-  const handleTempMaxChange = (value) => {
-    const max = Math.min(Number(value), maxPrice);
-    setTempMaxValue(max >= tempMinValue ? max : tempMinValue);
-  };
-
   const handlePriceApply = () => {
     setProducts(
       products.filter(
@@ -134,47 +155,32 @@ const CatalogPage = () => {
     setPriceDrawerVisible(false);
   };
 
+  const selectedPath = getSelectedPath(allCategories, selectedKeys);
+
   const isFilterSelected = !tempMaxValue && !tempMinValue;
 
-  // useEffect(() => {
-  //   const currentCategory = hierarchyPath[hierarchyPath.length - 1];
-
-  //   const filteredByCategory = products.filter((product) => {
-  //     return !currentCategory || product.category.includes(currentCategory);
-  //   });
-
-  //   if (filteredByCategory.length > 0) {
-  //     const prices = filteredByCategory.map((product) => product.price);
-  //     const min = Math.min(...prices);
-  //     const max = Math.max(...prices);
-
-  //     setMinPrice(min);
-  //     setMaxPrice(max);
-
-  //     if (tempMinValue === 0 && tempMaxValue === 0) {
-  //       setTempMinValue(min);
-  //       setTempMaxValue(max);
-  //     }
-  //   } else {
-  //     setMinPrice(0);
-  //     setMaxPrice(0);
-  //     setTempMinValue(0);
-  //     setTempMaxValue(0);
-  //   }
-
-  //   const filteredProducts = filteredByCategory.filter((product) => {
-  //     const matchesPrice =
-  //       product.price >= tempMinValue && product.price <= tempMaxValue;
-  //     const matchesColor =
-  //       selectedColors.length === 0 || selectedColors.includes(product.color);
-
-  //     return matchesPrice && matchesColor;
-  //   });
-
-  //   setProducts(filteredProducts);
-  // }, [hierarchyPath, tempMinValue, tempMaxValue, selectedColors]);
-
   useEffect(() => {
+    function collectKeysWithoutChildren() {
+      const result = [];
+
+      function traverse(node) {
+        // Если children равно null, добавляем key в результат
+        if (!node.children) {
+          result.push(node.key);
+        } else {
+          // Если есть дети, проходим по ним рекурсивно
+          node.children.forEach((child) => traverse(child));
+        }
+      }
+
+      // Проверяем последний элемент массива
+      const lastElement = selectedPath[selectedPath.length - 1];
+      if (lastElement) {
+        traverse(lastElement);
+      }
+
+      return result;
+    }
     const fetchProducts = async () => {
       try {
         setIsLoading(true);
@@ -192,6 +198,7 @@ const CatalogPage = () => {
           sort: sort,
           maxPriceFilter: tempMaxValue,
           minPriceFilter: tempMinValue,
+          categoryIdsFilter: collectKeysWithoutChildren(),
         });
         setProductsTotalSize(totalSize);
         setProducts(data);
@@ -206,7 +213,35 @@ const CatalogPage = () => {
     };
 
     fetchProducts();
-  }, [currentPage, sort, tempMaxValue, tempMinValue]);
+  }, [currentPage, sort, tempMaxValue, tempMinValue, selectedKeys]);
+
+  useEffect(() => {
+    const fetchItems = async () => {
+      try {
+        // setIsLoading(true);
+        const data = await getDataById("category", "AyZb1AB6NzYmh0YIfu8G");
+
+        if (data && data.scheme) {
+          setAllCategories([
+            {
+              key: 0,
+              children: transformData(JSON.parse(data.scheme)),
+              title: "Все категории",
+            },
+          ]);
+        } else {
+          console.error("Схема данных отсутствует или неверна");
+          setAllCategories([]);
+        }
+      } catch (error) {
+        console.error("Ошибка при загрузке данных:", error);
+      } finally {
+        // setIsLoading(false); // Отключаем индикатор загрузки
+      }
+    };
+
+    fetchItems();
+  }, []);
 
   return (
     <>
@@ -214,7 +249,7 @@ const CatalogPage = () => {
         <Spin spinning={isLoading}>
           <CategoryNavigation
             isFilterSelected={isFilterSelected}
-            currentHierarchy={currentHierarchy}
+            // currentHierarchy={currentHierarchy}
             productsTotalSize={productsTotalSize}
             handleBackClick={handleBackClick}
             handleCategoryClick={handleCategoryClick}
@@ -224,21 +259,27 @@ const CatalogPage = () => {
           />
           <div className="catalog-container">
             <Filters
+              productsTotalSize={productsTotalSize}
+              allCategories={allCategories}
+              setSelectedKeys={setSelectedKeys}
+              selectedKeys={selectedKeys}
               minPrice={minPrice}
               maxPrice={maxPrice}
               tempMinValue={tempMinValue}
               tempMaxValue={tempMaxValue}
               colorsWithCounts={colorsWithCounts}
               selectedColors={selectedColors}
-              handleTempMinChange={handleTempMinChange}
-              handleTempMaxChange={handleTempMaxChange}
               handleColorChange={handleColorChange}
+              setTempMinValue={setTempMinValue}
+              setTempMaxValue={setTempMaxValue}
               handlePriceApply={handlePriceApply}
               handlePriceReset={handlePriceReset}
-              currentHierarchy={allCategories}
+              // currentHierarchy={allCategories}
               handleCategoryClick={handleCategoryClick}
+              selectedPath={selectedPath}
             />
             <ProductList
+              isLoading={isLoading}
               products={products}
               favorites={favorites}
               toggleFavorite={toggleFavorite}

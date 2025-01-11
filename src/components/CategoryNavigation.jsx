@@ -7,7 +7,7 @@ import {
 } from "@ant-design/icons";
 
 const CategoryNavigation = ({
-  currentHierarchy,
+  // currentHierarchy,
   handleBackClick,
   handleCategoryClick,
   getCategoryTitle,
@@ -37,7 +37,7 @@ const CategoryNavigation = ({
           </Badge>
         </div>
       </div>
-      {currentHierarchy.length > 0 && (
+      {/* {currentHierarchy.length > 0 && (
         <div className="scrollable-row">
           {currentHierarchy.map((node) => (
             <Button
@@ -49,7 +49,7 @@ const CategoryNavigation = ({
             </Button>
           ))}
         </div>
-      )}
+      )} */}
     </div>
   );
 };

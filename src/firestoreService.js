@@ -26,7 +26,6 @@ export const addData = async ({
   data,
   storeCode = "cool-store",
 }) => {
-  console.log("data: ", data);
   const docRef = await addDoc(collection(db, collectionName), {
     ...data,
     storeCode,
@@ -85,11 +84,41 @@ export const getPaginatedData = async ({
   storeCode = "cool-store",
   minPriceFilter = null,
   maxPriceFilter = null,
+  categoryIdsFilter = [],
+  status = "active",
 }) => {
   try {
     const collectionRef = collection(db, collectionName);
 
     let countQueryRef = query(collectionRef);
+
+    if (storeCode !== null) {
+      countQueryRef = query(countQueryRef, where("storeCode", "==", storeCode));
+    }
+    if (categoryIdsFilter.length > 0) {
+      countQueryRef = query(
+        countQueryRef,
+        where("categoryId", "in", categoryIdsFilter)
+      );
+    }
+    if (status !== null) {
+      countQueryRef = query(countQueryRef, where("status", "==", status));
+    }
+    const minQueryRef = query(countQueryRef, orderBy("price", "asc"), limit(1));
+    const minSnapshot = await getDocs(minQueryRef);
+    const minPrice = minSnapshot.docs.length
+      ? minSnapshot.docs[0].data().price
+      : null;
+
+    const maxQueryRef = query(
+      countQueryRef,
+      orderBy("price", "desc"),
+      limit(1)
+    );
+    const maxSnapshot = await getDocs(maxQueryRef);
+    const maxPrice = maxSnapshot.docs.length
+      ? maxSnapshot.docs[0].data().price
+      : null;
 
     if (minPriceFilter !== null) {
       countQueryRef = query(
@@ -107,22 +136,6 @@ export const getPaginatedData = async ({
     const countSnapshot = await getDocs(countQueryRef);
     const totalSize = countSnapshot.size;
 
-    const minQueryRef = query(collectionRef, orderBy("price", "asc"), limit(1));
-    const minSnapshot = await getDocs(minQueryRef);
-    const minPrice = minSnapshot.docs.length
-      ? minSnapshot.docs[0].data().price
-      : null;
-
-    const maxQueryRef = query(
-      collectionRef,
-      orderBy("price", "desc"),
-      limit(1)
-    );
-    const maxSnapshot = await getDocs(maxQueryRef);
-    const maxPrice = maxSnapshot.docs.length
-      ? maxSnapshot.docs[0].data().price
-      : null;
-
     let queryRef = query(collectionRef, orderBy(sort.by, sort.order));
 
     if (minPriceFilter !== null) {
@@ -130,6 +143,15 @@ export const getPaginatedData = async ({
     }
     if (maxPriceFilter !== null) {
       queryRef = query(queryRef, where("price", "<=", maxPriceFilter));
+    }
+    if (categoryIdsFilter.length > 0) {
+      queryRef = query(queryRef, where("categoryId", "in", categoryIdsFilter));
+    }
+    if (storeCode !== null) {
+      queryRef = query(queryRef, where("storeCode", "==", storeCode));
+    }
+    if (status !== null) {
+      queryRef = query(queryRef, where("status", "==", status));
     }
 
     queryRef = query(queryRef, limit(pageSize));
