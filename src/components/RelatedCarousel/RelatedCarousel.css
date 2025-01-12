@@ -1,0 +1,132 @@
+.horizontal-scroll-container .ant-list-items {
+  display: flex;
+  overflow-x: auto; /* Горизонтальный скролл */
+  gap: 16px; /* Отступ между элементами */
+  scrollbar-width: thin; /* Тонкий скролл для браузеров, поддерживающих CSS Scrollbar */
+}
+.horizontal-scroll-container::-webkit-scrollbar {
+  height: 8px; /* Высота горизонтального скролла */
+}
+
+.horizontal-scroll-container::-webkit-scrollbar-thumb {
+  background: #888; /* Цвет полосы прокрутки */
+  border-radius: 4px;
+}
+
+.horizontal-scroll-container::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+.related-carousel-title {
+  margin: 10px 0;
+  font-size: 16px;
+  opacity: 0.5;
+}
+.related-carousel-item-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.related-carousel-item-category {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-clamp: 1;
+  -webkit-line-clamp: 1;
+  color: rgba(0, 0, 0, 0.5);
+}
+
+.related-carousel-item-image {
+  max-width: 100%;
+  max-height: 150px;
+  margin: auto;
+}
+
+.related-carousel-item-favorite {
+  background: white;
+  border-radius: 50%;
+  border: 1px solid black;
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  padding: 8px;
+  top: 5px;
+  right: 5px;
+  position: absolute;
+}
+
+.ant-list .ant-list-item.related-carousel-item {
+  height: 300px;
+  position: relative;
+  flex: 0 0 auto;
+  gap: 10px;
+  padding: 10px;
+  border: 1px solid black;
+  border-radius: 10px;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+.related-carousel-item-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  height: 100%;
+  width: 100%;
+  align-items: center;
+}
+.related-carousel-item-details {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  flex-grow: 1;
+  width: 100%;
+}
+.related-carousel-item-info {
+  display: flex;
+  flex-direction: column;
+}
+.related-carousel-item-title {
+  font-size: 16px;
+  color: black;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+}
+.related-carousel-item-price {
+  font-size: 24px;
+  font-weight: 700;
+  margin-top: auto;
+}
+
+@media (max-width: 448px) {
+  .ant-list .ant-list-item.related-carousel-item {
+    height: 275px;
+    width: 42.5vw;
+  }
+  .related-carousel-item-image {
+    margin: 0;
+    max-height: 125px;
+  }
+  .related-carousel-item-details,
+  .related-carousel-item-info {
+    width: 100%;
+    height: 100%;
+  }
+  .related-carousel-item-price {
+    font-size: 20px;
+    font-weight: 700;
+    margin-top: auto;
+  }
+}
+
+@media (min-width: 449px) {
+  .ant-list .ant-list-item.related-carousel-item {
+    width: 42.5vw;
+  }
+}

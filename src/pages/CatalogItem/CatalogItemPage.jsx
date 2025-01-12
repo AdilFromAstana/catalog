@@ -1,25 +1,78 @@
 import { Content } from "antd/es/layout/layout";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import "./CatalogItemPage.css";
 import { useParams } from "react-router-dom";
 import { Button, Spin } from "antd";
-import { getDataById } from "../../firestoreService";
+import {
+  getDataByCategoryId,
+  getDataById,
+  getDataByIds,
+} from "../../firestoreService";
+import RelatedCarousel from "../../components/RelatedCarousel/RelatedCarousel";
+import { formatNumber } from "../../common/common";
 
 const CatalogItemPage = () => {
   const { id } = useParams();
   const [catalogItem, setCatalogItem] = useState(null);
+  const [isItemLoading, setIsItemLoading] = useState(true);
   const [currentImage, setCurrentImage] = useState(0);
+  const [watchedItems, setWatchedItems] = useState([]);
+  const [isWatchedItemsLoading, setIsWatchedItemsLoading] = useState(true);
+  const [sameCategoryItems, setSameCategoryItems] = useState([]);
+  const [isSameCategoryItemsLoading, setIsSameCategoryItemsLoading] =
+    useState(true);
+  const ViewedItemsKey = "viewedItems";
 
   const handleImageClick = (index) => {
     setCurrentImage(index);
   };
 
+  const getWatchedItems = async () => {
+    const viewedItemIds =
+      JSON.parse(localStorage.getItem(ViewedItemsKey)) || [];
+
+    let updatedViewedItems;
+    if (viewedItemIds.includes(id)) {
+      updatedViewedItems = viewedItemIds.filter((itemId) => itemId !== id);
+    } else {
+      updatedViewedItems = [...viewedItemIds];
+    }
+    updatedViewedItems.unshift(id);
+    localStorage.setItem(ViewedItemsKey, JSON.stringify(updatedViewedItems));
+
+    const viewedItemsData = await getDataByIds({
+      ids: updatedViewedItems.filter((itemId) => itemId !== id),
+    });
+    setWatchedItems(viewedItemsData ?? []);
+    setIsWatchedItemsLoading(false);
+  };
+
+  const getSameCategoryItem = async ({ categoryId, exceptItemId }) => {
+    setIsSameCategoryItemsLoading(true);
+    const data = await getDataByCategoryId({
+      categoryId,
+      exceptItemId,
+    });
+    setSameCategoryItems(data);
+    setIsSameCategoryItemsLoading(false);
+  };
+
   useEffect(() => {
     const fetchData = async () => {
+      setIsItemLoading(true);
+      setIsWatchedItemsLoading(true);
+      setIsSameCategoryItemsLoading(true);
       const item = await getDataById("items", id);
       setCatalogItem(item);
       window.scrollTo({
         top: 0,
+      });
+      setIsItemLoading(false);
+
+      getWatchedItems();
+      getSameCategoryItem({
+        categoryId: item.categoryId,
+        exceptItemId: item.id,
       });
     };
     fetchData();
@@ -27,7 +80,7 @@ const CatalogItemPage = () => {
 
   return (
     <Content className="content">
-      <Spin size="large" spinning={!catalogItem}>
+      <Spin size="large" spinning={isItemLoading}>
         <div className="wrapper">
           <div className="item-gallery">
             <div className="main-image-container">
@@ -77,7 +130,9 @@ const CatalogItemPage = () => {
             </div>
 
             <div className="item-info">
-              <div className="item-price">{catalogItem?.price}₸</div>
+              <div className="item-price">
+                {formatNumber(catalogItem?.price ?? 0)}₸
+              </div>
               <div className="buttons">
                 <Button className="add-to-cart" type="primary" size="large">
                   Узнать наличие товара
@@ -99,6 +154,29 @@ const CatalogItemPage = () => {
               </ul>
             </div>
           </div>
+        </div>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "20px",
+            margin: "20px 0",
+          }}
+        >
+          <RelatedCarousel
+            title="Вы недавно смотрели"
+            products={watchedItems}
+            isLoading={isWatchedItemsLoading}
+            setIsItemLoading={setIsItemLoading}
+            id={id}
+          />
+          <RelatedCarousel
+            title={catalogItem?.categoryRu}
+            products={sameCategoryItems}
+            isLoading={isSameCategoryItemsLoading}
+            setIsItemLoading={setIsItemLoading}
+            id={id}
+          />
         </div>
       </Spin>
     </Content>

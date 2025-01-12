@@ -46,7 +46,6 @@ const MyCatalog = () => {
         collectionName: "items",
         storeCode: "cool-store",
       });
-      console.log("data: ", data);
       setProducts(data);
     } catch (error) {
       console.error("Ошибка при загрузке данных:", error);

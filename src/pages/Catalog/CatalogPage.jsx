@@ -155,6 +155,8 @@ const CatalogPage = () => {
     setPriceDrawerVisible(false);
   };
 
+  console.log("allCategories: ", allCategories);
+
   const selectedPath = getSelectedPath(allCategories, selectedKeys);
 
   const isFilterSelected = !tempMaxValue && !tempMinValue;
@@ -229,6 +231,7 @@ const CatalogPage = () => {
               title: "Все категории",
             },
           ]);
+          setSelectedKeys([0]);
         } else {
           console.error("Схема данных отсутствует или неверна");
           setAllCategories([]);
@@ -239,7 +242,6 @@ const CatalogPage = () => {
         // setIsLoading(false); // Отключаем индикатор загрузки
       }
     };
-
     fetchItems();
   }, []);
 

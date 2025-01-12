@@ -202,7 +202,7 @@ export const getDataById = async (collectionName, id) => {
 };
 
 export const getDataByIds = async ({
-  collectionName,
+  collectionName = "items",
   ids,
   storeCode = "cool-store",
 }) => {
@@ -234,6 +234,37 @@ export const getDataByIds = async ({
     return data.filter((doc) => doc !== null);
   } catch (error) {
     console.error("Ошибка при получении документов:", error);
+    throw error;
+  }
+};
+
+export const getDataByCategoryId = async ({
+  collectionName = "items",
+  categoryId,
+  storeCode = "cool-store",
+  status = "active",
+  exceptItemId,
+}) => {
+  try {
+    const collectionRef = collection(db, collectionName);
+    let queryRef = query(collectionRef);
+    queryRef = query(queryRef, limit(10));
+    queryRef = query(queryRef, where("storeCode", "==", storeCode));
+    queryRef = query(queryRef, where("status", "==", status));
+    if (categoryId) {
+      queryRef = query(queryRef, where("categoryId", "==", categoryId));
+    }
+    const querySnapshot = await getDocs(queryRef);
+
+    const data = querySnapshot.docs
+      .filter((doc) => doc.id !== exceptItemId)
+      .map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+    return data;
+  } catch (error) {
+    console.error("Ошибка при получении документа:", error);
     throw error;
   }
 };
