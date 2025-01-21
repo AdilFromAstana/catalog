@@ -6,6 +6,7 @@ import AppRouter from "./components/AppRouter";
 import "./App.css";
 import { useState } from "react";
 import MenuDrawer from "./components/MenuDrawer";
+const { Footer } = Layout;
 
 const App = () => {
   const [isDrawerVisible, setIsDrawerVisible] = useState(false);

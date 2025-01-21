@@ -18,8 +18,8 @@
 }
 
 .category-list-item.last-item {
+  cursor: default;
   font-weight: bold;
-  color: green;
 }
 
 .image-list {

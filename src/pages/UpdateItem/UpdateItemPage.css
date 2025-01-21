@@ -23,7 +23,7 @@
 
 .category-list-item.last-item {
   font-weight: bold;
-  color: green;
+  cursor: default;
 }
 
 .image-list {

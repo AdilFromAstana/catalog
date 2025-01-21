@@ -7,25 +7,23 @@ import {
 } from "@ant-design/icons";
 
 const CategoryNavigation = ({
-  // currentHierarchy,
-  handleBackClick,
-  handleCategoryClick,
-  getCategoryTitle,
   toggleSortDrawer,
   togglePriceDrawer,
   productsTotalSize,
   isFilterSelected,
+  availableCategories,
+  selectCategory,
+  categoryTitle,
+  returnToPreviousCategory,
 }) => {
-  console.log("isFilterSelected: ", isFilterSelected);
-
   return (
     <div className="category-navigation">
       <div className="nav-wrapper">
-        <div className="nav-item" onClick={handleBackClick}>
+        <div className="nav-item" onClick={returnToPreviousCategory}>
           <LeftOutlined className="icon" />
         </div>
         <div className="category-info">
-          <div className="category-title">{getCategoryTitle()}</div>
+          <div className="category-title">{categoryTitle}</div>
           <div>{productsTotalSize}</div>
         </div>
         <div className="nav-item">
@@ -37,19 +35,19 @@ const CategoryNavigation = ({
           </Badge>
         </div>
       </div>
-      {/* {currentHierarchy.length > 0 && (
+      {availableCategories.length > 0 && (
         <div className="scrollable-row">
-          {currentHierarchy.map((node) => (
+          {availableCategories.map((category) => (
             <Button
-              key={node.title}
+              key={category.title}
               type="primary"
-              onClick={() => handleCategoryClick(node.title)}
+              onClick={() => selectCategory(category.key)}
             >
-              {node.title}
+              {category.title}
             </Button>
           ))}
         </div>
-      )} */}
+      )}
     </div>
   );
 };

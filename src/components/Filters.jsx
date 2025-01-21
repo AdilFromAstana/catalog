@@ -2,30 +2,6 @@ import { Button, Checkbox, Input, List, Slider } from "antd";
 import { useEffect, useState } from "react";
 import { DownCircleOutlined, CheckCircleOutlined } from "@ant-design/icons";
 
-function findCategoryByKey(categories, key) {
-  for (const category of categories) {
-    if (category.key === key) return category;
-    if (category.children) {
-      const found = findCategoryByKey(category.children, key);
-      if (found) return found;
-    }
-  }
-  return null;
-}
-
-function getNestedItems(categories, keys) {
-  let currentLevel = categories;
-  for (const key of keys) {
-    const found = currentLevel.find((item) => item.key === key);
-    if (found && found.children) {
-      currentLevel = found.children;
-    } else {
-      currentLevel = [];
-    }
-  }
-  return currentLevel;
-}
-
 const Filters = ({
   minPrice,
   maxPrice,
@@ -34,35 +10,16 @@ const Filters = ({
   setTempMinValue,
   setTempMaxValue,
   handleColorChange,
-  allCategories,
-  setSelectedKeys,
-  selectedKeys,
-  selectedPath,
   productsTotalSize,
+  availableCategories,
+  selectedCategories,
+  selectCategory,
+  backToAlreadySelectedCategory,
+  categoryTitle,
 }) => {
   const [localMinPrice, setLocalMinPrice] = useState(minPrice);
   const [localMaxPrice, setLocalMaxPrice] = useState(maxPrice);
   const [minMaxObject, setMinMaxObject] = useState({});
-
-  const currentItems = selectedKeys.length
-    ? getNestedItems(allCategories, selectedKeys)
-    : allCategories;
-
-  const getCurrentCategoryTitle = () => {
-    if (selectedPath.length > 0) {
-      return selectedPath[selectedPath.length - 1]?.title;
-    } else {
-      return "Все категории";
-    }
-  };
-
-  const handleClick = (key) => {
-    setSelectedKeys((prevKeys) => [...prevKeys, key]);
-  };
-
-  const handleBackToLevel = (index) => {
-    setSelectedKeys((prevKeys) => prevKeys.slice(0, index + 1));
-  };
 
   const setMinPriceToInput = () => {
     if (localMinPrice < minPrice) {
@@ -121,29 +78,33 @@ const Filters = ({
             margin: "20px 0px",
           }}
         >
-          <h3 style={{ margin: 0 }}>{getCurrentCategoryTitle()}</h3>
+          <h3 style={{ margin: 0 }}>{categoryTitle}</h3>
           <span>{productsTotalSize} товар</span>
         </div>
         <List
           bordered
-          dataSource={[...selectedPath, ...currentItems]}
+          dataSource={[...selectedCategories, ...availableCategories]}
           className="category-list"
           renderItem={(item, index) => {
-            const isSelected = index < selectedPath.length;
+            const isSelected = index < selectedCategories.length;
+            const isDisabled = categoryTitle !== item.title;
             const isThislastItem =
-              currentItems.length === 0 && selectedPath.length - 1 === index;
+              availableCategories.length === 0 &&
+              selectedCategories.length - 1 === index;
             return (
               <List.Item
                 onClick={() => {
-                  if (isSelected) {
-                    handleBackToLevel(index);
-                  } else {
-                    handleClick(item.key);
+                  if (isDisabled) {
+                    if (isSelected) {
+                      backToAlreadySelectedCategory(index);
+                    } else {
+                      selectCategory(item.key);
+                    }
                   }
                 }}
                 className={`category-list-item ${
                   isSelected ? "selected" : ""
-                } ${isThislastItem ? "last-item" : ""}`}
+                } ${isDisabled ? "" : "last-item"}`}
               >
                 {item.title}
               </List.Item>
