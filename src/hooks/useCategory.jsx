@@ -92,8 +92,7 @@ const useCategory = () => {
     (key) => {
       const lastSelectedKey =
         selectedCategoryKeys[selectedCategoryKeys.length - 1];
-      if (key === lastSelectedKey) return; // Заблокировать нажатие на текущую категорию
-      console.log("DDDD")
+      if (key === lastSelectedKey) return;
       setSelectedCategoryKeys((prevKeys) => [...prevKeys, key]);
     },
     [selectedCategoryKeys]
@@ -104,7 +103,10 @@ const useCategory = () => {
   }, []);
 
   const returnToPreviousCategory = useCallback(() => {
-    setSelectedCategoryKeys((prevKeys) => prevKeys.slice(0, -1));
+    setSelectedCategoryKeys((prevKeys) => {
+      if (prevKeys.length <= 1) return prevKeys; // Если длина массива <= 1, ничего не делаем
+      return prevKeys.slice(0, -1); // Убираем последний ключ
+    });
   }, []);
 
   const getLastSelectedCategoryTitle = useMemo(() => {

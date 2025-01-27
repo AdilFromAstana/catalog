@@ -4,7 +4,6 @@ import CategoryNavigation from "../../components/CategoryNavigation";
 import Filters from "../../components/Filters";
 import DrawerFilters from "../../components/DrawerFilters";
 import useFavorites from "../../hooks/useFavorites";
-import { Content } from "antd/es/layout/layout";
 import "./CatalogPage.css";
 import { getPaginatedData } from "../../firestoreService";
 import { Spin } from "antd";
