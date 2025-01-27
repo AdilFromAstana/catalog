@@ -131,7 +131,8 @@
   justify-content: space-between;
 }
 
-.filter-component {
+.filter-component-desktop {
+  margin: 0 20px;
   display: none;
 }
 
@@ -211,7 +212,7 @@
   .sort-buttons {
     display: flex;
   }
-  .filter-component {
+  .filter-component-desktop {
     display: block;
   }
   .category-navigation {

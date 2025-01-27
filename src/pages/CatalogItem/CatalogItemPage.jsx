@@ -80,35 +80,12 @@ const CatalogItemPage = () => {
 
   return (
     <Spin size="large" spinning={isItemLoading}>
-      <div className="wrapper">
-        <div className="item-gallery">
-          <div className="main-image-container">
-            <img
-              className="main-image"
-              src={catalogItem?.images[currentImage].url}
-              alt="product"
-            />
-          </div>
-          <div className="thumbnail-container">
-            {catalogItem?.images.map((image, index) => (
+      <div style={{ margin: "0 20px" }}>
+        <div className="wrapper">
+          <div className="item-gallery">
+            <div className="main-image-container">
               <img
-                key={image.url}
-                src={image.url}
-                alt={`Thumbnail ${index}`}
-                className={`thumbnail ${
-                  currentImage === index ? "active-thumbnail" : ""
-                }`}
-                onClick={() => handleImageClick(index)}
-              />
-            ))}
-          </div>
-        </div>
-        <div className="content-wrapper">
-          <h2 className="item-title">{catalogItem?.title}</h2>
-          <div className="mobile-item-gallery">
-            <div className="mobile-image-container">
-              <img
-                className="mobile-image"
+                className="main-image"
                 src={catalogItem?.images[currentImage].url}
                 alt="product"
               />
@@ -127,56 +104,81 @@ const CatalogItemPage = () => {
               ))}
             </div>
           </div>
-
-          <div className="item-info">
-            <div className="item-price">
-              {formatNumber(catalogItem?.price ?? 0)}₸
+          <div className="content-wrapper">
+            <h2 className="item-title">{catalogItem?.title}</h2>
+            <div className="mobile-item-gallery">
+              <div className="mobile-image-container">
+                <img
+                  className="mobile-image"
+                  src={catalogItem?.images[currentImage].url}
+                  alt="product"
+                />
+              </div>
+              <div className="thumbnail-container">
+                {catalogItem?.images.map((image, index) => (
+                  <img
+                    key={image.url}
+                    src={image.url}
+                    alt={`Thumbnail ${index}`}
+                    className={`thumbnail ${
+                      currentImage === index ? "active-thumbnail" : ""
+                    }`}
+                    onClick={() => handleImageClick(index)}
+                  />
+                ))}
+              </div>
             </div>
-            <div className="buttons">
-              <Button className="add-to-cart" type="primary" size="large">
-                Узнать наличие товара
-              </Button>
+
+            <div className="item-info">
+              <div className="item-price">
+                {formatNumber(catalogItem?.price ?? 0)}₸
+              </div>
+              <div className="buttons">
+                <Button className="add-to-cart" type="primary" size="large">
+                  Узнать наличие товара
+                </Button>
+              </div>
             </div>
-          </div>
 
-          <div className="description">
-            <h3>Описание</h3>
-            <p>{catalogItem?.description}</p>
-          </div>
+            <div className="description">
+              <h3>Описание</h3>
+              <p>{catalogItem?.description}</p>
+            </div>
 
-          <div className="specifications">
-            <h3>Характеристики</h3>
-            <ul>
-              <li>Назначение: для бега</li>
-              <li>Материал: пластик, текстиль</li>
-              <li>Размеры: S</li>
-            </ul>
+            <div className="specifications">
+              <h3>Характеристики</h3>
+              <ul>
+                <li>Назначение: для бега</li>
+                <li>Материал: пластик, текстиль</li>
+                <li>Размеры: S</li>
+              </ul>
+            </div>
           </div>
         </div>
-      </div>
-      <div
-        style={{
-          maxWidth: "900px",
-          margin: "0 auto",
-          display: "flex",
-          flexDirection: "column",
-          gap: "20px",
-        }}
-      >
-        <RelatedCarousel
-          title="Вы недавно смотрели"
-          products={watchedItems}
-          isLoading={isWatchedItemsLoading}
-          setIsItemLoading={setIsItemLoading}
-          id={id}
-        />
-        <RelatedCarousel
-          title={catalogItem?.categoryRu}
-          products={sameCategoryItems}
-          isLoading={isSameCategoryItemsLoading}
-          setIsItemLoading={setIsItemLoading}
-          id={id}
-        />
+        <div
+          style={{
+            maxWidth: "900px",
+            margin: "0 auto",
+            display: "flex",
+            flexDirection: "column",
+            gap: "20px",
+          }}
+        >
+          <RelatedCarousel
+            title="Вы недавно смотрели"
+            products={watchedItems}
+            isLoading={isWatchedItemsLoading}
+            setIsItemLoading={setIsItemLoading}
+            id={id}
+          />
+          <RelatedCarousel
+            title={catalogItem?.categoryRu}
+            products={sameCategoryItems}
+            isLoading={isSameCategoryItemsLoading}
+            setIsItemLoading={setIsItemLoading}
+            id={id}
+          />
+        </div>
       </div>
     </Spin>
   );

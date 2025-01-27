@@ -1,6 +1,7 @@
 .layout {
   background: transparent;
-  min-height: 100vh;
+  min-height: 100svh;
+  padding-bottom: 10vh;
 }
 
 .header {
@@ -19,4 +20,3 @@
 .header-title:hover {
   color: black;
 }
-

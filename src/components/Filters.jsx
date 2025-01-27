@@ -1,6 +1,5 @@
 import { Button, Checkbox, Input, List, Slider } from "antd";
 import { memo, useEffect, useState } from "react";
-import { DownCircleOutlined, CheckCircleOutlined } from "@ant-design/icons";
 
 const Filters = memo(
   ({
@@ -68,7 +67,7 @@ const Filters = memo(
     }, [minPrice, maxPrice]);
 
     return (
-      <div style={{ margin: "0 20px" }} className="filter-component">
+      <div className="filter-component">
         <div>
           <div
             style={{

@@ -57,6 +57,7 @@
 }
 
 .ant-list .ant-list-item.related-carousel-item {
+  aspect-ratio: 1 / 1.42;
   height: 300px;
   position: relative;
   flex: 0 0 auto;
@@ -132,10 +133,5 @@
   .related-carousel-item-image {
     margin: 0;
     max-height: 150px;
-  }
-}
-
-@media (min-width: 769px) {
-  .ant-list .ant-list-item.related-carousel-item {
   }
 }

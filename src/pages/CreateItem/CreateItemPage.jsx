@@ -67,7 +67,6 @@ const CreateItemPage = () => {
   };
 
   const handleBackToLevel = (index) => {
-    // Сохраняем только ключи до указанного уровня включительно
     setSelectedKeys((prevKeys) => prevKeys.slice(0, index + 1));
   };
 

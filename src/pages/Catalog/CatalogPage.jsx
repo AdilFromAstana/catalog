@@ -6,7 +6,7 @@ import DrawerFilters from "../../components/DrawerFilters";
 import useFavorites from "../../hooks/useFavorites";
 import "./CatalogPage.css";
 import { getPaginatedData } from "../../firestoreService";
-import { Spin } from "antd";
+import { Drawer, Spin } from "antd";
 import useCategory from "../../hooks/useCategory";
 
 const CatalogPage = () => {
@@ -163,25 +163,27 @@ const CatalogPage = () => {
           selectCategory={selectCategory}
         />
         <div className="catalog-container">
-          <Filters
-            productsTotalSize={productsTotalSize}
-            minPrice={minPrice}
-            maxPrice={maxPrice}
-            tempMinValue={tempMinValue}
-            tempMaxValue={tempMaxValue}
-            colorsWithCounts={colorsWithCounts}
-            selectedColors={selectedColors}
-            handleColorChange={handleColorChange}
-            setTempMinValue={setTempMinValue}
-            setTempMaxValue={setTempMaxValue}
-            handlePriceReset={handlePriceReset}
-            availableCategories={availableCategories}
-            selectedCategoryKeys={selectedCategoryKeys}
-            selectCategory={selectCategory}
-            backToAlreadySelectedCategory={backToAlreadySelectedCategory}
-            selectedCategories={selectedCategories}
-            categoryTitle={categoryTitle}
-          />
+          <div className="filter-component-desktop">
+            <Filters
+              productsTotalSize={productsTotalSize}
+              minPrice={minPrice}
+              maxPrice={maxPrice}
+              tempMinValue={tempMinValue}
+              tempMaxValue={tempMaxValue}
+              colorsWithCounts={colorsWithCounts}
+              selectedColors={selectedColors}
+              handleColorChange={handleColorChange}
+              setTempMinValue={setTempMinValue}
+              setTempMaxValue={setTempMaxValue}
+              handlePriceReset={handlePriceReset}
+              availableCategories={availableCategories}
+              selectedCategoryKeys={selectedCategoryKeys}
+              selectCategory={selectCategory}
+              backToAlreadySelectedCategory={backToAlreadySelectedCategory}
+              selectedCategories={selectedCategories}
+              categoryTitle={categoryTitle}
+            />
+          </div>
           <ProductList
             isLoading={isLoading}
             products={products}
@@ -207,6 +209,37 @@ const CatalogPage = () => {
         maxPrice={maxPrice}
         handleSortChange={handleSortChange}
       />
+      <Drawer
+        title="Фильтры"
+        placement="bottom"
+        styles={{
+          wrapper: {
+            height: "100%",
+          },
+        }}
+        onClose={() => togglePriceDrawer(false)}
+        open={isPriceDrawerVisible}
+      >
+        <Filters
+          productsTotalSize={productsTotalSize}
+          minPrice={minPrice}
+          maxPrice={maxPrice}
+          tempMinValue={tempMinValue}
+          tempMaxValue={tempMaxValue}
+          colorsWithCounts={colorsWithCounts}
+          selectedColors={selectedColors}
+          handleColorChange={handleColorChange}
+          setTempMinValue={setTempMinValue}
+          setTempMaxValue={setTempMaxValue}
+          handlePriceReset={handlePriceReset}
+          availableCategories={availableCategories}
+          selectedCategoryKeys={selectedCategoryKeys}
+          selectCategory={selectCategory}
+          backToAlreadySelectedCategory={backToAlreadySelectedCategory}
+          selectedCategories={selectedCategories}
+          categoryTitle={categoryTitle}
+        />
+      </Drawer>
     </>
   );
 };
