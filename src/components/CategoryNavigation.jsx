@@ -1,4 +1,4 @@
-import React, { memo, useState } from "react";
+import React, { memo, useCallback, useState } from "react";
 import { Badge, Button } from "antd";
 import {
   ControlOutlined,
@@ -11,24 +11,44 @@ const CategoryNavigation = memo(
   ({
     toggleSortDrawer,
     togglePriceDrawer,
-    productsTotalSize,
     isFilterSelected,
-    selectCategory,
-    categoryTitle,
-    returnToPreviousCategory,
   }) => {
     const [level, setLevel] = useState(1);
     const [parentId, setParentId] = useState(null);
+    const [history, setHistory] = useState([]); // Стек истории переходов
+    const [selectedCategory, setSelectedCategory] = useState(null); // Выбранная категория на последнем уровне
 
     const {
-      data: availableCategories = [],
+      data: availableCategories,
       isLoading,
       error,
     } = useGetDataByCategory(
       "categories/getCategoriesByLevelAndParent",
       level,
-      parentId
+      parentId,
     );
+
+    const handleCategoryClick = (category) => {
+      setSelectedCategory(category);
+      setHistory((prev) => [...prev, { level, parentId }]);
+
+      setParentId(category.id);
+      setLevel(level + 1);
+    };
+
+    const returnToPreviousCategory = () => {
+      if (selectedCategory) {
+        setSelectedCategory(null);
+        return;
+      }
+
+      if (history.length > 0) {
+        const previousState = history[history.length - 1];
+        setParentId(previousState.parentId);
+        setLevel(previousState.level);
+        setHistory((prev) => prev.slice(0, -1));
+      }
+    };
 
     return (
       <div className="category-navigation">
@@ -37,8 +57,10 @@ const CategoryNavigation = memo(
             <LeftOutlined className="icon" />
           </div>
           <div className="category-info">
-            <div className="category-title">{categoryTitle}</div>
-            <div>{productsTotalSize}</div>
+            <div className="category-title">
+              {selectedCategory ? selectedCategory?.titleRu : isLoading ? "-" : availableCategories?.currentTitleRu}
+            </div>
+            <div>0</div>
           </div>
           <div className="nav-item">
             <OrderedListOutlined className="icon" onClick={toggleSortDrawer} />
@@ -53,19 +75,15 @@ const CategoryNavigation = memo(
           <div>Loading categories...</div>
         ) : error ? (
           <div>Error loading categories</div>
-        ) : availableCategories.length > 0 ? (
+        ) : (
           <div className="scrollable-row">
-            {availableCategories.map((category) => (
-              <Button
-                key={category.title}
-                type="primary"
-                onClick={() => selectCategory(category.key)}
-              >
-                {category.title}
+            {availableCategories?.categories?.map((category) => (
+              <Button key={category.id} type="primary" onClick={() => handleCategoryClick(category)}>
+                {category.titleRu}
               </Button>
             ))}
           </div>
-        ) : null}
+        )}
       </div>
     );
   }

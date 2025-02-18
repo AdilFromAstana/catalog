@@ -71,7 +71,6 @@ export const useGetDataById = (collectionName, id) => {
     { enabled: !!id }
   );
 };
-
 export const useGetDataByCategory = (
   collectionName,
   level = 1,
@@ -85,8 +84,12 @@ export const useGetDataByCategory = (
       });
       return response.data;
     },
+    staleTime: 60000, // Данные считаются актуальными 60 секунд (1 минута)
+    cacheTime: 300000, // Данные остаются в кэше 5 минут
+    enabled: level > 0, // Запрос не выполняется при невалидных значениях
   });
 };
+
 
 // ✅ 8. Хук для загрузки файлов (UPLOAD)
 export const useUploadFile = () => {
