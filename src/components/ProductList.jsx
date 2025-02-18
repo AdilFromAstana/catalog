@@ -6,7 +6,7 @@ import { memo } from "react";
 
 const ProductList = memo(
   ({
-    products,
+    products = [],
     favorites,
     toggleFavorite,
     handleSortChange,
@@ -28,6 +28,8 @@ const ProductList = memo(
         return 3;
       }
     };
+
+    console.log("products: ", products);
 
     return (
       <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
@@ -74,7 +76,7 @@ const ProductList = memo(
               gutter: 16,
               column: getColumnCount(),
             }}
-            dataSource={Array.from({ length: 12 }, (_, index) => index + 1)}
+            dataSource={[1, 2, 3, 4, 5, 6]}
             renderItem={() => {
               return (
                 <List.Item className="list-item">
@@ -96,8 +98,8 @@ const ProductList = memo(
               return (
                 <List.Item className="list-item">
                   <img
-                    src={item.images[0].url}
-                    alt={item.images[0].url || "Продукт"}
+                    src={item?.images?.url}
+                    alt={item?.images?.url || "Продукт"}
                     className="product-image"
                   />
                   <div className="product-details">

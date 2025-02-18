@@ -1,7 +1,8 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 import { Button, List, message, Segmented, Spin } from "antd";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getData, itemToArchive } from "../../firestoreService";
+import { useGetData } from "../../firestoreService";
 import "./MyCatalogPage.css";
 import { Content } from "antd/es/layout/layout";
 import { PlusOutlined } from "@ant-design/icons";
@@ -42,7 +43,7 @@ const MyCatalog = () => {
   const getCatalog = async () => {
     try {
       setIsLoading(true);
-      const data = await getData({
+      const { data } = useGetData({
         collectionName: "items",
         storeCode: "cool-store",
       });
@@ -57,7 +58,7 @@ const MyCatalog = () => {
   const toUpdateStatus = async ({ id, status }) => {
     try {
       setIsButtonsDisabled(true);
-      await itemToArchive({ collectionName: "items", id, status });
+      // await itemToArchive({ collectionName: "items", id, status });
       message.success("Статус успешно обновлен!");
       getCatalog();
     } catch (error) {

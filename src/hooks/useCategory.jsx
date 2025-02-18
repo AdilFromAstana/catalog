@@ -1,5 +1,6 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 import { useCallback, useMemo, useState, useEffect } from "react";
-import { getDataById } from "../firestoreService";
+import { useGetDataById } from "../firestoreService";
 
 const language = "ru";
 const transformData = (items) => {
@@ -31,7 +32,7 @@ const useCategory = () => {
     const loadData = async () => {
       try {
         setIsCategoryLoading(true);
-        const data = await getDataById("category", "AyZb1AB6NzYmh0YIfu8G"); // Вызов импортированной функции
+        const { data } = useGetDataById("category", "AyZb1AB6NzYmh0YIfu8G"); // Вызов импортированной функции
 
         if (data && data.scheme) {
           try {

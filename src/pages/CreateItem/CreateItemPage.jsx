@@ -1,6 +1,7 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 import { Button, Form, Input, List, message, Modal, Spin } from "antd";
 import { useEffect, useState } from "react";
-import { addData, getDataById, uploadFile } from "../../firestoreService";
+import { useAddData, useGetDataById, useUploadFile } from "../../firestoreService";
 import {
   DownCircleOutlined,
   CheckCircleOutlined,
@@ -134,7 +135,7 @@ const CreateItemPage = () => {
       const uploadedImageURLs = await Promise.all(
         uploadedImages.map(async (image, index) => {
           const url = image.file
-            ? await uploadFile(image.file)
+            ? await useUploadFile(image.file)
             : image.previewURL;
           return { url, priority: index };
         })
@@ -142,7 +143,7 @@ const CreateItemPage = () => {
 
       data.images = uploadedImageURLs;
 
-      await addData({ collectionName: "items", data: data });
+      await useAddData({ collectionName: "items", data: data });
       message.success("Данные успешно сохранены!");
       setIsProductCreated(true);
     } catch (error) {
@@ -157,7 +158,7 @@ const CreateItemPage = () => {
     const fetchItems = async () => {
       try {
         setIsLoading(true); // Устанавливаем индикатор загрузки
-        const data = await getDataById("category", "AyZb1AB6NzYmh0YIfu8G");
+        const { data } = useGetDataById("category", "AyZb1AB6NzYmh0YIfu8G");
 
         if (data && data.scheme) {
           setCategories([

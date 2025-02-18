@@ -5,7 +5,7 @@ const Filters = memo(
   ({
     minPrice,
     maxPrice,
-    colorsWithCounts,
+    // colorsWithCounts,
     selectedColors,
     setTempMinValue,
     setTempMaxValue,
@@ -187,7 +187,7 @@ const Filters = memo(
             </div>
           </div>
         </div>
-        <div>
+        {/* <div>
           <h3>Цвет</h3>
           <div style={{ display: "flex", flexDirection: "column" }}>
             {colorsWithCounts.map(({ color, count }) => (
@@ -200,7 +200,7 @@ const Filters = memo(
               </Checkbox>
             ))}
           </div>
-        </div>
+        </div> */}
       </div>
     );
   }

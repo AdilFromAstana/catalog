@@ -1,270 +1,114 @@
-import {
-  collection,
-  addDoc,
-  setDoc,
-  doc,
-  getDocs,
-  deleteDoc,
-  getDoc,
-  query,
-  orderBy,
-  limit,
-  startAfter,
-  where,
-} from "firebase/firestore";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { db, storage } from "./firebaseConfig";
+import { useQuery, useMutation, useInfiniteQuery } from "@tanstack/react-query";
+import axios from "axios";
 
-export const uploadFile = async (file, folder = "uploads") => {
-  const storageRef = ref(storage, `images/${file.name}`);
-  await uploadBytes(storageRef, file);
-  return await getDownloadURL(storageRef);
-};
+// ✅ Настройка базового URL API
+const API_URL = "http://localhost:5000/api";
 
-export const addData = async ({
-  collectionName,
-  data,
-  storeCode = "cool-store",
-}) => {
-  const docRef = await addDoc(collection(db, collectionName), {
-    ...data,
-    storeCode,
-  });
-  return docRef.id;
-};
-
-export const updateData = async (collectionName, docId, data) => {
-  await setDoc(doc(db, collectionName, docId), data, { merge: true });
-};
-
-export const itemToArchive = async ({ collectionName, id, status }) => {
-  try {
-    await setDoc(
-      doc(db, collectionName, id),
-      { status: status },
-      { merge: true }
-    );
-  } catch (error) {
-    console.error(`Ошибка при обновлении статуса документа ${id}:`, error);
-    throw error;
-  }
-};
-
-export const getData = async ({
-  collectionName = "items",
-  storeCode = "cool-store",
-}) => {
-  try {
-    const queryRef = query(
-      collection(db, collectionName),
-      where("storeCode", "==", storeCode)
-    );
-
-    const querySnapshot = await getDocs(queryRef);
-
-    return querySnapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    }));
-  } catch (error) {
-    console.error("Ошибка при загрузке данных:", error);
-    throw error;
-  }
-};
-
-export const getPaginatedData = async ({
-  collectionName,
-  pageSize,
-  currentPage = 1,
-  lastVisible = null,
-  sort = {
-    by: "price",
-    order: "asc",
+const api = axios.create({
+  baseURL: API_URL,
+  headers: {
+    "Content-Type": "application/json",
   },
-  storeCode = "cool-store",
-  minPriceFilter = null,
-  maxPriceFilter = null,
-  categoryIdsFilter = [],
-  status = "active",
+});
+
+// ✅ 1. Хук для добавления данных (POST)
+export const useAddData = (collectionName) => {
+  return useMutation(async (data) => {
+    const response = await api.post(`/${collectionName}`, data);
+    return response.data;
+  });
+};
+
+// ✅ 2. Хук для обновления данных (PUT)
+export const useUpdateData = (collectionName) => {
+  return useMutation(async ({ id, data }) => {
+    const response = await api.put(`/${collectionName}/${id}`, data);
+    return response.data;
+  });
+};
+
+// ✅ 3. Хук для удаления данных (DELETE)
+export const useDeleteData = (collectionName) => {
+  return useMutation(async (id) => {
+    await api.delete(`/${collectionName}/${id}`);
+  });
+};
+
+// ✅ 4. Хук для получения всех данных (GET)
+export const useGetData = (collectionName, params = {}) => {
+  return useQuery([collectionName, params], async () => {
+    const response = await api.get(`/${collectionName}`, { params });
+    return response.data;
+  });
+};
+
+// ✅ 5. Хук для получения данных с пагинацией (GET + пагинация)
+export const useGetPaginatedData = ({
+  collectionName,
+  pageSize = 10,
+  filters = {},
 }) => {
-  try {
-    const collectionRef = collection(db, collectionName);
-
-    let countQueryRef = query(collectionRef);
-
-    if (storeCode !== null) {
-      countQueryRef = query(countQueryRef, where("storeCode", "==", storeCode));
-    }
-    if (categoryIdsFilter.length > 0) {
-      countQueryRef = query(
-        countQueryRef,
-        where("categoryId", "in", categoryIdsFilter)
-      );
-    }
-    if (status !== null) {
-      countQueryRef = query(countQueryRef, where("status", "==", status));
-    }
-    const minQueryRef = query(countQueryRef, orderBy("price", "asc"), limit(1));
-    const minSnapshot = await getDocs(minQueryRef);
-    const minPrice = minSnapshot.docs.length
-      ? minSnapshot.docs[0].data().price
-      : null;
-
-    const maxQueryRef = query(
-      countQueryRef,
-      orderBy("price", "desc"),
-      limit(1)
-    );
-    const maxSnapshot = await getDocs(maxQueryRef);
-    const maxPrice = maxSnapshot.docs.length
-      ? maxSnapshot.docs[0].data().price
-      : null;
-
-    if (minPriceFilter !== null) {
-      countQueryRef = query(
-        countQueryRef,
-        where("price", ">=", minPriceFilter)
-      );
-    }
-    if (maxPriceFilter !== null) {
-      countQueryRef = query(
-        countQueryRef,
-        where("price", "<=", maxPriceFilter)
-      );
-    }
-
-    const countSnapshot = await getDocs(countQueryRef);
-    const totalSize = countSnapshot.size;
-
-    let queryRef = query(collectionRef, orderBy(sort.by, sort.order));
-
-    if (minPriceFilter !== null) {
-      queryRef = query(queryRef, where("price", ">=", minPriceFilter));
-    }
-    if (maxPriceFilter !== null) {
-      queryRef = query(queryRef, where("price", "<=", maxPriceFilter));
-    }
-    if (categoryIdsFilter.length > 0) {
-      queryRef = query(queryRef, where("categoryId", "in", categoryIdsFilter));
-    }
-    if (storeCode !== null) {
-      queryRef = query(queryRef, where("storeCode", "==", storeCode));
-    }
-    if (status !== null) {
-      queryRef = query(queryRef, where("status", "==", status));
-    }
-
-    queryRef = query(queryRef, limit(pageSize));
-    if (currentPage > 1 && lastVisible) {
-      queryRef = query(queryRef, startAfter(lastVisible));
-    }
-
-    const querySnapshot = await getDocs(queryRef);
-
-    const data = querySnapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    }));
-    const newLastVisible = querySnapshot.docs[querySnapshot.docs.length - 1];
-
-    return {
-      data,
-      lastVisible: newLastVisible,
-      totalSize,
-      minPrice,
-      maxPrice,
-    };
-  } catch (error) {
-    console.error("Ошибка при загрузке данных:", error);
-    throw error;
-  }
+  return useInfiniteQuery({
+    queryKey: [collectionName, filters],
+    queryFn: async ({ pageParam = 1 }) => {
+      const response = await api.get(`/${collectionName}`, {
+        params: { ...filters, page: pageParam, limit: pageSize },
+      });
+      return response.data;
+    },
+    getNextPageParam: (lastPage) => lastPage.nextPage || null,
+  });
 };
 
-export const deleteData = async (collectionName, docId) => {
-  await deleteDoc(doc(db, collectionName, docId));
+// ✅ 6. Хук для получения данных по ID (GET /:id)
+export const useGetDataById = (collectionName, id) => {
+  return useQuery(
+    [collectionName, id],
+    async () => {
+      const response = await api.get(`/${collectionName}/${id}`);
+      return response.data;
+    },
+    { enabled: !!id }
+  );
 };
 
-export const getDataById = async (collectionName, id) => {
-  try {
-    const docRef = doc(db, collectionName, id);
-    const docSnap = await getDoc(docRef);
-
-    if (docSnap.exists()) {
-      return { id: docSnap.id, ...docSnap.data() };
-    } else {
-      console.error("Документ не найден");
-      return null;
-    }
-  } catch (error) {
-    console.error("Ошибка при получении документа:", error);
-    throw error;
-  }
+export const useGetDataByCategory = (
+  collectionName,
+  level = 1,
+  parentId = null
+) => {
+  return useQuery({
+    queryKey: [collectionName, level, parentId],
+    queryFn: async () => {
+      const response = await api.get(`/${collectionName}`, {
+        params: { level, parentId },
+      });
+      return response.data;
+    },
+  });
 };
 
-export const getDataByIds = async ({
-  collectionName = "items",
-  ids,
-  storeCode = "cool-store",
-}) => {
-  try {
-    if (!Array.isArray(ids)) {
-      throw new Error("Аргумент ids должен быть массивом");
-    }
+// ✅ 8. Хук для загрузки файлов (UPLOAD)
+export const useUploadFile = () => {
+  return useMutation(async (file) => {
+    const formData = new FormData();
+    formData.append("file", file);
 
-    const data = await Promise.all(
-      ids.map(async (id) => {
-        const docRef = doc(db, collectionName, id);
-        const docSnap = await getDoc(docRef);
+    const response = await api.post("/upload", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
 
-        if (docSnap.exists()) {
-          const docData = docSnap.data();
-          if (docData.storeCode === storeCode) {
-            return { id: docSnap.id, ...docData };
-          } else {
-            console.warn(`Документ с id ${id} не соответствует storeCode`);
-            return null;
-          }
-        } else {
-          console.warn(`Документ с id ${id} не найден`);
-          return null;
-        }
-      })
-    );
-
-    return data.filter((doc) => doc !== null);
-  } catch (error) {
-    console.error("Ошибка при получении документов:", error);
-    throw error;
-  }
+    return response.data;
+  });
 };
 
-export const getDataByCategoryId = async ({
-  collectionName = "items",
-  categoryId,
-  storeCode = "cool-store",
-  status = "active",
-  exceptItemId,
-}) => {
-  try {
-    const collectionRef = collection(db, collectionName);
-    let queryRef = query(collectionRef);
-    queryRef = query(queryRef, limit(10));
-    queryRef = query(queryRef, where("storeCode", "==", storeCode));
-    queryRef = query(queryRef, where("status", "==", status));
-    if (categoryId) {
-      queryRef = query(queryRef, where("categoryId", "==", categoryId));
-    }
-    const querySnapshot = await getDocs(queryRef);
-
-    const data = querySnapshot.docs
-      .filter((doc) => doc.id !== exceptItemId)
-      .map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
-    return data;
-  } catch (error) {
-    console.error("Ошибка при получении документа:", error);
-    throw error;
-  }
+export const useGetDataByIds = ({ collectionName, ids = [] }) => {
+  return useQuery(
+    [collectionName, "byIds", ids],
+    async () => {
+      const response = await api.post(`/${collectionName}/by-ids`, { ids });
+      return response.data;
+    },
+    { enabled: Array.isArray(ids) && ids.length > 0 }
+  );
 };

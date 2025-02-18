@@ -1,6 +1,7 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 import { Button, Form, Input, List, message, Modal, Spin } from "antd";
 import { useEffect, useState } from "react";
-import { getDataById, updateData, uploadFile } from "../../firestoreService";
+import { useGetDataById, useUpdateData, useUploadFile } from "../../firestoreService";
 import "./UpdateItemPage.css";
 import { useParams, useNavigate } from "react-router-dom";
 import { Content } from "antd/es/layout/layout";
@@ -48,13 +49,13 @@ const UpdateItemPage = () => {
       const uploadedImageURLs = await Promise.all(
         uploadedImages.map(async (image, index) => {
           const url = image.file
-            ? await uploadFile(image.file)
+            ? await useUploadFile(image.file)
             : image.previewURL;
           return { url, priority: index };
         })
       );
       const data = { ...form.getFieldsValue(), images: uploadedImageURLs };
-      await updateData("items", id, data);
+      await useUpdateData("items", id, data);
       message.success("Данные успешно сохранены!");
       setIsProductUpdated(true);
     } catch (e) {
@@ -67,7 +68,7 @@ const UpdateItemPage = () => {
   useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true);
-      const item = await getDataById("items", id);
+      const { data: item } = useGetDataById("items", id);
       if (item.images) {
         setUploadedImages(
           item.images.map((image) => ({

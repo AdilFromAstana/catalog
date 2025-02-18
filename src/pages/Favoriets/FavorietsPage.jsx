@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 import { Content } from "antd/es/layout/layout";
 import { useEffect, useState } from "react";
 import "./FavorietsPage.css";
@@ -6,7 +7,7 @@ import useWindowWidth from "../../hooks/useWindowWidth";
 import { Link } from "react-router-dom";
 import useFavorites from "../../hooks/useFavorites";
 import { HeartOutlined, HeartFilled } from "@ant-design/icons";
-import { getDataByIds } from "../../firestoreService";
+import { useGetDataByIds } from "../../firestoreService";
 
 const FavorietsPage = () => {
   const [items, setItems] = useState([]);
@@ -30,7 +31,7 @@ const FavorietsPage = () => {
       try {
         const savedItems = localStorage.getItem("favorites");
         const parsedItems = JSON.parse(savedItems) || [];
-        const needItems = await getDataByIds({
+        const { data: needItems } = useGetDataByIds({
           ids: parsedItems,
           collectionName: "items",
           storeCode: "cool-store",

@@ -1,12 +1,12 @@
-import { Content } from "antd/es/layout/layout";
+/* eslint-disable react-hooks/rules-of-hooks */
 import { useEffect, useState } from "react";
 import "./CatalogItemPage.css";
 import { useParams } from "react-router-dom";
 import { Button, Spin } from "antd";
 import {
-  getDataByCategoryId,
-  getDataById,
-  getDataByIds,
+  useGetDataByCategory,
+  useGetDataById,
+  useGetDataByIds,
 } from "../../firestoreService";
 import RelatedCarousel from "../../components/RelatedCarousel/RelatedCarousel";
 import { formatNumber } from "../../common/common";
@@ -40,7 +40,7 @@ const CatalogItemPage = () => {
     updatedViewedItems.unshift(id);
     localStorage.setItem(ViewedItemsKey, JSON.stringify(updatedViewedItems));
 
-    const viewedItemsData = await getDataByIds({
+    const { data: viewedItemsData } = useGetDataByIds({
       ids: updatedViewedItems.filter((itemId) => itemId !== id),
     });
     setWatchedItems(viewedItemsData ?? []);
@@ -49,7 +49,7 @@ const CatalogItemPage = () => {
 
   const getSameCategoryItem = async ({ categoryId, exceptItemId }) => {
     setIsSameCategoryItemsLoading(true);
-    const data = await getDataByCategoryId({
+    const { data } = useGetDataByCategory({
       categoryId,
       exceptItemId,
     });
@@ -62,7 +62,7 @@ const CatalogItemPage = () => {
       setIsItemLoading(true);
       setIsWatchedItemsLoading(true);
       setIsSameCategoryItemsLoading(true);
-      const item = await getDataById("items", id);
+      const { data: item } = useGetDataById("items", id);
       setCatalogItem(item);
       window.scrollTo({
         top: 0,

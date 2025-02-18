@@ -1,10 +1,11 @@
-import React, { memo } from "react";
+import React, { memo, useState } from "react";
 import { Badge, Button } from "antd";
 import {
   ControlOutlined,
   LeftOutlined,
   OrderedListOutlined,
 } from "@ant-design/icons";
+import { useGetDataByCategory } from "../firestoreService";
 
 const CategoryNavigation = memo(
   ({
@@ -12,11 +13,23 @@ const CategoryNavigation = memo(
     togglePriceDrawer,
     productsTotalSize,
     isFilterSelected,
-    availableCategories,
     selectCategory,
     categoryTitle,
     returnToPreviousCategory,
   }) => {
+    const [level, setLevel] = useState(1);
+    const [parentId, setParentId] = useState(null);
+
+    const {
+      data: availableCategories = [],
+      isLoading,
+      error,
+    } = useGetDataByCategory(
+      "categories/getCategoriesByLevelAndParent",
+      level,
+      parentId
+    );
+
     return (
       <div className="category-navigation">
         <div className="nav-wrapper">
@@ -36,7 +49,11 @@ const CategoryNavigation = memo(
             </Badge>
           </div>
         </div>
-        {availableCategories.length > 0 && (
+        {isLoading ? (
+          <div>Loading categories...</div>
+        ) : error ? (
+          <div>Error loading categories</div>
+        ) : availableCategories.length > 0 ? (
           <div className="scrollable-row">
             {availableCategories.map((category) => (
               <Button
@@ -48,7 +65,7 @@ const CategoryNavigation = memo(
               </Button>
             ))}
           </div>
-        )}
+        ) : null}
       </div>
     );
   }

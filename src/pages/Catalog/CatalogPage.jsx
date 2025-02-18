@@ -5,7 +5,7 @@ import Filters from "../../components/Filters";
 import DrawerFilters from "../../components/DrawerFilters";
 import useFavorites from "../../hooks/useFavorites";
 import "./CatalogPage.css";
-import { getPaginatedData } from "../../firestoreService";
+import { useGetPaginatedData } from "../../firestoreService";
 import { Drawer, Spin } from "antd";
 import useCategory from "../../hooks/useCategory";
 
@@ -17,7 +17,6 @@ const CatalogPage = () => {
     order: "asc",
     value: "priceasc",
   });
-  const [products, setProducts] = useState([]);
   const [selectedColors, setSelectedColors] = useState([]);
   const [minPrice, setMinPrice] = useState(0);
   const [maxPrice, setMaxPrice] = useState(0);
@@ -26,7 +25,6 @@ const CatalogPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [productsTotalSize, setProductsTotalSize] = useState(1);
   const [lastVisible, setLastVisible] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
   const itemsPerPage = 12;
 
   function collectKeysWithoutChildren() {
@@ -62,18 +60,18 @@ const CatalogPage = () => {
     setCurrentPage(page);
   };
 
-  const colorsWithCounts = useMemo(() => {
-    const colorCounts = {};
-    products.forEach((product) => {
-      if (product.color) {
-        colorCounts[product.color] = (colorCounts[product.color] || 0) + 1;
-      }
-    });
-    return Object.entries(colorCounts).map(([color, count]) => ({
-      color,
-      count,
-    }));
-  }, [products]);
+  // const colorsWithCounts = useMemo(() => {
+  //   const colorCounts = {};
+  //   products.forEach((product) => {
+  //     if (product.color) {
+  //       colorCounts[product.color] = (colorCounts[product.color] || 0) + 1;
+  //     }
+  //   });
+  //   return Object.entries(colorCounts).map(([color, count]) => ({
+  //     color,
+  //     count,
+  //   }));
+  // }, [products]);
 
   const handleColorChange = (color) => {
     setSelectedColors((prev) =>
@@ -114,40 +112,23 @@ const CatalogPage = () => {
 
   const isFilterSelected = !tempMaxValue && !tempMinValue;
 
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        setIsLoading(true);
-        const {
-          data,
-          lastVisible: newLastVisible,
-          totalSize,
-          maxPrice,
-          minPrice,
-        } = await getPaginatedData({
-          collectionName: "items",
-          pageSize: itemsPerPage,
-          currentPage: currentPage,
-          lastVisible: lastVisible,
-          sort: sort,
-          maxPriceFilter: tempMaxValue,
-          minPriceFilter: tempMinValue,
-          categoryIdsFilter: collectKeysWithoutChildren(),
-        });
-        setProductsTotalSize(totalSize);
-        setProducts(data);
-        setLastVisible(newLastVisible);
-        setMinPrice(minPrice);
-        setMaxPrice(maxPrice);
-      } catch (error) {
-        console.error("Ошибка при загрузке данных:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+  const {
+    data: products,
+    isLoading,
+    lastVisible: newLastVisible,
+    totalSize,
+  } = useGetPaginatedData({
+    collectionName: "items/getAll",
+    pageSize: itemsPerPage,
+    currentPage: currentPage,
+    lastVisible: lastVisible,
+    sort: sort,
+    maxPriceFilter: tempMaxValue,
+    minPriceFilter: tempMinValue,
+    categoryIdsFilter: collectKeysWithoutChildren(),
+  });
 
-    fetchProducts();
-  }, [currentPage, sort, tempMaxValue, tempMinValue, selectedCategoryKeys]);
+  console.log("products: ", products);
 
   return (
     <>
@@ -170,7 +151,7 @@ const CatalogPage = () => {
               maxPrice={maxPrice}
               tempMinValue={tempMinValue}
               tempMaxValue={tempMaxValue}
-              colorsWithCounts={colorsWithCounts}
+              // colorsWithCounts={colorsWithCounts}
               selectedColors={selectedColors}
               handleColorChange={handleColorChange}
               setTempMinValue={setTempMinValue}
@@ -186,7 +167,7 @@ const CatalogPage = () => {
           </div>
           <ProductList
             isLoading={isLoading}
-            products={products}
+            products={products?.pages}
             favorites={favorites}
             toggleFavorite={toggleFavorite}
             handleSortChange={handleSortChange}
@@ -226,7 +207,7 @@ const CatalogPage = () => {
           maxPrice={maxPrice}
           tempMinValue={tempMinValue}
           tempMaxValue={tempMaxValue}
-          colorsWithCounts={colorsWithCounts}
+          // colorsWithCounts={colorsWithCounts}
           selectedColors={selectedColors}
           handleColorChange={handleColorChange}
           setTempMinValue={setTempMinValue}
