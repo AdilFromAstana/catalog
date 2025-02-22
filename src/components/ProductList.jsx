@@ -3,6 +3,7 @@ import { HeartOutlined, HeartFilled } from "@ant-design/icons";
 import { Link } from "react-router-dom";
 import useWindowWidth from "../hooks/useWindowWidth";
 import { memo } from "react";
+import { formatNumber } from "../common/common";
 
 const ProductList = memo(
   ({
@@ -108,7 +109,9 @@ const ProductList = memo(
                       <div className="product-category">
                         {item.categoryRu || "Не указано"}
                       </div>
-                      <div className="product-price">{item.price || 0} ₸</div>
+                      <div className="product-price">
+                        {formatNumber(item.price || 0)} ₸
+                      </div>
                     </div>
                     <div
                       className="product-favorite"
@@ -119,7 +122,9 @@ const ProductList = memo(
                           style={{ color: "red", fontSize: "24px" }}
                         />
                       ) : (
-                        <HeartOutlined style={{ fontSize: "24px" }} />
+                        <HeartOutlined
+                          style={{ color: "#FEFBEA", fontSize: "24px" }}
+                        />
                       )}
                     </div>
                   </div>

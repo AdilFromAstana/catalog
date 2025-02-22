@@ -1,18 +1,18 @@
+* {
+  font-family: "EB Garamond", serif;
+}
+
 body {
-  background: white;
+  /* background: #013328; */
+  /* background: #0D2B1D; */
+  background: #091235;
+  font-weight: 500;
+  color: #FEFBEA;
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
-    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
-    sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
-    monospace;
-}
-
 .ant-tree .ant-tree-node-content-wrapper.ant-tree-node-selected {
-  color: white;
+  color: #FEFBEA;
 }

@@ -3,14 +3,9 @@ import { useEffect, useState } from "react";
 import "./CatalogItemPage.css";
 import { useParams } from "react-router-dom";
 import { Button, Spin } from "antd";
-import {
-  useGetDataByCategory,
-  useGetDataById,
-  useGetDataByIds,
-} from "../../firestoreService";
 import RelatedCarousel from "../../components/RelatedCarousel/RelatedCarousel";
 import { formatNumber } from "../../common/common";
-import { flowers } from "../../common/products";
+import { initialFlowers } from "../../common/initialData";
 
 const CatalogItemPage = () => {
   const { id } = useParams();
@@ -27,6 +22,8 @@ const CatalogItemPage = () => {
   const handleImageClick = (index) => {
     setCurrentImage(index);
   };
+
+  console.log("catalogItem", catalogItem);
 
   // const getWatchedItems = async () => {
   //   const viewedItemIds =
@@ -63,7 +60,7 @@ const CatalogItemPage = () => {
       setIsItemLoading(true);
       setIsWatchedItemsLoading(true);
       setIsSameCategoryItemsLoading(true);
-      const item = flowers.find(flower => flower.id === id);
+      const item = initialFlowers.find((flower) => flower.id === id);
       setCatalogItem(item);
       window.scrollTo({
         top: 0,
@@ -75,6 +72,24 @@ const CatalogItemPage = () => {
       //   categoryId: item.category,
       //   exceptItemId: item.id,
       // });
+
+      const itemBouquet = Array.isArray(item.bouquetComposition)
+        ? item.bouquetComposition
+        : [item.bouquetComposition];
+
+      const filteredItems = initialFlowers.filter(
+        (flower) =>
+          flower.id !== item.id && // Исключаем текущий item
+          flower.bouquetComposition.some((composition) =>
+            itemBouquet.includes(composition)
+          )
+      );
+
+      setSameCategoryItems(filteredItems);
+
+      setIsItemLoading(false);
+      setIsSameCategoryItemsLoading(false);
+      setIsWatchedItemsLoading(false);
     };
     fetchData();
   }, [id]);
@@ -100,9 +115,6 @@ const CatalogItemPage = () => {
   //   fetchData();
   // }, [id]);
 
-  console.log("catalogItem?.images: ", catalogItem?.images)
-  console.log("currentImage: ", currentImage)
-
   return (
     <Spin size="large" spinning={!catalogItem}>
       <div style={{ margin: "0 20px" }}>
@@ -121,8 +133,9 @@ const CatalogItemPage = () => {
                   key={image?.url}
                   src={image?.url}
                   alt={`Thumbnail ${index}`}
-                  className={`thumbnail ${currentImage === index ? "active-thumbnail" : ""
-                    }`}
+                  className={`thumbnail ${
+                    currentImage === index ? "active-thumbnail" : ""
+                  }`}
                   onClick={() => handleImageClick(index)}
                 />
               ))}
@@ -144,8 +157,9 @@ const CatalogItemPage = () => {
                     key={image.url}
                     src={image.url}
                     alt={`Thumbnail ${index}`}
-                    className={`thumbnail ${currentImage === index ? "active-thumbnail" : ""
-                      }`}
+                    className={`thumbnail ${
+                      currentImage === index ? "active-thumbnail" : ""
+                    }`}
                     onClick={() => handleImageClick(index)}
                   />
                 ))}
@@ -157,7 +171,12 @@ const CatalogItemPage = () => {
                 {formatNumber(catalogItem?.price ?? 0)}₸
               </div>
               <div className="buttons">
-                <Button className="add-to-cart" type="primary" size="large">
+                <Button
+                  className="add-to-cart"
+                  type="primary"
+                  size="large"
+                  style={{ color: "#091235" }}
+                >
                   Узнать наличие товара
                 </Button>
               </div>
@@ -171,9 +190,12 @@ const CatalogItemPage = () => {
             <div className="specifications">
               <h3>Характеристики</h3>
               <ul>
-                <li>Назначение: для бега</li>
-                <li>Материал: пластик, текстиль</li>
-                <li>Размеры: S</li>
+                <li>Кол-во цветов: {catalogItem?.flowerCount}</li>
+                <li>Высота цветов: {catalogItem?.flowerHeight}</li>
+                <li>
+                  Состав букета:{" "}
+                  {catalogItem?.bouquetComposition.map((item) => item)}
+                </li>
               </ul>
             </div>
           </div>
@@ -187,20 +209,24 @@ const CatalogItemPage = () => {
             gap: "20px",
           }}
         >
-          <RelatedCarousel
-            title="Вы недавно смотрели"
-            products={watchedItems}
-            isLoading={isWatchedItemsLoading}
-            setIsItemLoading={setIsItemLoading}
-            id={id}
-          />
-          <RelatedCarousel
-            title={catalogItem?.categoryRu}
-            products={sameCategoryItems}
-            isLoading={isSameCategoryItemsLoading}
-            setIsItemLoading={setIsItemLoading}
-            id={id}
-          />
+          {watchedItems.length > 0 && (
+            <RelatedCarousel
+              title="Вы недавно смотрели"
+              products={watchedItems}
+              isLoading={isWatchedItemsLoading}
+              setIsItemLoading={setIsItemLoading}
+              id={id}
+            />
+          )}
+          {sameCategoryItems.length > 0 && (
+            <RelatedCarousel
+              title={catalogItem?.categoryRu}
+              products={sameCategoryItems}
+              isLoading={isSameCategoryItemsLoading}
+              setIsItemLoading={setIsItemLoading}
+              id={id}
+            />
+          )}
         </div>
       </div>
     </Spin>

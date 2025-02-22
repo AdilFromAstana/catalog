@@ -41,7 +41,7 @@
   text-overflow: ellipsis;
   line-clamp: 1;
   -webkit-line-clamp: 1;
-  color: rgba(0, 0, 0, 0.5);
+  color: #fefbea;
 }
 
 .related-carousel-item-image {
@@ -53,7 +53,7 @@
 .related-carousel-item-favorite {
   background: white;
   border-radius: 50%;
-  border: 1px solid black;
+  border: 1px solid white;
   align-items: center;
   display: flex;
   justify-content: center;
@@ -70,7 +70,7 @@
   flex: 0 0 auto;
   gap: 10px;
   padding: 10px;
-  border: 1px solid black;
+  border: 1px solid white;
   border-radius: 10px;
   box-sizing: border-box;
   overflow: hidden;
@@ -102,7 +102,7 @@
 
 .related-carousel-item-title {
   font-size: 16px;
-  color: black;
+  color: #fefbea;
   display: -webkit-box;
   -webkit-box-orient: vertical;
   overflow: hidden;
@@ -112,6 +112,7 @@
 }
 
 .related-carousel-item-price {
+  color: #fefbea;
   font-size: 24px;
   font-weight: 700;
   margin-top: auto;

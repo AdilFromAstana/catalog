@@ -73,9 +73,9 @@ input[type="file"].file-input {
   top: 5px;
   right: 5px;
   padding: 10px;
-  background-color: white;
+  background-color: #FEFBEA;
   border-radius: 50%;
-  border: 1px solid black;
+  border: 1px solid white;
 }
 
 .create-item-image {
@@ -87,7 +87,7 @@ input[type="file"].file-input {
 
 .ant-list .ant-list-item.item-image-wrapper {
   position: relative;
-  border: 1px solid black;
+  border: 1px solid white;
   width: 100%;
   height: 200px;
   border-radius: 10px;

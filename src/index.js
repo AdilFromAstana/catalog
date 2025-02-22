@@ -13,12 +13,6 @@ root.render(
     <ConfigProvider
       theme={{
         hashed: false,
-        token: {
-          colorPrimaryHover: "black",
-          colorPrimaryBorder: "black",
-          colorPrimary: "black",
-          colorBorder: "black",
-        },
       }}
     >
       <App />

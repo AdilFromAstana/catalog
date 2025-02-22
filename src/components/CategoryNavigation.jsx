@@ -8,11 +8,7 @@ import {
 import { useGetDataByCategory } from "../firestoreService";
 
 const CategoryNavigation = memo(
-  ({
-    toggleSortDrawer,
-    togglePriceDrawer,
-    isFilterSelected,
-  }) => {
+  ({ toggleSortDrawer, togglePriceDrawer, isFilterSelected }) => {
     const [level, setLevel] = useState(1);
     const [parentId, setParentId] = useState(null);
     const [history, setHistory] = useState([]); // Стек истории переходов
@@ -25,7 +21,7 @@ const CategoryNavigation = memo(
     } = useGetDataByCategory(
       "categories/getCategoriesByLevelAndParent",
       level,
-      parentId,
+      parentId
     );
 
     const handleCategoryClick = (category) => {
@@ -58,7 +54,11 @@ const CategoryNavigation = memo(
           </div>
           <div className="category-info">
             <div className="category-title">
-              {selectedCategory ? selectedCategory?.titleRu : isLoading ? "-" : availableCategories?.currentTitleRu}
+              {selectedCategory
+                ? selectedCategory?.titleRu
+                : isLoading
+                ? "-"
+                : availableCategories?.currentTitleRu}
             </div>
             <div>0</div>
           </div>
@@ -71,14 +71,14 @@ const CategoryNavigation = memo(
             </Badge>
           </div>
         </div>
-        {isLoading ? (
-          <div>Loading categories...</div>
-        ) : error ? (
-          <div>Error loading categories</div>
-        ) : (
+        {isLoading ? null : error ? null : (
           <div className="scrollable-row">
             {availableCategories?.categories?.map((category) => (
-              <Button key={category.id} type="primary" onClick={() => handleCategoryClick(category)}>
+              <Button
+                key={category.id}
+                type="primary"
+                onClick={() => handleCategoryClick(category)}
+              >
                 {category.titleRu}
               </Button>
             ))}

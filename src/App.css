@@ -5,7 +5,7 @@
 }
 
 .header {
-  background: #fff;
+  background: transparent;
   border-bottom: 1px solid #ddd;
   display: flex;
   justify-content: space-between;
@@ -13,10 +13,10 @@
 }
 
 .header-title {
-  color: black;
+  color: #FEFBEA;
   margin: 0;
   font-size: 18px;
 }
 .header-title:hover {
-  color: black;
+  color: #FEFBEA;
 }

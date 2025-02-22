@@ -7,7 +7,7 @@ import useWindowWidth from "../../hooks/useWindowWidth";
 import { Link } from "react-router-dom";
 import useFavorites from "../../hooks/useFavorites";
 import { HeartOutlined, HeartFilled } from "@ant-design/icons";
-import { useGetDataByIds } from "../../firestoreService";
+import { initialFlowers } from "../../common/initialData";
 
 const FavorietsPage = () => {
   const [items, setItems] = useState([]);
@@ -31,11 +31,14 @@ const FavorietsPage = () => {
       try {
         const savedItems = localStorage.getItem("favorites");
         const parsedItems = JSON.parse(savedItems) || [];
-        const { data: needItems } = useGetDataByIds({
-          ids: parsedItems,
-          collectionName: "items",
-          storeCode: "cool-store",
-        });
+        // const { data: needItems } = useGetDataByIds({
+        //   ids: parsedItems,
+        //   collectionName: "items",
+        //   storeCode: "cool-store",
+        // });
+        const needItems = initialFlowers.filter((flower) =>
+          parsedItems.includes(flower.id)
+        );
         setItems(needItems);
       } catch (error) {
         console.error("Ошибка при загрузке данных:", error);
@@ -82,7 +85,9 @@ const FavorietsPage = () => {
                     {favorites.includes(item.id) ? (
                       <HeartFilled style={{ color: "red", fontSize: "24px" }} />
                     ) : (
-                      <HeartOutlined style={{ fontSize: "24px" }} />
+                      <HeartOutlined
+                        style={{ color: "#FEFBEA", fontSize: "24px" }}
+                      />
                     )}
                   </div>
                 </div>

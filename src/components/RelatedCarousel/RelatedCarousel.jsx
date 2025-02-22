@@ -9,7 +9,6 @@ import "./RelatedCarousel.css";
 
 const RelatedCarousel = memo(
   ({ products, isLoading = true, setIsItemLoading, title, id }) => {
-    const width = useWindowWidth();
     const { favorites, toggleFavorite } = useFavorites();
     const [carouselItemWidth, setCarouselItemWidth] = useState(0);
     const carouselWrapperRef = useRef(null);

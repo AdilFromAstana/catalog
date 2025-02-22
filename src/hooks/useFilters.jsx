@@ -1,16 +1,59 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
+import { initialFlowers } from "../common/initialData"; // Товары
+import { initialFilters } from "../common/initialData"; // Фильтры
 
 const useFilters = () => {
-    const [filters, setFilters] = useState({});
+  const [filters, setFilters] = useState({});
+  const [filteredFlowers, setFilteredFlowers] = useState(initialFlowers);
 
-    const updateFilter = (paramName, values) => {
-        setFilters((prev) => ({
-            ...prev,
-            [paramName]: values.length ? values : undefined,
-        }));
-    };
+  // Обновляем список доступных фильтров в зависимости от текущего выбора
+  const filteredOptions = useMemo(() => {
+    // Отфильтрованные товары
+    let filteredProducts = initialFlowers.filter((flower) =>
+      Object.entries(filters).every(([param, values]) =>
+        values.length ? values.includes(flower[param]) : true
+      )
+    );
 
-    return { filters, updateFilter };
+    // Генерация актуальных параметров после фильтрации
+    const updatedFilterData = Object.keys(initialFilters).reduce((acc, key) => {
+      const options = initialFilters[key].options.map((option) => ({
+        ...option,
+        count: filteredProducts.filter((p) =>
+          Array.isArray(p[key])
+            ? p[key].includes(option.value)
+            : p[key] === option.value
+        ).length,
+      }));
+      acc[key] = { ...initialFilters[key], options };
+      return acc;
+    }, {});
+
+    setFilteredFlowers(filteredProducts); // Обновляем отфильтрованные товары
+    return updatedFilterData;
+  }, [filters]);
+
+  // Функция для обновления фильтров
+  const updateFilter = (param, values) => {
+    setFilters((prevFilters) => ({
+      ...prevFilters,
+      [param]: values.length ? values : [],
+    }));
+  };
+
+  // Функция для сброса фильтров
+  const resetFilters = () => {
+    setFilters({});
+    setFilteredFlowers(initialFlowers);
+  };
+
+  return {
+    filters,
+    updateFilter,
+    resetFilters,
+    filteredFlowers,
+    filteredOptions, // Обновленные варианты для фильтров
+  };
 };
 
 export default useFilters;

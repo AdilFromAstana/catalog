@@ -6,7 +6,7 @@
   align-items: flex-start;
   border-radius: 10px;
   padding: 10px;
-  border: 1px solid black;
+  border: 1px solid white;
   gap: 10px;
 }
 .my-catalog-item {
@@ -39,7 +39,7 @@
 
 .my-catalog-item-title {
   font-size: 16px;
-  color: black;
+  color: #FEFBEA;
   display: -webkit-box; /* Используем flexbox для текстового контейнера */
   -webkit-box-orient: vertical; /* Указываем вертикальную ориентацию */
   overflow: hidden; /* Скрываем текст, выходящий за пределы */
@@ -48,7 +48,7 @@
   line-clamp: 2; /* Для современных браузеров */
 }
 .my-catalog-item-title:hover {
-  color: black;
+  color: #FEFBEA;
 }
 
 .my-catalog-item-category {

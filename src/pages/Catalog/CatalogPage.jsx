@@ -1,16 +1,14 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import ProductList from "../../components/ProductList";
 import CategoryNavigation from "../../components/CategoryNavigation";
 import Filters from "../../components/Filters";
 import DrawerFilters from "../../components/DrawerFilters";
 import useFavorites from "../../hooks/useFavorites";
 import "./CatalogPage.css";
-import { useGetPaginatedData } from "../../firestoreService";
 import { Drawer, Spin } from "antd";
 import useCategory from "../../hooks/useCategory";
 import InlineFilters from "../../components/InlineFilters";
-import { flowers } from "../../common/products";
-
+import { initialFlowers } from "../../common/initialData";
 
 const CatalogPage = () => {
   const [isSortDrawerVisible, setSortDrawerVisible] = useState(false);
@@ -23,6 +21,7 @@ const CatalogPage = () => {
   const [selectedColors, setSelectedColors] = useState([]);
   const [minPrice, setMinPrice] = useState(0);
   const [maxPrice, setMaxPrice] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
   const [tempMinValue, setTempMinValue] = useState(null);
   const [tempMaxValue, setTempMaxValue] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
@@ -30,21 +29,21 @@ const CatalogPage = () => {
   const [lastVisible, setLastVisible] = useState(null);
   const itemsPerPage = 12;
 
-  function collectKeysWithoutChildren() {
-    const result = [];
-    function traverse(node) {
-      if (!node.children) {
-        result.push(node.key);
-      } else {
-        node.children.forEach((child) => traverse(child));
-      }
-    }
-    const lastElement = selectedCategories[selectedCategories.length - 1];
-    if (lastElement) {
-      traverse(lastElement);
-    }
-    return result;
-  }
+  // function collectKeysWithoutChildren() {
+  //   const result = [];
+  //   function traverse(node) {
+  //     if (!node.children) {
+  //       result.push(node.key);
+  //     } else {
+  //       node.children.forEach((child) => traverse(child));
+  //     }
+  //   }
+  //   const lastElement = selectedCategories[selectedCategories.length - 1];
+  //   if (lastElement) {
+  //     traverse(lastElement);
+  //   }
+  //   return result;
+  // }
 
   const {
     availableCategories,
@@ -115,28 +114,33 @@ const CatalogPage = () => {
 
   const isFilterSelected = !tempMaxValue && !tempMinValue;
 
-  const {
-    data: products,
-    isLoading,
-    lastVisible: newLastVisible,
-    totalSize,
-  } = useGetPaginatedData({
-    collectionName: "items/getAll",
-    pageSize: itemsPerPage,
-    currentPage: currentPage,
-    lastVisible: lastVisible,
-    sort: sort,
-    maxPriceFilter: tempMaxValue,
-    minPriceFilter: tempMinValue,
-    categoryIdsFilter: collectKeysWithoutChildren(),
-  });
+  // const {
+  //   data: products,
+  //   isLoading,
+  //   lastVisible: newLastVisible,
+  //   totalSize,
+  // } = useGetPaginatedData({
+  //   collectionName: "items/getAll",
+  //   pageSize: itemsPerPage,
+  //   currentPage: currentPage,
+  //   lastVisible: lastVisible,
+  //   sort: sort,
+  //   maxPriceFilter: tempMaxValue,
+  //   minPriceFilter: tempMinValue,
+  //   categoryIdsFilter: collectKeysWithoutChildren(),
+  // });
 
-  const [filteredProducts, setFilteredProducts] = useState(flowers);
+  const [filteredProducts, setFilteredProducts] = useState([]);
 
   const applyFilters = (filters) => {
-    console.log("filters: ", filters);
+    setIsLoading(true);
+    if (!filters) {
+      setIsLoading(false);
+      setFilteredProducts(initialFlowers);
+      return;
+    }
 
-    const newProducts = flowers.filter((product) =>
+    const newProducts = initialFlowers.filter((product) =>
       Object.entries(filters).every(([param, values]) => {
         if (!values || values.length === 0) return true; // Если фильтр пустой — товар проходит
 
@@ -147,21 +151,26 @@ const CatalogPage = () => {
 
         // Проверяем, если параметр — число (например, высота цветов)
         if (typeof product[param] === "number") {
-          return values.includes(String(product[param]));
+          return values.includes(product[param]);
         }
 
         // Обычная проверка для строковых значений
         return values.includes(product[param]);
       })
     );
-
+    setIsLoading(false);
     setFilteredProducts(newProducts);
   };
+
+  useEffect(() => {
+    applyFilters();
+  }, [selectedCategoryKeys]);
 
   return (
     <>
       <Spin spinning={isLoading && isCategoryLoading}>
         <CategoryNavigation
+          isLoading={isLoading}
           categoryTitle={categoryTitle}
           availableCategories={availableCategories}
           returnToPreviousCategory={returnToPreviousCategory}
