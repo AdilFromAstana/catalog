@@ -5,8 +5,6 @@ const useWindowWidth = () => {
     document.documentElement.clientWidth
   );
 
-  console.log("windowWidth: ", windowWidth);
-
   useEffect(() => {
     const handleResize = () => {
       setWindowWidth(window.innerWidth);

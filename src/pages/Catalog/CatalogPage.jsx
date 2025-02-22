@@ -8,6 +8,9 @@ import "./CatalogPage.css";
 import { useGetPaginatedData } from "../../firestoreService";
 import { Drawer, Spin } from "antd";
 import useCategory from "../../hooks/useCategory";
+import InlineFilters from "../../components/InlineFilters";
+import { flowers } from "../../common/products";
+
 
 const CatalogPage = () => {
   const [isSortDrawerVisible, setSortDrawerVisible] = useState(false);
@@ -128,7 +131,32 @@ const CatalogPage = () => {
     categoryIdsFilter: collectKeysWithoutChildren(),
   });
 
-  console.log("products: ", products);
+  const [filteredProducts, setFilteredProducts] = useState(flowers);
+
+  const applyFilters = (filters) => {
+    console.log("filters: ", filters);
+
+    const newProducts = flowers.filter((product) =>
+      Object.entries(filters).every(([param, values]) => {
+        if (!values || values.length === 0) return true; // Если фильтр пустой — товар проходит
+
+        // Проверяем, если параметр — массив (например, особенности)
+        if (Array.isArray(product[param])) {
+          return product[param].some((item) => values.includes(item));
+        }
+
+        // Проверяем, если параметр — число (например, высота цветов)
+        if (typeof product[param] === "number") {
+          return values.includes(String(product[param]));
+        }
+
+        // Обычная проверка для строковых значений
+        return values.includes(product[param]);
+      })
+    );
+
+    setFilteredProducts(newProducts);
+  };
 
   return (
     <>
@@ -143,6 +171,7 @@ const CatalogPage = () => {
           togglePriceDrawer={togglePriceDrawer}
           selectCategory={selectCategory}
         />
+        <InlineFilters applyFilters={applyFilters} />
         <div className="catalog-container">
           <div className="filter-component-desktop">
             <Filters
@@ -167,7 +196,7 @@ const CatalogPage = () => {
           </div>
           <ProductList
             isLoading={isLoading}
-            products={products?.pages}
+            products={filteredProducts}
             favorites={favorites}
             toggleFavorite={toggleFavorite}
             handleSortChange={handleSortChange}

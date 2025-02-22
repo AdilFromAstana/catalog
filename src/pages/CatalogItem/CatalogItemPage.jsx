@@ -10,6 +10,7 @@ import {
 } from "../../firestoreService";
 import RelatedCarousel from "../../components/RelatedCarousel/RelatedCarousel";
 import { formatNumber } from "../../common/common";
+import { flowers } from "../../common/products";
 
 const CatalogItemPage = () => {
   const { id } = useParams();
@@ -27,78 +28,101 @@ const CatalogItemPage = () => {
     setCurrentImage(index);
   };
 
-  const getWatchedItems = async () => {
-    const viewedItemIds =
-      JSON.parse(localStorage.getItem(ViewedItemsKey)) || [];
+  // const getWatchedItems = async () => {
+  //   const viewedItemIds =
+  //     JSON.parse(localStorage.getItem(ViewedItemsKey)) || [];
 
-    let updatedViewedItems;
-    if (viewedItemIds.includes(id)) {
-      updatedViewedItems = viewedItemIds.filter((itemId) => itemId !== id);
-    } else {
-      updatedViewedItems = [...viewedItemIds];
-    }
-    updatedViewedItems.unshift(id);
-    localStorage.setItem(ViewedItemsKey, JSON.stringify(updatedViewedItems));
+  //   let updatedViewedItems;
+  //   if (viewedItemIds.includes(id)) {
+  //     updatedViewedItems = viewedItemIds.filter((itemId) => itemId !== id);
+  //   } else {
+  //     updatedViewedItems = [...viewedItemIds];
+  //   }
+  //   updatedViewedItems.unshift(id);
+  //   localStorage.setItem(ViewedItemsKey, JSON.stringify(updatedViewedItems));
 
-    const { data: viewedItemsData } = useGetDataByIds({
-      ids: updatedViewedItems.filter((itemId) => itemId !== id),
-    });
-    setWatchedItems(viewedItemsData ?? []);
-    setIsWatchedItemsLoading(false);
-  };
+  //   const { data: viewedItemsData } = useGetDataByIds({
+  //     ids: updatedViewedItems.filter((itemId) => itemId !== id),
+  //   });
+  //   setWatchedItems(viewedItemsData ?? []);
+  //   setIsWatchedItemsLoading(false);
+  // };
 
-  const getSameCategoryItem = async ({ categoryId, exceptItemId }) => {
-    setIsSameCategoryItemsLoading(true);
-    const { data } = useGetDataByCategory({
-      categoryId,
-      exceptItemId,
-    });
-    setSameCategoryItems(data);
-    setIsSameCategoryItemsLoading(false);
-  };
+  // const getSameCategoryItem = async ({ categoryId, exceptItemId }) => {
+  //   setIsSameCategoryItemsLoading(true);
+  //   const { data } = useGetDataByCategory({
+  //     categoryId,
+  //     exceptItemId,
+  //   });
+  //   setSameCategoryItems(data);
+  //   setIsSameCategoryItemsLoading(false);
+  // };
 
   useEffect(() => {
     const fetchData = async () => {
       setIsItemLoading(true);
       setIsWatchedItemsLoading(true);
       setIsSameCategoryItemsLoading(true);
-      const { data: item } = useGetDataById("items", id);
+      const item = flowers.find(flower => flower.id === id);
       setCatalogItem(item);
       window.scrollTo({
         top: 0,
       });
       setIsItemLoading(false);
 
-      getWatchedItems();
-      getSameCategoryItem({
-        categoryId: item.categoryId,
-        exceptItemId: item.id,
-      });
+      // getWatchedItems();
+      // getSameCategoryItem({
+      //   categoryId: item.category,
+      //   exceptItemId: item.id,
+      // });
     };
     fetchData();
   }, [id]);
 
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     setIsItemLoading(true);
+  //     setIsWatchedItemsLoading(true);
+  //     setIsSameCategoryItemsLoading(true);
+  //     const { data: item } = useGetDataById("items", id);
+  //     setCatalogItem(item);
+  //     window.scrollTo({
+  //       top: 0,
+  //     });
+  //     setIsItemLoading(false);
+
+  //     getWatchedItems();
+  //     getSameCategoryItem({
+  //       categoryId: item.categoryId,
+  //       exceptItemId: item.id,
+  //     });
+  //   };
+  //   fetchData();
+  // }, [id]);
+
+  console.log("catalogItem?.images: ", catalogItem?.images)
+  console.log("currentImage: ", currentImage)
+
   return (
-    <Spin size="large" spinning={isItemLoading}>
+    <Spin size="large" spinning={!catalogItem}>
       <div style={{ margin: "0 20px" }}>
         <div className="wrapper">
           <div className="item-gallery">
             <div className="main-image-container">
               <img
                 className="main-image"
-                src={catalogItem?.images[currentImage].url}
+                src={catalogItem?.images[currentImage]?.url || ""}
                 alt="product"
               />
             </div>
             <div className="thumbnail-container">
-              {catalogItem?.images.map((image, index) => (
+              {catalogItem?.images?.map((image, index) => (
                 <img
-                  key={image.url}
-                  src={image.url}
+                  key={image?.url}
+                  src={image?.url}
                   alt={`Thumbnail ${index}`}
-                  className={`thumbnail ${
-                    currentImage === index ? "active-thumbnail" : ""
-                  }`}
+                  className={`thumbnail ${currentImage === index ? "active-thumbnail" : ""
+                    }`}
                   onClick={() => handleImageClick(index)}
                 />
               ))}
@@ -120,9 +144,8 @@ const CatalogItemPage = () => {
                     key={image.url}
                     src={image.url}
                     alt={`Thumbnail ${index}`}
-                    className={`thumbnail ${
-                      currentImage === index ? "active-thumbnail" : ""
-                    }`}
+                    className={`thumbnail ${currentImage === index ? "active-thumbnail" : ""
+                      }`}
                     onClick={() => handleImageClick(index)}
                   />
                 ))}

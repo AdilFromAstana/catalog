@@ -5,11 +5,8 @@ const Filters = memo(
   ({
     minPrice,
     maxPrice,
-    // colorsWithCounts,
-    selectedColors,
     setTempMinValue,
     setTempMaxValue,
-    handleColorChange,
     productsTotalSize,
     availableCategories,
     selectedCategories,
@@ -99,9 +96,8 @@ const Filters = memo(
                       }
                     }
                   }}
-                  className={`category-list-item ${
-                    isSelected ? "selected" : ""
-                  } ${isDisabled ? "" : "last-item"}`}
+                  className={`category-list-item ${isSelected ? "selected" : ""
+                    } ${isDisabled ? "" : "last-item"}`}
                 >
                   {item.title}
                 </List.Item>
@@ -187,20 +183,6 @@ const Filters = memo(
             </div>
           </div>
         </div>
-        {/* <div>
-          <h3>Цвет</h3>
-          <div style={{ display: "flex", flexDirection: "column" }}>
-            {colorsWithCounts.map(({ color, count }) => (
-              <Checkbox
-                key={color}
-                onChange={() => handleColorChange(color)}
-                checked={selectedColors.includes(color)}
-              >
-                {color} ({count})
-              </Checkbox>
-            ))}
-          </div>
-        </div> */}
       </div>
     );
   }
