@@ -44,6 +44,9 @@ const InlineFilters = memo(({ applyFilters }) => {
 
   const applyFilterChanges = () => {
     setConfirmedFilters(tempFilters);
+    Object.entries(tempFilters).forEach(([key, value]) => {
+      updateFilter(key, value); // ✅ Теперь обновляем useFilters
+    });
     applyFilters(tempFilters);
     closeDrawer();
   };

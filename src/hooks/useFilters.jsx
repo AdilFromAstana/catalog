@@ -36,8 +36,8 @@ const useFilters = () => {
   // Функция для обновления фильтров
   const updateFilter = (param, values) => {
     setFilters((prevFilters) => ({
-      ...prevFilters,
-      [param]: values.length ? values : [],
+      ...prevFilters, // ✅ Сохраняем предыдущие параметры
+      [param]: values.length ? values : prevFilters[param] || [], // ✅ Если пусто, оставляем предыдущее значение
     }));
   };
 
