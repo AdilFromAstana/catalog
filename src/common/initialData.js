@@ -769,10 +769,10 @@ export const initialFilters = {
   features: {
     name: "Особенности",
     options: [
-      { name: "Ароматные", value: "ароматные", count: 16 },
-      { name: "Гипоаллергенные", value: "гипоаллергенные", count: 19 },
-      { name: "Экзотические", value: "экзотические", count: 14 },
-      { name: "Бенто-торт", value: "бенто-торт", count: 1 },
+      { name: "Ароматные", value: "Ароматные", count: 16 },
+      { name: "Гипоаллергенные", value: "Гипоаллергенные", count: 19 },
+      { name: "Экзотические", value: "Экзотические", count: 14 },
+      { name: "Бенто-торт", value: "Бенто-торт", count: 1 },
     ],
   },
 };

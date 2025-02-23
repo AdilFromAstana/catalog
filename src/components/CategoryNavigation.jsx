@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useState } from "react";
+import React, { memo, useState } from "react";
 import { Badge, Button } from "antd";
 import {
   ControlOutlined,
@@ -6,23 +6,15 @@ import {
   OrderedListOutlined,
 } from "@ant-design/icons";
 import { useGetDataByCategory } from "../firestoreService";
+import { useSelector } from "react-redux";
 
 const CategoryNavigation = memo(
   ({ toggleSortDrawer, togglePriceDrawer, isFilterSelected }) => {
     const [level, setLevel] = useState(1);
     const [parentId, setParentId] = useState(null);
+    const filteredFlowers = useSelector((state) => state.filters.filteredFlowers);
     const [history, setHistory] = useState([]); // Стек истории переходов
-    const [selectedCategory, setSelectedCategory] = useState(null); // Выбранная категория на последнем уровне
-
-    const {
-      data: availableCategories,
-      isLoading,
-      error,
-    } = useGetDataByCategory(
-      "categories/getCategoriesByLevelAndParent",
-      level,
-      parentId
-    );
+    const [selectedCategory, setSelectedCategory] = useState({ titleRu: "Цветы" }); // Выбранная категория на последнем уровне
 
     const handleCategoryClick = (category) => {
       setSelectedCategory(category);
@@ -56,11 +48,10 @@ const CategoryNavigation = memo(
             <div className="category-title">
               {selectedCategory
                 ? selectedCategory?.titleRu
-                : isLoading
-                ? "-"
-                : availableCategories?.currentTitleRu}
+                : "-"
+              }
             </div>
-            <div>0</div>
+            <div>{filteredFlowers.length}</div>
           </div>
           <div className="nav-item">
             <OrderedListOutlined className="icon" onClick={toggleSortDrawer} />
@@ -71,7 +62,7 @@ const CategoryNavigation = memo(
             </Badge>
           </div>
         </div>
-        {isLoading ? null : error ? null : (
+        {/* {!availableCategories ? null : (
           <div className="scrollable-row">
             {availableCategories?.categories?.map((category) => (
               <Button
@@ -83,7 +74,7 @@ const CategoryNavigation = memo(
               </Button>
             ))}
           </div>
-        )}
+        )} */}
       </div>
     );
   }

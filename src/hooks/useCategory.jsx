@@ -9,8 +9,8 @@ const transformData = (items) => {
       language === "kz"
         ? item.titleKz
         : language === "en"
-        ? item.titleEn
-        : item.titleRu;
+          ? item.titleEn
+          : item.titleRu;
 
     const children = item.children ? transformData(item.children) : null;
 
@@ -32,16 +32,15 @@ const useCategory = () => {
     const loadData = async () => {
       try {
         setIsCategoryLoading(true);
-        const { data } = useGetDataById("category", "AyZb1AB6NzYmh0YIfu8G"); // Вызов импортированной функции
+        const data = [{ "titleRu": "Мужская верхняя одежда", "titleKz": "Ерлердің сыртқы киімі", "titleEn": "Men's Outerwear", "key": 1, "children": [{ "titleRu": "Мужские пуховики и зимние куртки", "titleKz": "Ерлерге арналған қыстық курткалар", "titleEn": "Men's Down Jackets and Winter Coats", "key": 2, "children": null }, { "titleRu": "Мужские легкие куртки и ветровки", "titleKz": "Ерлерге арналған жеңіл күртешелер мен желеткелер", "titleEn": "Men's Light Jackets and Windbreakers", "key": 3, "children": null }] }, { "titleRu": "Мужские футболки и майки", "titleKz": "Ерлерге арналған футболкалар мен жейделер", "titleEn": "Men's T - Shirts and Tank Tops", "key": 4, "children": null }, { "titleRu": "Мужские джинсы", "titleKz": "Ерлерге арналған джинсылар", "titleEn": "Men's Jeans", "key": 5, "children": null }, { "titleRu": "Мужские кардиганы и джемперы", "titleKz": "Ерлерге арналған кардигандар мен жемпірлер", "titleEn": "Men's Cardigans and Jumpers", "key": 6, "children": null }, { "titleRu": "Мужские толстовки и свитшоты", "titleKz": "Ерлерге арналған толстовкалар мен свитшоттар", "titleEn": "Men's Hoodies and Sweatshirts", "key": 7, "children": null }, { "titleRu": "Мужские брюки", "titleKz": "Ерлерге арналған шалбар", "titleEn": "Men's Trousers", "key": 8, "children": null }, { "titleRu": "Мужские рубашки", "titleKz": "Ерлерге арналған көйлектер", "titleEn": "Men's Shirts", "key": 9, "children": null }]
 
-        if (data && data.scheme) {
+        if (data) {
           try {
-            const parsedScheme = JSON.parse(data.scheme);
             setSelectedCategoryKeys([0]);
             setTreeData([
               {
                 key: 0,
-                children: transformData(parsedScheme),
+                children: transformData(data),
                 title: "Все категории",
               },
             ]);

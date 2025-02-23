@@ -19,10 +19,12 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  color: #fefbea;
   padding: 4px;
 }
 
 .category-title {
+  color: #fefbea;
   font-size: 14px;
   font-weight: 700;
   white-space: nowrap;
@@ -72,13 +74,20 @@
 .product-title {
   font-size: 16px;
   color: #fefbea;
-  display: -webkit-box; /* Используем flexbox для текстового контейнера */
-  -webkit-box-orient: vertical; /* Указываем вертикальную ориентацию */
-  overflow: hidden; /* Скрываем текст, выходящий за пределы */
-  text-overflow: ellipsis; /* Добавляем многоточие */
-  -webkit-line-clamp: 2; /* Обрезаем текст после 2 строк */
-  line-clamp: 2; /* Для современных браузеров */
+  display: -webkit-box;
+  /* Используем flexbox для текстового контейнера */
+  -webkit-box-orient: vertical;
+  /* Указываем вертикальную ориентацию */
+  overflow: hidden;
+  /* Скрываем текст, выходящий за пределы */
+  text-overflow: ellipsis;
+  /* Добавляем многоточие */
+  -webkit-line-clamp: 2;
+  /* Обрезаем текст после 2 строк */
+  line-clamp: 2;
+  /* Для современных браузеров */
 }
+
 .product-title:hover {
   color: #fefbea;
 }
@@ -107,6 +116,7 @@
 .inline-filters-header .ant-drawer-close {
   color: #fefbea;
 }
+
 .inline-filters-header .ant-drawer-title {
   font-size: 20px;
 }
@@ -150,7 +160,8 @@
 
 .catalog-container {
   display: grid;
-  grid-template-columns: 1fr; /* Для маленьких экранов */
+  grid-template-columns: 1fr;
+  /* Для маленьких экранов */
   padding: 10px;
 }
 
@@ -161,6 +172,7 @@
 }
 
 @media (max-width: 448px) {
+
   .product-details,
   .product-info {
     height: 100%;
@@ -220,17 +232,22 @@
   .sort-buttons {
     display: flex;
   }
+
   .filter-component-desktop {
     display: block;
   }
+
   .category-navigation {
     display: none;
   }
+
   .catalog-container {
     gap: 20px;
-    grid-template-columns: 1fr 2fr; /* Для экранов шире 964px */
+    grid-template-columns: 1fr 2fr;
+    /* Для экранов шире 964px */
   }
 }
+
 @media (min-width: 1176px) {
   .catalog-container {
     margin: 0 auto;

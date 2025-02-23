@@ -8,7 +8,6 @@ import "./CatalogPage.css";
 import { Drawer, Spin } from "antd";
 import useCategory from "../../hooks/useCategory";
 import InlineFilters from "../../components/InlineFilters";
-import { initialFlowers } from "../../common/initialData";
 
 const CatalogPage = () => {
   const [isSortDrawerVisible, setSortDrawerVisible] = useState(false);
@@ -21,7 +20,7 @@ const CatalogPage = () => {
   const [selectedColors, setSelectedColors] = useState([]);
   const [minPrice, setMinPrice] = useState(0);
   const [maxPrice, setMaxPrice] = useState(0);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [tempMinValue, setTempMinValue] = useState(null);
   const [tempMaxValue, setTempMaxValue] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
@@ -29,21 +28,21 @@ const CatalogPage = () => {
   const [lastVisible, setLastVisible] = useState(null);
   const itemsPerPage = 12;
 
-  // function collectKeysWithoutChildren() {
-  //   const result = [];
-  //   function traverse(node) {
-  //     if (!node.children) {
-  //       result.push(node.key);
-  //     } else {
-  //       node.children.forEach((child) => traverse(child));
-  //     }
-  //   }
-  //   const lastElement = selectedCategories[selectedCategories.length - 1];
-  //   if (lastElement) {
-  //     traverse(lastElement);
-  //   }
-  //   return result;
-  // }
+  function collectKeysWithoutChildren() {
+    const result = [];
+    function traverse(node) {
+      if (!node.children) {
+        result.push(node.key);
+      } else {
+        node.children.forEach((child) => traverse(child));
+      }
+    }
+    const lastElement = selectedCategories[selectedCategories.length - 1];
+    if (lastElement) {
+      traverse(lastElement);
+    }
+    return result;
+  }
 
   const {
     availableCategories,
@@ -55,25 +54,13 @@ const CatalogPage = () => {
     backToAlreadySelectedCategory,
     returnToPreviousCategory,
   } = useCategory();
+
   const { favorites, toggleFavorite } = useFavorites();
 
   const handlePageChange = (page) => {
     window.scrollTo({ top: 0, behavior: "smooth" });
     setCurrentPage(page);
   };
-
-  // const colorsWithCounts = useMemo(() => {
-  //   const colorCounts = {};
-  //   products.forEach((product) => {
-  //     if (product.color) {
-  //       colorCounts[product.color] = (colorCounts[product.color] || 0) + 1;
-  //     }
-  //   });
-  //   return Object.entries(colorCounts).map(([color, count]) => ({
-  //     color,
-  //     count,
-  //   }));
-  // }, [products]);
 
   const handleColorChange = (color) => {
     setSelectedColors((prev) =>
@@ -130,42 +117,6 @@ const CatalogPage = () => {
   //   categoryIdsFilter: collectKeysWithoutChildren(),
   // });
 
-  const [filteredProducts, setFilteredProducts] = useState([]);
-
-  const applyFilters = (filters) => {
-    setIsLoading(true);
-    if (!filters) {
-      setIsLoading(false);
-      setFilteredProducts(initialFlowers);
-      return;
-    }
-
-    const newProducts = initialFlowers.filter((product) =>
-      Object.entries(filters).every(([param, values]) => {
-        if (!values || values.length === 0) return true; // Если фильтр пустой — товар проходит
-
-        // Проверяем, если параметр — массив (например, особенности)
-        if (Array.isArray(product[param])) {
-          return product[param].some((item) => values.includes(item));
-        }
-
-        // Проверяем, если параметр — число (например, высота цветов)
-        if (typeof product[param] === "number") {
-          return values.includes(product[param]);
-        }
-
-        // Обычная проверка для строковых значений
-        return values.includes(product[param]);
-      })
-    );
-    setIsLoading(false);
-    setFilteredProducts(newProducts);
-  };
-
-  useEffect(() => {
-    applyFilters();
-  }, [selectedCategoryKeys]);
-
   return (
     <>
       <Spin spinning={isLoading && isCategoryLoading}>
@@ -180,7 +131,7 @@ const CatalogPage = () => {
           togglePriceDrawer={togglePriceDrawer}
           selectCategory={selectCategory}
         />
-        <InlineFilters applyFilters={applyFilters} />
+        <InlineFilters />
         <div className="catalog-container">
           <div className="filter-component-desktop">
             <Filters
@@ -205,7 +156,6 @@ const CatalogPage = () => {
           </div>
           <ProductList
             isLoading={isLoading}
-            products={filteredProducts}
             favorites={favorites}
             toggleFavorite={toggleFavorite}
             handleSortChange={handleSortChange}

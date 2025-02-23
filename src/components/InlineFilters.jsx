@@ -1,28 +1,21 @@
 import React, { memo, useRef, useState } from "react";
-import { Button, Checkbox, Drawer, Input, List, Slider } from "antd";
-import { SearchOutlined } from "@ant-design/icons";
-import useFilters from "../hooks/useFilters";
-import PriceFilter from "./PriceFilter";
+import { Button, Checkbox, Drawer, List } from "antd";
+import { useDispatch, useSelector } from "react-redux";
+import { updateFilter, resetFilters } from "../redux/filterSlice";
 
-const InlineFilters = memo(({ applyFilters }) => {
-  const { filters, updateFilter, filteredOptions } = useFilters();
+const InlineFilters = memo(() => {
+  const dispatch = useDispatch();
+  const filters = useSelector((state) => state.filters.filters);
+  const filteredOptions = useSelector((state) => state.filters.filteredOptions);
   const [activeFilter, setActiveFilter] = useState(null);
   const [visible, setVisible] = useState(false);
-  const [searchTerm, setSearchTerm] = useState("");
   const [tempFilters, setTempFilters] = useState({});
-  const [confirmedFilters, setConfirmedFilters] = useState({});
   const listRef = useRef(null);
 
   const showDrawer = (key) => {
     setActiveFilter(key);
     setVisible(true);
-    setSearchTerm("");
     setTempFilters(filters);
-    setTimeout(() => {
-      if (listRef.current) {
-        listRef.current.scrollTop = 0;
-      }
-    }, 0);
   };
 
   const closeDrawer = () => {
@@ -42,12 +35,27 @@ const InlineFilters = memo(({ applyFilters }) => {
     }));
   };
 
+  const resetFilterForActiveCategory = () => {
+    if (!activeFilter) return;
+
+    // Сбрасываем фильтр только для текущей категории
+    dispatch(updateFilter({ param: activeFilter, values: [] }));
+
+    // Обновляем временные фильтры, убирая выбранные значения для активного фильтра
+    setTempFilters((prev) => ({
+      ...prev,
+      [activeFilter]: [],
+    }));
+  };
+
   const applyFilterChanges = () => {
-    setConfirmedFilters(tempFilters);
-    Object.entries(tempFilters).forEach(([key, value]) => {
-      updateFilter(key, value); // ✅ Теперь обновляем useFilters
-    });
-    applyFilters(tempFilters);
+    dispatch(updateFilter({ param: activeFilter, values: tempFilters[activeFilter] || [] }));
+    closeDrawer();
+  };
+
+  // Сброс только активного фильтра
+  const resetCurrentFilter = () => {
+    dispatch(updateFilter({ param: activeFilter, values: [] }));
     closeDrawer();
   };
 
@@ -56,12 +64,12 @@ const InlineFilters = memo(({ applyFilters }) => {
       <div className="scrollable-row">
         {Object.entries(filteredOptions)
           .sort(([keyA], [keyB]) => {
-            const hasValueA = (confirmedFilters[keyA] || []).length > 0;
-            const hasValueB = (confirmedFilters[keyB] || []).length > 0;
+            const hasValueA = (filters[keyA] || []).length > 0;
+            const hasValueB = (filters[keyB] || []).length > 0;
             return hasValueB - hasValueA;
           })
           .map(([key, param]) => {
-            const selectedValues = confirmedFilters[key] || [];
+            const selectedValues = filters[key] || [];
             const selectedLabels = param.options
               ?.filter((opt) => selectedValues.includes(opt.value))
               .map((opt) => opt.name);
@@ -70,9 +78,7 @@ const InlineFilters = memo(({ applyFilters }) => {
             if (selectedLabels.length === 1) {
               buttonText = selectedLabels[0];
             } else if (selectedLabels.length > 1) {
-              buttonText = `${selectedLabels[0]}, +${
-                selectedLabels.length - 1
-              }`;
+              buttonText = `${selectedLabels[0]}, +${selectedLabels.length - 1}`;
             }
 
             return (
@@ -81,9 +87,7 @@ const InlineFilters = memo(({ applyFilters }) => {
                 onClick={() => showDrawer(key)}
                 style={{
                   borderRadius: "20px",
-                  backgroundColor: selectedValues.length
-                    ? "#091235"
-                    : "#FEFBEA",
+                  backgroundColor: selectedValues.length ? "#091235" : "#FEFBEA",
                   color: selectedValues.length ? "#FEFBEA" : "#091235",
                   borderColor: selectedValues.length ? "#FEFBEA" : "#091235",
                 }}
@@ -100,44 +104,15 @@ const InlineFilters = memo(({ applyFilters }) => {
         open={visible}
         height="90svh"
         styles={{
-          header: {
-            backgroundColor: "#091235",
-            color: "#FEFBEA",
-            fontSize: "24px",
-          },
-          body: {
-            backgroundColor: "#091235",
-            display: "flex",
-            flexDirection: "column",
-            height: "100%",
-            paddingTop: 12,
-          },
+          header: { backgroundColor: "#091235", color: "#FEFBEA", fontSize: "24px" },
+          body: { backgroundColor: "#091235", display: "flex", flexDirection: "column", height: "100%", paddingTop: 12 },
         }}
         rootClassName="inline-filters-header"
       >
-        {activeFilter === "price" ? (
-          <PriceFilter
-            minPrice={filteredOptions.price.min}
-            maxPrice={filteredOptions.price.max}
-            applyFilters={applyFilters}
-          />
-        ) : (
-          <div
-            ref={listRef}
-            style={{ flex: 1, overflowY: "auto", marginTop: 10 }}
-          >
+        {activeFilter && (
+          <div ref={listRef} style={{ flex: 1, overflowY: "auto", marginTop: 10 }}>
             <List
-              dataSource={(() => {
-                const selectedOptions =
-                  filteredOptions[activeFilter]?.options?.filter((opt) =>
-                    tempFilters[activeFilter]?.includes(opt.value)
-                  ) || [];
-                const unselectedOptions =
-                  filteredOptions[activeFilter]?.options?.filter(
-                    (opt) => !tempFilters[activeFilter]?.includes(opt.value)
-                  ) || [];
-                return [...selectedOptions, ...unselectedOptions];
-              })()}
+              dataSource={filteredOptions[activeFilter]?.options || []}
               renderItem={(option) => (
                 <List.Item>
                   <Checkbox
@@ -164,7 +139,7 @@ const InlineFilters = memo(({ applyFilters }) => {
         >
           <Button
             size="large"
-            onClick={closeDrawer}
+            onClick={resetFilterForActiveCategory}
             type="default"
             style={{ width: "100%" }}
           >
