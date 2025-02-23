@@ -66,6 +66,7 @@ const MenuDrawer = ({ isDrawerVisible, setIsDrawerVisible }) => {
       styles={{
         body: {
           padding: 0,
+          background: "#091235"
         },
       }}
       placement="right"

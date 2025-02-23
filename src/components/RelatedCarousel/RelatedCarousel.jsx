@@ -65,7 +65,7 @@ const RelatedCarousel = memo(
                 return (
                   <List.Item
                     className="related-carousel-item"
-                    // style={{ width: `${carouselItemWidth}px` }}
+                  // style={{ width: `${carouselItemWidth}px` }}
                   >
                     <Skeleton active />
                   </List.Item>
@@ -82,7 +82,7 @@ const RelatedCarousel = memo(
                 return (
                   <List.Item
                     className="related-carousel-item"
-                    // style={{ width: `${carouselItemWidth}px` }}
+                  // style={{ width: `${carouselItemWidth}px` }}
                   >
                     <div className="related-carousel-item-content">
                       <img

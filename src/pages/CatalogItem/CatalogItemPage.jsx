@@ -25,25 +25,29 @@ const CatalogItemPage = () => {
 
   console.log("catalogItem", catalogItem);
 
-  // const getWatchedItems = async () => {
-  //   const viewedItemIds =
-  //     JSON.parse(localStorage.getItem(ViewedItemsKey)) || [];
+  const getWatchedItems = async () => {
+    const viewedItemIds = JSON.parse(localStorage.getItem(ViewedItemsKey)) || [];
 
-  //   let updatedViewedItems;
-  //   if (viewedItemIds.includes(id)) {
-  //     updatedViewedItems = viewedItemIds.filter((itemId) => itemId !== id);
-  //   } else {
-  //     updatedViewedItems = [...viewedItemIds];
-  //   }
-  //   updatedViewedItems.unshift(id);
-  //   localStorage.setItem(ViewedItemsKey, JSON.stringify(updatedViewedItems));
+    let updatedViewedItems = viewedItemIds.filter((itemId) => itemId !== id); // Убираем текущий товар
+    updatedViewedItems.unshift(id); // Добавляем в начало
 
-  //   const { data: viewedItemsData } = useGetDataByIds({
-  //     ids: updatedViewedItems.filter((itemId) => itemId !== id),
-  //   });
-  //   setWatchedItems(viewedItemsData ?? []);
-  //   setIsWatchedItemsLoading(false);
-  // };
+    // Ограничиваем список до 10 элементов
+    if (updatedViewedItems.length > 10) {
+        updatedViewedItems = updatedViewedItems.slice(0, 10);
+    }
+
+    // Сохраняем в локальное хранилище (включая текущий товар)
+    localStorage.setItem(ViewedItemsKey, JSON.stringify(updatedViewedItems));
+
+    // Получаем данные товаров, **но исключаем текущий элемент (id)**
+    const viewedItemsData = updatedViewedItems
+        .filter((itemId) => itemId !== id) // Исключаем текущий товар
+        .map((itemId) => initialFlowers.find((item) => item.id === itemId))
+        .filter(Boolean); // Убираем `undefined`, если товар удален
+
+    setWatchedItems(viewedItemsData); // Обновляем отображаемые товары
+    setIsWatchedItemsLoading(false);
+};
 
   // const getSameCategoryItem = async ({ categoryId, exceptItemId }) => {
   //   setIsSameCategoryItemsLoading(true);
@@ -66,6 +70,7 @@ const CatalogItemPage = () => {
         top: 0,
       });
       setIsItemLoading(false);
+      getWatchedItems();
 
       // getWatchedItems();
       // getSameCategoryItem({
@@ -133,9 +138,8 @@ const CatalogItemPage = () => {
                   key={image?.url}
                   src={image?.url}
                   alt={`Thumbnail ${index}`}
-                  className={`thumbnail ${
-                    currentImage === index ? "active-thumbnail" : ""
-                  }`}
+                  className={`thumbnail ${currentImage === index ? "active-thumbnail" : ""
+                    }`}
                   onClick={() => handleImageClick(index)}
                 />
               ))}
@@ -157,9 +161,8 @@ const CatalogItemPage = () => {
                     key={image.url}
                     src={image.url}
                     alt={`Thumbnail ${index}`}
-                    className={`thumbnail ${
-                      currentImage === index ? "active-thumbnail" : ""
-                    }`}
+                    className={`thumbnail ${currentImage === index ? "active-thumbnail" : ""
+                      }`}
                     onClick={() => handleImageClick(index)}
                   />
                 ))}
@@ -194,7 +197,7 @@ const CatalogItemPage = () => {
                 <li>Высота цветов: {catalogItem?.flowerHeight}</li>
                 <li>
                   Состав букета:{" "}
-                  {catalogItem?.bouquetComposition.map((item) => item)}
+                  {catalogItem?.bouquetCompositionRu.map((item) => item)}
                 </li>
               </ul>
             </div>
