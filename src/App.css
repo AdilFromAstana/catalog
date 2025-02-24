@@ -5,7 +5,11 @@
 }
 
 .header {
-  background: transparent;
+  height: 64px;
+  position: fixed;
+  width: 100%;
+  z-index: 1;
+  background: #091235;
   border-bottom: 1px solid #ddd;
   display: flex;
   justify-content: space-between;
@@ -17,6 +21,7 @@
   margin: 0;
   font-size: 18px;
 }
+
 .header-title:hover {
   color: #FEFBEA;
 }

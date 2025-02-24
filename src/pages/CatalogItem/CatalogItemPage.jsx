@@ -1,14 +1,20 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import { useEffect, useState } from "react";
 import "./CatalogItemPage.css";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { Button, Spin } from "antd";
 import RelatedCarousel from "../../components/RelatedCarousel/RelatedCarousel";
 import { formatNumber } from "../../common/common";
 import { initialFlowers } from "../../common/initialData";
+import { HeartOutlined, HeartFilled } from "@ant-design/icons";
+import useFavorites from "../../hooks/useFavorites";
+import useCart from "../../hooks/useCart";
 
 const CatalogItemPage = () => {
   const { id } = useParams();
+  const nav = useNavigate();
+  const { toggleFavorite, favorites } = useFavorites();
+  const { addToCart, cart, removeFromCart } = useCart();
   const [catalogItem, setCatalogItem] = useState(null);
   const [isItemLoading, setIsItemLoading] = useState(true);
   const [currentImage, setCurrentImage] = useState(0);
@@ -23,17 +29,16 @@ const CatalogItemPage = () => {
     setCurrentImage(index);
   };
 
-  console.log("catalogItem", catalogItem);
-
   const getWatchedItems = async () => {
-    const viewedItemIds = JSON.parse(localStorage.getItem(ViewedItemsKey)) || [];
+    const viewedItemIds =
+      JSON.parse(localStorage.getItem(ViewedItemsKey)) || [];
 
     let updatedViewedItems = viewedItemIds.filter((itemId) => itemId !== id); // Убираем текущий товар
     updatedViewedItems.unshift(id); // Добавляем в начало
 
     // Ограничиваем список до 10 элементов
     if (updatedViewedItems.length > 10) {
-        updatedViewedItems = updatedViewedItems.slice(0, 10);
+      updatedViewedItems = updatedViewedItems.slice(0, 10);
     }
 
     // Сохраняем в локальное хранилище (включая текущий товар)
@@ -41,23 +46,15 @@ const CatalogItemPage = () => {
 
     // Получаем данные товаров, **но исключаем текущий элемент (id)**
     const viewedItemsData = updatedViewedItems
-        .filter((itemId) => itemId !== id) // Исключаем текущий товар
-        .map((itemId) => initialFlowers.find((item) => item.id === itemId))
-        .filter(Boolean); // Убираем `undefined`, если товар удален
+      .filter((itemId) => itemId !== id) // Исключаем текущий товар
+      .map((itemId) => initialFlowers.find((item) => item.id === itemId))
+      .filter(Boolean); // Убираем `undefined`, если товар удален
 
     setWatchedItems(viewedItemsData); // Обновляем отображаемые товары
     setIsWatchedItemsLoading(false);
-};
+  };
 
-  // const getSameCategoryItem = async ({ categoryId, exceptItemId }) => {
-  //   setIsSameCategoryItemsLoading(true);
-  //   const { data } = useGetDataByCategory({
-  //     categoryId,
-  //     exceptItemId,
-  //   });
-  //   setSameCategoryItems(data);
-  //   setIsSameCategoryItemsLoading(false);
-  // };
+  const cartItem = cart?.find((cartItem) => cartItem?.id === catalogItem?.id);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -72,12 +69,6 @@ const CatalogItemPage = () => {
       setIsItemLoading(false);
       getWatchedItems();
 
-      // getWatchedItems();
-      // getSameCategoryItem({
-      //   categoryId: item.category,
-      //   exceptItemId: item.id,
-      // });
-
       const itemBouquet = Array.isArray(item.bouquetComposition)
         ? item.bouquetComposition
         : [item.bouquetComposition];
@@ -86,8 +77,8 @@ const CatalogItemPage = () => {
         (flower) =>
           flower.id !== item.id && // Исключаем текущий item
           flower.bouquetComposition.some((composition) =>
-            itemBouquet.includes(composition)
-          )
+            itemBouquet.includes(composition),
+          ),
       );
 
       setSameCategoryItems(filteredItems);
@@ -99,26 +90,8 @@ const CatalogItemPage = () => {
     fetchData();
   }, [id]);
 
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     setIsItemLoading(true);
-  //     setIsWatchedItemsLoading(true);
-  //     setIsSameCategoryItemsLoading(true);
-  //     const { data: item } = useGetDataById("items", id);
-  //     setCatalogItem(item);
-  //     window.scrollTo({
-  //       top: 0,
-  //     });
-  //     setIsItemLoading(false);
-
-  //     getWatchedItems();
-  //     getSameCategoryItem({
-  //       categoryId: item.categoryId,
-  //       exceptItemId: item.id,
-  //     });
-  //   };
-  //   fetchData();
-  // }, [id]);
+  const message = `Здравствуйте!\nПодскажите, есть ли в наличии "${catalogItem?.title}"?\nhttps://catalog-beta.vercel.app/${catalogItem?.id}`;
+  const whatsappUrl = `https://wa.me/77761156416?text=${encodeURIComponent(message)}`;
 
   return (
     <Spin size="large" spinning={!catalogItem}>
@@ -138,8 +111,9 @@ const CatalogItemPage = () => {
                   key={image?.url}
                   src={image?.url}
                   alt={`Thumbnail ${index}`}
-                  className={`thumbnail ${currentImage === index ? "active-thumbnail" : ""
-                    }`}
+                  className={`thumbnail ${
+                    currentImage === index ? "active-thumbnail" : ""
+                  }`}
                   onClick={() => handleImageClick(index)}
                 />
               ))}
@@ -161,34 +135,135 @@ const CatalogItemPage = () => {
                     key={image.url}
                     src={image.url}
                     alt={`Thumbnail ${index}`}
-                    className={`thumbnail ${currentImage === index ? "active-thumbnail" : ""
-                      }`}
+                    className={`thumbnail ${
+                      currentImage === index ? "active-thumbnail" : ""
+                    }`}
                     onClick={() => handleImageClick(index)}
                   />
                 ))}
               </div>
             </div>
 
-            <div className="item-info">
-              <div className="item-price">
-                {formatNumber(catalogItem?.price ?? 0)}₸
-              </div>
-              <div className="buttons">
-                <Button
-                  className="add-to-cart"
-                  type="primary"
-                  size="large"
-                  style={{ color: "#091235" }}
-                >
-                  Узнать наличие товара
-                </Button>
-              </div>
+            <div className="item-price">
+              {formatNumber(catalogItem?.price ?? 0)}₸
             </div>
 
-            <div className="description">
+            <div
+              className="buttons"
+              style={{ display: "flex", flexDirection: "column" }}
+            >
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "1fr 40px",
+                  gap: 10,
+                }}
+              >
+                {cartItem ? (
+                  <div
+                    style={{
+                      display: "grid",
+                      gridTemplateColumns: "40px 40px 40px 1fr",
+                      gap: 10,
+                    }}
+                  >
+                    <Button
+                      style={{
+                        color: "#FEFBEA",
+                        border: "2px solid #FEFBEA",
+                        background: "#091235",
+                        height: "40px",
+                        fontSize: 36,
+                        opacity: cartItem.quantity === 5 ? 0.5 : 1,
+                      }}
+                      disabled={cartItem.quantity === 5}
+                      onClick={() => addToCart(catalogItem.id)}
+                    >
+                      +
+                    </Button>
+                    <div
+                      style={{
+                        fontSize: "20px",
+                        color: "#FEFBEA",
+                        margin: "auto",
+                      }}
+                    >
+                      {cartItem?.quantity}
+                    </div>
+                    <Button
+                      onClick={removeFromCart}
+                      style={{
+                        color: "#FEFBEA",
+                        border: "2px solid #FEFBEA",
+                        background: "#091235",
+                        height: "40px",
+                        fontSize: 36,
+                      }}
+                      onClick={() => removeFromCart(catalogItem.id)}
+                    >
+                      -
+                    </Button>
+                    <Button
+                      type="primary"
+                      size="large"
+                      style={{
+                        color: "#FEFBEA",
+                        border: "2px solid #FEFBEA",
+                        background: "#091235",
+                      }}
+                      onClick={() => nav("/cart")}
+                    >
+                      В корзину
+                    </Button>
+                  </div>
+                ) : (
+                  <Button
+                    type="primary"
+                    size="large"
+                    style={{
+                      color: "#FEFBEA",
+                      border: "2px solid #FEFBEA",
+                      background: "#091235",
+                    }}
+                    onClick={() => addToCart(catalogItem.id)}
+                  >
+                    Добавить в корзину
+                  </Button>
+                )}
+                <Button
+                  type="primary"
+                  size="large"
+                  style={{
+                    color: "#FEFBEA",
+                    border: "2px solid #FEFBEA",
+                    background: "#091235",
+                  }}
+                  onClick={() => toggleFavorite(catalogItem?.id)}
+                >
+                  {favorites.includes(catalogItem?.id) ? (
+                    <HeartFilled style={{ color: "red", fontSize: "24px" }} />
+                  ) : (
+                    <HeartOutlined
+                      style={{ color: "#FEFBEA", fontSize: "24px" }}
+                    />
+                  )}
+                </Button>
+              </div>
+              <Button
+                onClick={() => window.open(whatsappUrl, "_blank")}
+                className="add-to-cart"
+                type="primary"
+                size="large"
+                style={{ color: "#091235" }}
+              >
+                Узнать наличие товара
+              </Button>
+            </div>
+
+            {/* <div className="description">
               <h3>Описание</h3>
               <p>{catalogItem?.description}</p>
-            </div>
+            </div> */}
 
             <div className="specifications">
               <h3>Характеристики</h3>

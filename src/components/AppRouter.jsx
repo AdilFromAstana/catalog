@@ -7,6 +7,7 @@ import MyCatalogPage from "../pages/MyCatalog/MyCatalogPage";
 import UpdateItemPage from "../pages/UpdateItem/UpdateItemPage";
 import { Content } from "antd/es/layout/layout";
 import { AnimatePresence, motion } from "framer-motion";
+import CartPage from "../pages/Cart/CartPage";
 
 const pageVariants = {
   initial: { opacity: 0, y: 40 },
@@ -30,18 +31,19 @@ const pageVariants = {
 
 const AppRouter = () => {
   const location = useLocation();
-  
+
   const routes = [
     { path: "/", element: <CatalogPage /> },
     { path: "/:id", element: <CatalogItemPage /> },
     { path: "/favorites", element: <FavorietsPage /> },
     { path: "/create", element: <CreateItemPage /> },
+    { path: "/cart", element: <CartPage /> },
     { path: "/my-catalog", element: <MyCatalogPage /> },
     { path: "/my-catalog/:my-item", element: <UpdateItemPage /> },
   ];
 
   return (
-    <Content>
+    <Content style={{ paddingTop: "64px" }}>
       <AnimatePresence mode="wait">
         <Routes location={location} key={location.pathname}>
           {routes.map((route) => (

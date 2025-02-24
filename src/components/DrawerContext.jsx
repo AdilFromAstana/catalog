@@ -20,7 +20,20 @@ export const DrawerProvider = ({ children }) => {
   return (
     <DrawerContext.Provider value={{ openDrawer, closeDrawer }}>
       {children}
-      <Drawer placement="right" onClose={closeDrawer} open={isVisible}>
+      <Drawer
+        placement="right"
+        onClose={closeDrawer}
+        open={isVisible}
+        styles={{
+          header: { backgroundColor: "#091235", color: "#FEFBEA", fontSize: "24px" },
+          body: {
+            color: "#FEFBEA",
+            fontSize: "24px",
+            background: "#091235"
+          },
+        }}
+        rootClassName="inline-filters-header"
+      >
         {content}
       </Drawer>
     </DrawerContext.Provider>

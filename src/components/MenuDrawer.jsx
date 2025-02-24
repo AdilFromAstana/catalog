@@ -13,48 +13,18 @@ import {
 import { Link, useLocation } from "react-router-dom";
 
 const menuItems = [
-  { key: "/", icon: <HomeOutlined />, label: "Главное", path: "/" },
+  { key: "/", icon: <HomeOutlined style={{ fontSize: "24px" }} />, label: "Главное", path: "/" },
   {
     key: "/favorites",
-    icon: <HeartOutlined />,
+    icon: <HeartOutlined style={{ fontSize: "24px" }} />,
     label: "Избранное",
     path: "/favorites",
   },
   {
-    key: "/my-catalog",
-    icon: <ShopOutlined />,
-    label: "Мои товары",
-    path: "/my-catalog",
-  },
-  {
-    key: "/profile",
-    icon: <UserOutlined />,
-    label: "Профиль",
-    path: "/profile",
-  },
-  {
     key: "/cart",
-    icon: <ShoppingCartOutlined />,
+    icon: <ShoppingCartOutlined style={{ fontSize: "24px" }} />,
     label: "Корзина",
     path: "/cart",
-  },
-  {
-    key: "/settings",
-    icon: <SettingOutlined />,
-    label: "Настройки",
-    path: "/settings",
-  },
-  {
-    key: "/about",
-    icon: <InfoCircleOutlined />,
-    label: "О компании",
-    path: "/about",
-  },
-  {
-    key: "/contacts",
-    icon: <PhoneOutlined />,
-    label: "Контакты",
-    path: "/contacts",
   },
 ];
 
@@ -64,7 +34,9 @@ const MenuDrawer = ({ isDrawerVisible, setIsDrawerVisible }) => {
   return (
     <Drawer
       styles={{
+        header: { backgroundColor: "#091235", color: "#FEFBEA", fontSize: "24px" },
         body: {
+          color: "#FEFBEA",
           padding: 0,
           background: "#091235"
         },
@@ -73,19 +45,20 @@ const MenuDrawer = ({ isDrawerVisible, setIsDrawerVisible }) => {
       title="Меню"
       onClose={() => setIsDrawerVisible(false)}
       open={isDrawerVisible}
+      rootClassName="inline-filters-header"
     >
       <Menu
         mode="inline"
-        style={{ height: "100%" }}
+        style={{ height: "100%", background: "#091235" }}
         selectedKeys={[location.pathname]}
       >
         {menuItems.map((item) => (
           <Menu.Item
             key={item.key}
-            icon={item.icon}
             style={{
-              backgroundColor: location.pathname === item.path && "black",
-              color: location.pathname === item.path && "white",
+              color: "#FEFBEA",
+              backgroundColor: location.pathname === item.path ? "#FEFBEA" : "#091235",
+              color: location.pathname === item.path ? "#091235" : "#FEFBEA",
             }}
           >
             <Link
@@ -95,7 +68,13 @@ const MenuDrawer = ({ isDrawerVisible, setIsDrawerVisible }) => {
                   setIsDrawerVisible(false);
                 }
               }}
+              style={{
+                display: "flex",
+                fontSize: "16px",
+                gap: 10
+              }}
             >
+              {item.icon}
               {item.label}
             </Link>
           </Menu.Item>

@@ -1,5 +1,5 @@
 * {
-  font-family: "EB Garamond", serif;
+  font-family: "Roboto", serif;
 }
 
 body {
@@ -11,6 +11,17 @@ body {
   margin: 0;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.ant-btn-variant-outlined:not(:disabled):not(.ant-btn-disabled):hover,
+.ant-btn-variant-dashed:not(:disabled):not(.ant-btn-disabled):hover {
+  border-color: #ffffff;
+}
+
+.ant-btn:hover, 
+.ant-btn-primary:hover, 
+.ant-btn-color-primary:hover {
+  background-color: #091235;
 }
 
 .ant-tree .ant-tree-node-content-wrapper.ant-tree-node-selected {
