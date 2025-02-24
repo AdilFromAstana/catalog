@@ -23,6 +23,9 @@ const CatalogItemPage = () => {
   const [sameCategoryItems, setSameCategoryItems] = useState([]);
   const [isSameCategoryItemsLoading, setIsSameCategoryItemsLoading] =
     useState(true);
+
+  const cartItem = cart?.find((cartItem) => cartItem?.id === catalogItem?.id);
+
   const ViewedItemsKey = "viewedItems";
 
   const handleImageClick = (index) => {
@@ -54,39 +57,44 @@ const CatalogItemPage = () => {
     setIsWatchedItemsLoading(false);
   };
 
-  const cartItem = cart?.find((cartItem) => cartItem?.id === catalogItem?.id);
-
   useEffect(() => {
     const fetchData = async () => {
       setIsItemLoading(true);
       setIsWatchedItemsLoading(true);
       setIsSameCategoryItemsLoading(true);
+
       const item = initialFlowers.find((flower) => flower.id === id);
       setCatalogItem(item);
-      window.scrollTo({
-        top: 0,
-      });
+
+      window.scrollTo({ top: 0 });
       setIsItemLoading(false);
       getWatchedItems();
 
-      const itemBouquet = Array.isArray(item.bouquetComposition)
-        ? item.bouquetComposition
-        : [item.bouquetComposition];
+      if (!item) return;
 
-      const filteredItems = initialFlowers.filter(
-        (flower) =>
-          flower.id !== item.id && // Исключаем текущий item
-          flower.bouquetComposition.some((composition) =>
-            itemBouquet.includes(composition),
-          ),
-      );
+      const itemBouquet = item.bouquetCompositionRu; // Массив видов цветов
 
-      setSameCategoryItems(filteredItems);
+      let matchingItems = [];
 
-      setIsItemLoading(false);
+      // Итерируемся по каждому виду цветка в текущем букете
+      itemBouquet.forEach((flowerType) => {
+        // Фильтруем товары, где присутствует этот вид цветка
+        const itemsWithFlower = initialFlowers.filter(
+          (flower) =>
+            flower.id !== item.id &&
+            flower.bouquetCompositionRu.includes(flowerType),
+        );
+
+        matchingItems.push({
+          title: flowerType,
+          children: itemsWithFlower,
+        });
+      });
+
+      setSameCategoryItems(matchingItems); // Массив [{ title: "Роза", children: [...] }, { title: "Лилия", children: [...] }]
       setIsSameCategoryItemsLoading(false);
-      setIsWatchedItemsLoading(false);
     };
+
     fetchData();
   }, [id]);
 
@@ -191,7 +199,6 @@ const CatalogItemPage = () => {
                       {cartItem?.quantity}
                     </div>
                     <Button
-                      onClick={removeFromCart}
                       style={{
                         color: "#FEFBEA",
                         border: "2px solid #FEFBEA",
@@ -260,11 +267,6 @@ const CatalogItemPage = () => {
               </Button>
             </div>
 
-            {/* <div className="description">
-              <h3>Описание</h3>
-              <p>{catalogItem?.description}</p>
-            </div> */}
-
             <div className="specifications">
               <h3>Характеристики</h3>
               <ul>
@@ -296,15 +298,18 @@ const CatalogItemPage = () => {
               id={id}
             />
           )}
-          {sameCategoryItems.length > 0 && (
-            <RelatedCarousel
-              title={catalogItem?.categoryRu}
-              products={sameCategoryItems}
-              isLoading={isSameCategoryItemsLoading}
-              setIsItemLoading={setIsItemLoading}
-              id={id}
-            />
-          )}
+          {sameCategoryItems.length > 0 &&
+            sameCategoryItems.map((item) => {
+              return (
+                <RelatedCarousel
+                  title={item?.title}
+                  products={item.children}
+                  isLoading={isSameCategoryItemsLoading}
+                  setIsItemLoading={setIsItemLoading}
+                  id={id}
+                />
+              );
+            })}
         </div>
       </div>
     </Spin>

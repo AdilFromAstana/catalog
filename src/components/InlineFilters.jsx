@@ -1,63 +1,83 @@
-import React, { memo, useRef, useState } from "react";
-import { Button, Checkbox, Drawer, List } from "antd";
+import React, { memo, useRef, useState, useCallback } from "react";
+import { Button, Checkbox, Drawer, List, Slider } from "antd";
 import { useDispatch, useSelector } from "react-redux";
-import { updateFilter, resetFilters } from "../redux/filterSlice";
+import { updateFilter, setPriceRange } from "../redux/filterSlice";
 
 const InlineFilters = memo(() => {
   const dispatch = useDispatch();
   const filters = useSelector((state) => state.filters.filters);
   const filteredOptions = useSelector((state) => state.filters.filteredOptions);
+  const priceRange = filteredOptions.price?.range || { min: 0, max: 0 };
+
   const [activeFilter, setActiveFilter] = useState(null);
   const [visible, setVisible] = useState(false);
   const [tempFilters, setTempFilters] = useState({});
+  const [priceVisible, setPriceVisible] = useState(false);
+  const [tempPrice, setTempPrice] = useState([
+    filters.price?.[0] || priceRange.min,
+    filters.price?.[1] || priceRange.max,
+  ]);
+
   const listRef = useRef(null);
 
-  const showDrawer = (key) => {
-    setActiveFilter(key);
-    setVisible(true);
-    setTempFilters(filters);
-  };
+  const showDrawer = useCallback(
+    (key) => {
+      if (key === "price") {
+        setPriceVisible(true);
+      } else {
+        setActiveFilter(key);
+        setVisible(true);
+        setTempFilters(filters);
+      }
+    },
+    [filters],
+  );
 
-  const closeDrawer = () => {
+  const closeDrawer = useCallback(() => {
     setVisible(false);
     setActiveFilter(null);
-  };
+  }, []);
 
-  const onSelectItem = (paramKey, optionValue) => {
-    const currentValues = tempFilters[paramKey] || [];
-    const newValues = currentValues.includes(optionValue)
-      ? currentValues.filter((item) => item !== optionValue)
-      : [...currentValues, optionValue];
+  const closePriceDrawer = useCallback(() => {
+    setPriceVisible(false);
+  }, []);
 
+  const onSelectItem = useCallback((paramKey, optionValue) => {
     setTempFilters((prev) => ({
       ...prev,
-      [paramKey]: newValues,
+      [paramKey]: prev[paramKey]?.includes(optionValue)
+        ? prev[paramKey].filter((item) => item !== optionValue)
+        : [...(prev[paramKey] || []), optionValue],
     }));
-  };
+  }, []);
 
-  const resetFilterForActiveCategory = () => {
+  const resetFilterForActiveCategory = useCallback(() => {
     if (!activeFilter) return;
 
-    // Сбрасываем фильтр только для текущей категории
     dispatch(updateFilter({ param: activeFilter, values: [] }));
 
-    // Обновляем временные фильтры, убирая выбранные значения для активного фильтра
     setTempFilters((prev) => ({
       ...prev,
       [activeFilter]: [],
     }));
-  };
+  }, [dispatch, activeFilter]);
 
-  const applyFilterChanges = () => {
-    dispatch(updateFilter({ param: activeFilter, values: tempFilters[activeFilter] || [] }));
+  const applyFilterChanges = useCallback(() => {
+    if (activeFilter) {
+      dispatch(
+        updateFilter({
+          param: activeFilter,
+          values: tempFilters[activeFilter] || [],
+        }),
+      );
+    }
     closeDrawer();
-  };
+  }, [dispatch, activeFilter, tempFilters, closeDrawer]);
 
-  // Сброс только активного фильтра
-  const resetCurrentFilter = () => {
-    dispatch(updateFilter({ param: activeFilter, values: [] }));
-    closeDrawer();
-  };
+  const applyPriceFilter = useCallback(() => {
+    dispatch(setPriceRange({ min: tempPrice[0], max: tempPrice[1] }));
+    closePriceDrawer();
+  }, [dispatch, tempPrice, closePriceDrawer]);
 
   return (
     <div>
@@ -69,15 +89,17 @@ const InlineFilters = memo(() => {
             return hasValueB - hasValueA;
           })
           .map(([key, param]) => {
+            if (key === "price") return null; // Пропускаем price
+
             const selectedValues = filters[key] || [];
-            const selectedLabels = param.options
+            const selectedLabels = param?.options
               ?.filter((opt) => selectedValues.includes(opt.value))
               .map((opt) => opt.name);
 
             let buttonText = param.name;
-            if (selectedLabels.length === 1) {
+            if (selectedLabels?.length === 1) {
               buttonText = selectedLabels[0];
-            } else if (selectedLabels.length > 1) {
+            } else if (selectedLabels?.length > 1) {
               buttonText = `${selectedLabels[0]}, +${selectedLabels.length - 1}`;
             }
 
@@ -87,7 +109,9 @@ const InlineFilters = memo(() => {
                 onClick={() => showDrawer(key)}
                 style={{
                   borderRadius: "20px",
-                  backgroundColor: selectedValues.length ? "#091235" : "#FEFBEA",
+                  backgroundColor: selectedValues.length
+                    ? "#091235"
+                    : "#FEFBEA",
                   color: selectedValues.length ? "#FEFBEA" : "#091235",
                   borderColor: selectedValues.length ? "#FEFBEA" : "#091235",
                 }}
@@ -96,7 +120,31 @@ const InlineFilters = memo(() => {
               </Button>
             );
           })}
+
+        {/* Отдельная кнопка для цены, показывающая выбранный диапазон */}
+        <Button
+          onClick={() => showDrawer("price")}
+          style={{
+            borderRadius: "20px",
+            backgroundColor:
+              tempPrice[0] !== priceRange.min || tempPrice[1] !== priceRange.max
+                ? "#091235"
+                : "#FEFBEA",
+            color:
+              tempPrice[0] !== priceRange.min || tempPrice[1] !== priceRange.max
+                ? "#FEFBEA"
+                : "#091235",
+            borderColor:
+              tempPrice[0] !== priceRange.min || tempPrice[1] !== priceRange.max
+                ? "#FEFBEA"
+                : "#091235",
+          }}
+        >
+          Цена: {tempPrice[0]}₸ - {tempPrice[1]}₸
+        </Button>
       </div>
+
+      {/* Drawer для обычных фильтров */}
       <Drawer
         title={filteredOptions[activeFilter]?.name}
         placement="bottom"
@@ -104,13 +152,26 @@ const InlineFilters = memo(() => {
         open={visible}
         height="90svh"
         styles={{
-          header: { backgroundColor: "#091235", color: "#FEFBEA", fontSize: "24px" },
-          body: { backgroundColor: "#091235", display: "flex", flexDirection: "column", height: "100%", paddingTop: 12 },
+          header: {
+            backgroundColor: "#091235",
+            color: "#FEFBEA",
+            fontSize: "24px",
+          },
+          body: {
+            backgroundColor: "#091235",
+            display: "flex",
+            flexDirection: "column",
+            height: "100%",
+            paddingTop: 12,
+          },
         }}
         rootClassName="inline-filters-header"
       >
         {activeFilter && (
-          <div ref={listRef} style={{ flex: 1, overflowY: "auto", marginTop: 10 }}>
+          <div
+            ref={listRef}
+            style={{ flex: 1, overflowY: "auto", marginTop: 10 }}
+          >
             <List
               dataSource={filteredOptions[activeFilter]?.options || []}
               renderItem={(option) => (
@@ -127,6 +188,7 @@ const InlineFilters = memo(() => {
             />
           </div>
         )}
+
         <div
           style={{
             display: "flex",
@@ -154,6 +216,52 @@ const InlineFilters = memo(() => {
             Применить
           </Button>
         </div>
+      </Drawer>
+
+      {/* Drawer для фильтрации по цене */}
+      <Drawer
+        title="Цена"
+        placement="bottom"
+        onClose={closePriceDrawer}
+        open={priceVisible}
+        height="40svh"
+        styles={{
+          header: {
+            backgroundColor: "#091235",
+            color: "#FEFBEA",
+            fontSize: "24px",
+          },
+          body: {
+            backgroundColor: "#091235",
+            padding: "20px",
+          },
+        }}
+      >
+        <Slider
+          range
+          min={priceRange.min}
+          max={priceRange.max}
+          value={tempPrice}
+          onChange={(values) => setTempPrice(values)}
+        />
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            color: "#FEFBEA",
+          }}
+        >
+          <span>{tempPrice[0]}₸</span>
+          <span>{tempPrice[1]}₸</span>
+        </div>
+        <Button
+          size="large"
+          onClick={applyPriceFilter}
+          type="primary"
+          style={{ width: "100%", marginTop: "20px" }}
+        >
+          Применить
+        </Button>
       </Drawer>
     </div>
   );

@@ -751,7 +751,6 @@ export const initialFlowers = [
     ],
   },
 ];
-
 export const initialFilters = {
   bouquetComposition: {
     name: "Состав букета",
@@ -802,5 +801,22 @@ export const initialFilters = {
       { name: "Экзотические", value: "Экзотические", count: 14 },
       { name: "Бенто-торт", value: "Бенто-торт", count: 1 },
     ],
+  },
+  price: {
+    name: "Цена",
+    range: {
+      min: Math.min(
+        ...initialFlowers.flatMap((flower) => [
+          flower.price,
+          flower.originalPrice,
+        ]),
+      ),
+      max: Math.max(
+        ...initialFlowers.flatMap((flower) => [
+          flower.price,
+          flower.originalPrice,
+        ]),
+      ),
+    },
   },
 };

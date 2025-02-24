@@ -31,7 +31,7 @@ const pageVariants = {
 };
 
 const MobileOnlyPage = () => (
-  <div style={{ textAlign: "center", padding: "50px" }}>
+  <div style={{ textAlign: "center", padding: "50px", color: "#FEFBEA" }}>
     <h1>Этот сайт доступен только с мобильных устройств</h1>
     <p>Попробуйте открыть его на телефоне или уменьшите размер окна.</p>
   </div>

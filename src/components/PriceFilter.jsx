@@ -1,9 +1,18 @@
 import { useState, useEffect, memo } from "react";
 import { Input, Button, Slider } from "antd";
 import useFilters from "../hooks/useFilters";
+import { useSelector } from "react-redux"; // Импорт useSelector для получения minPrice и maxPrice из Redux
+import { setPriceRange } from "../store/filterSlice"; // Импорт action для обновления диапазона цен
+import { useDispatch } from "react-redux"; // Импорт useDispatch для отправки действий в Redux
 
-const PriceFilter = memo(({ minPrice, maxPrice, applyFilters }) => {
-  const { filters, updateFilter } = useFilters();
+const PriceFilter = memo(() => {
+  const dispatch = useDispatch();
+  const { filters, updateFilter, applyFilters } = useFilters();
+
+  // Получаем минимальную и максимальную цену из Redux-хранилища
+  const minPrice = useSelector((state) => state.filters.priceRange.min);
+  const maxPrice = useSelector((state) => state.filters.priceRange.max);
+
   const [priceRange, setPriceRange] = useState([minPrice, maxPrice]);
 
   useEffect(() => {
@@ -23,12 +32,14 @@ const PriceFilter = memo(({ minPrice, maxPrice, applyFilters }) => {
   };
 
   const applyFilterChanges = () => {
+    dispatch(setPriceRange({ min: priceRange[0], max: priceRange[1] }));
     updateFilter("price", priceRange);
     applyFilters(filters);
   };
 
   const resetPrices = () => {
     setPriceRange([minPrice, maxPrice]);
+    dispatch(setPriceRange({ min: minPrice, max: maxPrice }));
     updateFilter("price", null);
     applyFilters(filters);
   };
@@ -44,12 +55,20 @@ const PriceFilter = memo(({ minPrice, maxPrice, applyFilters }) => {
           value={priceRange}
           onChange={handleSliderChange}
         />
-        <div style={{ display: "flex", gap: "10px", justifyContent: "space-between" }}>
+        <div
+          style={{
+            display: "flex",
+            gap: "10px",
+            justifyContent: "space-between",
+          }}
+        >
           <Input
             size="large"
             value={priceRange[0]}
             onChange={(e) => handleInputChange(0, e.target.value)}
-            onBlur={() => setPriceRange([Math.max(minPrice, priceRange[0]), priceRange[1]])}
+            onBlur={() =>
+              setPriceRange([Math.max(minPrice, priceRange[0]), priceRange[1]])
+            }
             type="number"
             prefix="от"
           />
@@ -57,16 +76,29 @@ const PriceFilter = memo(({ minPrice, maxPrice, applyFilters }) => {
             size="large"
             value={priceRange[1]}
             onChange={(e) => handleInputChange(1, e.target.value)}
-            onBlur={() => setPriceRange([priceRange[0], Math.min(maxPrice, priceRange[1])])}
+            onBlur={() =>
+              setPriceRange([priceRange[0], Math.min(maxPrice, priceRange[1])])
+            }
             type="number"
             prefix="до"
           />
         </div>
-        <div style={{ display: "flex", gap: "10px", justifyContent: "space-between" }}>
+        <div
+          style={{
+            display: "flex",
+            gap: "10px",
+            justifyContent: "space-between",
+          }}
+        >
           <Button size="large" style={{ width: "100%" }} onClick={resetPrices}>
             Сбросить
           </Button>
-          <Button size="large" type="primary" style={{ width: "100%" }} onClick={applyFilterChanges}>
+          <Button
+            size="large"
+            type="primary"
+            style={{ width: "100%" }}
+            onClick={applyFilterChanges}
+          >
             Применить
           </Button>
         </div>
