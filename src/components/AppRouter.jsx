@@ -8,6 +8,7 @@ import UpdateItemPage from "../pages/UpdateItem/UpdateItemPage";
 import { Content } from "antd/es/layout/layout";
 import { AnimatePresence, motion } from "framer-motion";
 import CartPage from "../pages/Cart/CartPage";
+import { useEffect, useState } from "react";
 
 const pageVariants = {
   initial: { opacity: 0, y: 40 },
@@ -29,8 +30,26 @@ const pageVariants = {
   },
 };
 
+const MobileOnlyPage = () => (
+  <div style={{ textAlign: "center", padding: "50px" }}>
+    <h1>Этот сайт доступен только с мобильных устройств</h1>
+    <p>Попробуйте открыть его на телефоне или уменьшите размер окна.</p>
+  </div>
+);
+
 const AppRouter = () => {
   const location = useLocation();
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  if (!isMobile) {
+    return <MobileOnlyPage />;
+  }
 
   const routes = [
     { path: "/", element: <CatalogPage /> },
