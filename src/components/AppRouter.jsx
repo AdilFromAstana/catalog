@@ -1,4 +1,4 @@
-import { Route, Routes, useLocation } from "react-router-dom";
+import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import CatalogPage from "../pages/Catalog/CatalogPage";
 import CatalogItemPage from "../pages/CatalogItem/CatalogItemPage";
 import FavorietsPage from "../pages/Favoriets/FavorietsPage";
@@ -58,9 +58,16 @@ const AppRouter = () => {
     { path: "/favorites", element: <FavorietsPage /> },
     { path: "/create", element: <CreateItemPage /> },
     { path: "/cart", element: <CartPage /> },
-    { path: "/categories", element: <Categories /> },
     { path: "/my-catalog", element: <MyCatalogPage /> },
     { path: "/my-catalog/:my-item", element: <UpdateItemPage /> },
+    {
+      path: "/admin/categories",
+      element: <Categories />,
+    },
+    {
+      path: "/admin/*",
+      element: <Navigate to="/admin/categories" replace />,
+    },
   ];
 
   return (

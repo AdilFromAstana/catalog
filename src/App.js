@@ -1,27 +1,35 @@
-import { BrowserRouter } from "react-router-dom";
+import { BrowserRouter, useLocation } from "react-router-dom";
 import "./App.css";
 import { Layout } from "antd";
 import Header from "./components/Header";
 import AppRouter from "./components/AppRouter";
-import "./App.css";
 import { useState } from "react";
 import MenuDrawer from "./components/MenuDrawer";
 
 const App = () => {
   const [isDrawerVisible, setIsDrawerVisible] = useState(false);
+  const location = useLocation();
+
+  // Проверяем, содержит ли путь "/admin"
+  const isAdminRoute = location.pathname.startsWith("/admin");
 
   return (
-    <BrowserRouter>
-      <Layout className="layout">
-        <Header setIsDrawerVisible={setIsDrawerVisible} />
-        <AppRouter />
-        <MenuDrawer
-          isDrawerVisible={isDrawerVisible}
-          setIsDrawerVisible={setIsDrawerVisible}
-        />
-      </Layout>
-    </BrowserRouter>
+    <Layout className={isAdminRoute ? "" : "layout"}>
+      <Header setIsDrawerVisible={setIsDrawerVisible} />
+      <AppRouter />
+      <MenuDrawer
+        isDrawerVisible={isDrawerVisible}
+        setIsDrawerVisible={setIsDrawerVisible}
+      />
+    </Layout>
   );
 };
 
-export default App;
+// Обернем `App` в `BrowserRouter` в `index.js`
+const AppWrapper = () => (
+  <BrowserRouter>
+    <App />
+  </BrowserRouter>
+);
+
+export default AppWrapper;

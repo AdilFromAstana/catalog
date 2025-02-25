@@ -11,38 +11,45 @@ const api = axios.create({
   },
 });
 
-// ✅ 1. Хук для добавления данных (POST)
+export const useUpdateCategoryAttributes = (categoryId) => {
+  return useMutation({
+    mutationFn: async (attributes) => {
+      const { data } = await api.patch(`/categories/update/${categoryId}/attributes`, {
+        attributes,
+      });
+      return data;
+    },
+    onSuccess: (data, variables, context) => {
+      console.log("Атрибуты обновлены!", data);
+    },
+    onError: (error) => {
+      console.error("Ошибка при обновлении атрибутов:", error);
+    },
+  });
+};
 export const useAddData = (collectionName) => {
   return useMutation(async (data) => {
     const response = await api.post(`/${collectionName}`, data);
     return response.data;
   });
 };
-
-// ✅ 2. Хук для обновления данных (PUT)
 export const useUpdateData = (collectionName) => {
   return useMutation(async ({ id, data }) => {
     const response = await api.put(`/${collectionName}/${id}`, data);
     return response.data;
   });
 };
-
-// ✅ 3. Хук для удаления данных (DELETE)
 export const useDeleteData = (collectionName) => {
   return useMutation(async (id) => {
     await api.delete(`/${collectionName}/${id}`);
   });
 };
-
-// ✅ 4. Хук для получения всех данных (GET)
 export const useGetData = (collectionName, params = {}) => {
   return useQuery([collectionName, params], async () => {
     const response = await api.get(`/${collectionName}`, { params });
     return response.data;
   });
 };
-
-// ✅ 5. Хук для получения данных с пагинацией (GET + пагинация)
 export const useGetPaginatedData = ({
   collectionName,
   pageSize = 10,
@@ -59,8 +66,6 @@ export const useGetPaginatedData = ({
     getNextPageParam: (lastPage) => lastPage.nextPage || null,
   });
 };
-
-// ✅ 6. Хук для получения данных по ID (GET /:id)
 export const useGetDataById = (collectionName, id) => {
   return useQuery(
     [collectionName, id],
@@ -89,8 +94,6 @@ export const useGetDataByCategory = (
     keepPreviousData: true, // Сохраняет предыдущие данные до получения новых
   });
 };
-
-// ✅ 8. Хук для загрузки файлов (UPLOAD)
 export const useUploadFile = () => {
   return useMutation(async (file) => {
     const formData = new FormData();
@@ -103,7 +106,6 @@ export const useUploadFile = () => {
     return response.data;
   });
 };
-
 export const useGetDataByIds = ({ collectionName, ids = [] }) => {
   return useQuery(
     [collectionName, "byIds", ids],
