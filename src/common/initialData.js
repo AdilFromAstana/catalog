@@ -820,3 +820,4 @@ export const initialFilters = {
     },
   },
 };
+

@@ -9,6 +9,7 @@ import { Content } from "antd/es/layout/layout";
 import { AnimatePresence, motion } from "framer-motion";
 import CartPage from "../pages/Cart/CartPage";
 import { useEffect, useState } from "react";
+import Categories from "../pages/Categories/Categories";
 
 const pageVariants = {
   initial: { opacity: 0, y: 40 },
@@ -47,9 +48,9 @@ const AppRouter = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  if (!isMobile) {
-    return <MobileOnlyPage />;
-  }
+  // if (!isMobile) {
+  //   return <MobileOnlyPage />;
+  // }
 
   const routes = [
     { path: "/", element: <CatalogPage /> },
@@ -57,6 +58,7 @@ const AppRouter = () => {
     { path: "/favorites", element: <FavorietsPage /> },
     { path: "/create", element: <CreateItemPage /> },
     { path: "/cart", element: <CartPage /> },
+    { path: "/categories", element: <Categories /> },
     { path: "/my-catalog", element: <MyCatalogPage /> },
     { path: "/my-catalog/:my-item", element: <UpdateItemPage /> },
   ];

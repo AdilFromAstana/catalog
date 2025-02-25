@@ -21,5 +21,5 @@ root.render(
         <App />
       </Provider>
     </ConfigProvider>
-  </QueryClientProvider>
+  </QueryClientProvider>,
 );

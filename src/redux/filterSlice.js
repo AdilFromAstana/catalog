@@ -1,17 +1,19 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { initialFlowers, initialFilters } from "../common/initialData";
 
+const initialProducts = initialFlowers;
+
 // Определяем минимальную и максимальную цену из всех товаров
-const allPrices = initialFlowers.flatMap((flower) => [
-  flower.price,
-  flower.originalPrice,
+const allPrices = initialProducts.flatMap((product) => [
+  product.price,
+  product.originalPrice,
 ]);
 const minPrice = Math.min(...allPrices);
 const maxPrice = Math.max(...allPrices);
 
 const initialState = {
   filters: {}, // Активные фильтры
-  filteredFlowers: initialFlowers, // Отфильтрованные товары
+  filteredProducts: initialProducts, // Отфильтрованные товары
   filteredOptions: initialFilters, // Доступные параметры
   initialFiltersState: initialFilters, // Запоминаем первый выбранный фильтр
   firstSelectedFilter: null, // Первый выбранный фильтр
@@ -33,13 +35,13 @@ const filterSlice = createSlice({
 
       state.filters[param] = values.length ? values : [];
 
-      let filtered = initialFlowers.filter((flower) =>
+      let filtered = initialProducts.filter((product) =>
         Object.entries(state.filters).every(([param, values]) =>
           values.length
             ? values.some((v) =>
-                Array.isArray(flower[param])
-                  ? flower[param].includes(v)
-                  : flower[param] === v,
+                Array.isArray(product[param])
+                  ? product[param].includes(v)
+                  : product[param] === v,
               )
             : true,
         ),
@@ -49,7 +51,7 @@ const filterSlice = createSlice({
       if (state.filters.price) {
         const [min, max] = state.filters.price;
         filtered = filtered.filter(
-          (flower) => flower.price >= min && flower.price <= max,
+          (product) => product.price >= min && product.price <= max,
         );
       }
 
@@ -60,7 +62,7 @@ const filterSlice = createSlice({
         filtered = filtered.sort((a, b) => b.price - a.price);
       }
 
-      state.filteredFlowers = filtered;
+      state.filteredProducts = filtered;
 
       // Обновляем фильтры, но НЕ трогаем первый выбранный фильтр
       state.filteredOptions = Object.keys(initialFilters).reduce((acc, key) => {
@@ -75,7 +77,7 @@ const filterSlice = createSlice({
           acc[key].options = filterConfig.options
             .map((option) => ({
               ...option,
-              count: state.filteredFlowers.filter((p) =>
+              count: state.filteredProducts.filter((p) =>
                 Array.isArray(p[key])
                   ? p[key].includes(option.value)
                   : p[key] === option.value,
@@ -98,17 +100,17 @@ const filterSlice = createSlice({
       const { min, max } = action.payload;
       state.filters.price = [min, max];
 
-      state.filteredFlowers = initialFlowers.filter(
-        (flower) => flower.price >= min && flower.price <= max,
+      state.filteredProducts = initialProducts.filter(
+        (product) => product.price >= min && product.price <= max,
       );
 
       // Применяем текущую сортировку
       if (state.sortOrder === "asc") {
-        state.filteredFlowers = state.filteredFlowers.sort(
+        state.filteredProducts = state.filteredProducts.sort(
           (a, b) => a.price - b.price,
         );
       } else if (state.sortOrder === "desc") {
-        state.filteredFlowers = state.filteredFlowers.sort(
+        state.filteredProducts = state.filteredProducts.sort(
           (a, b) => b.price - a.price,
         );
       }
@@ -119,11 +121,11 @@ const filterSlice = createSlice({
       state.sortOrder = action.payload;
 
       if (state.sortOrder === "asc") {
-        state.filteredFlowers = [...state.filteredFlowers].sort(
+        state.filteredProducts = [...state.filteredProducts].sort(
           (a, b) => a.price - b.price,
         );
       } else if (state.sortOrder === "desc") {
-        state.filteredFlowers = [...state.filteredFlowers].sort(
+        state.filteredProducts = [...state.filteredProducts].sort(
           (a, b) => b.price - a.price,
         );
       }
@@ -131,7 +133,7 @@ const filterSlice = createSlice({
 
     resetFilters: (state) => {
       state.filters = {};
-      state.filteredFlowers = initialFlowers;
+      state.filteredProducts = initialProducts;
       state.filteredOptions = initialFilters;
       state.firstSelectedFilter = null;
       state.initialFiltersState = initialFilters;

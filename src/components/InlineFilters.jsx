@@ -82,6 +82,27 @@ const InlineFilters = memo(() => {
   return (
     <div>
       <div className="scrollable-row">
+        {/* Отдельная кнопка для цены, показывающая выбранный диапазон */}
+        <Button
+          onClick={() => showDrawer("price")}
+          style={{
+            borderRadius: "20px",
+            backgroundColor:
+              tempPrice[0] !== priceRange.min || tempPrice[1] !== priceRange.max
+                ? "#091235"
+                : "#FEFBEA",
+            color:
+              tempPrice[0] !== priceRange.min || tempPrice[1] !== priceRange.max
+                ? "#FEFBEA"
+                : "#091235",
+            borderColor:
+              tempPrice[0] !== priceRange.min || tempPrice[1] !== priceRange.max
+                ? "#FEFBEA"
+                : "#091235",
+          }}
+        >
+          Цена: {tempPrice[0]}₸ - {tempPrice[1]}₸
+        </Button>
         {Object.entries(filteredOptions)
           .sort(([keyA], [keyB]) => {
             const hasValueA = (filters[keyA] || []).length > 0;
@@ -120,28 +141,6 @@ const InlineFilters = memo(() => {
               </Button>
             );
           })}
-
-        {/* Отдельная кнопка для цены, показывающая выбранный диапазон */}
-        <Button
-          onClick={() => showDrawer("price")}
-          style={{
-            borderRadius: "20px",
-            backgroundColor:
-              tempPrice[0] !== priceRange.min || tempPrice[1] !== priceRange.max
-                ? "#091235"
-                : "#FEFBEA",
-            color:
-              tempPrice[0] !== priceRange.min || tempPrice[1] !== priceRange.max
-                ? "#FEFBEA"
-                : "#091235",
-            borderColor:
-              tempPrice[0] !== priceRange.min || tempPrice[1] !== priceRange.max
-                ? "#FEFBEA"
-                : "#091235",
-          }}
-        >
-          Цена: {tempPrice[0]}₸ - {tempPrice[1]}₸
-        </Button>
       </div>
 
       {/* Drawer для обычных фильтров */}

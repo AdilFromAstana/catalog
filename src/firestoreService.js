@@ -68,13 +68,13 @@ export const useGetDataById = (collectionName, id) => {
       const response = await api.get(`/${collectionName}/${id}`);
       return response.data;
     },
-    { enabled: !!id }
+    { enabled: !!id },
   );
 };
 export const useGetDataByCategory = (
   collectionName,
   level = 1,
-  parentId = null
+  parentId = null,
 ) => {
   return useQuery({
     queryKey: [collectionName, level, parentId],
@@ -84,12 +84,11 @@ export const useGetDataByCategory = (
       });
       return response.data;
     },
-    staleTime: 60000, // Данные считаются актуальными 60 секунд (1 минута)
-    cacheTime: 300000, // Данные остаются в кэше 5 минут
-    enabled: level > 0, // Запрос не выполняется при невалидных значениях
+    staleTime: 5 * 60 * 1000, // Данные считаются актуальными в течение 5 минут
+    cacheTime: 10 * 60 * 1000, // Данные остаются в кэше 10 минут после последнего использования
+    keepPreviousData: true, // Сохраняет предыдущие данные до получения новых
   });
 };
-
 
 // ✅ 8. Хук для загрузки файлов (UPLOAD)
 export const useUploadFile = () => {
@@ -112,6 +111,6 @@ export const useGetDataByIds = ({ collectionName, ids = [] }) => {
       const response = await api.post(`/${collectionName}/by-ids`, { ids });
       return response.data;
     },
-    { enabled: Array.isArray(ids) && ids.length > 0 }
+    { enabled: Array.isArray(ids) && ids.length > 0 },
   );
 };
