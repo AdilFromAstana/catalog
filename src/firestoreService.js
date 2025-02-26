@@ -14,9 +14,12 @@ const api = axios.create({
 export const useUpdateCategoryAttributes = (categoryId) => {
   return useMutation({
     mutationFn: async (attributes) => {
-      const { data } = await api.patch(`/categories/update/${categoryId}/attributes`, {
-        attributes,
-      });
+      const { data } = await api.patch(
+        `/categories/update/${categoryId}/attributes`,
+        {
+          attributes,
+        },
+      );
       return data;
     },
     onSuccess: (data, variables, context) => {
@@ -76,16 +79,17 @@ export const useGetDataById = (collectionName, id) => {
     { enabled: !!id },
   );
 };
-export const useGetDataByCategory = (
-  collectionName,
+export const useGetDataByCategory = ({
+  endPoint,
   level = 1,
   parentId = null,
-) => {
+  titleRu = "",
+}) => {
   return useQuery({
-    queryKey: [collectionName, level, parentId],
+    queryKey: [endPoint, level, parentId, titleRu],
     queryFn: async () => {
-      const response = await api.get(`/${collectionName}`, {
-        params: { level, parentId },
+      const response = await api.get(`/${endPoint}`, {
+        params: { level, parentId, titleRu },
       });
       return response.data;
     },
