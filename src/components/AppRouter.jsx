@@ -71,7 +71,7 @@ const AppRouter = () => {
   ];
 
   return (
-    <Content style={{ paddingTop: "64px" }}>
+    <Content style={{ paddingTop: "64px", width: "70vw", margin: "auto" }}>
       <AnimatePresence mode="wait">
         <Routes location={location} key={location.pathname}>
           {routes.map((route) => (

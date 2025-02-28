@@ -1,7 +1,12 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import { Button, Form, Input, List, message, Modal, Spin } from "antd";
 import { useEffect, useState } from "react";
-import { useAddData, useGetDataById, useUploadFile } from "../../firestoreService";
+import {
+  useAddData,
+  useGetDataByCategory,
+  useGetDataById,
+  useUploadFile,
+} from "../../firestoreService";
 import {
   DownCircleOutlined,
   CheckCircleOutlined,
@@ -42,6 +47,7 @@ function getNestedItems(categories, keys) {
 const CreateItemPage = () => {
   const [uploadedImages, setUploadedImages] = useState([]);
   const [previewVisible, setPreviewVisible] = useState(false);
+  const [currentCategories, setCurrentCategories] = useState([]);
   const [isProductCreated, setIsProductCreated] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
@@ -52,6 +58,29 @@ const CreateItemPage = () => {
 
   const [selectedKeys, setSelectedKeys] = useState([]);
   const selectedPath = getSelectedPath(categories, selectedKeys);
+
+  const [isModalCategoryOpen, setIsCategoryModalOpen] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState("");
+
+  const [loading, setLoading] = useState(false);
+  const [path, setPath] = useState([]);
+
+  const fetchCategories = async (level = 1, parentId = null) => {
+    setLoading(true);
+    const { data } = useGetDataByCategory({
+      endPoint: "categories/getCategoriesByLevelAndParent",
+      level,
+      parentId,
+    });
+    setCurrentCategories(data);
+    setLoading(false);
+  };
+
+  const showModal = () => {
+    setIsCategoryModalOpen(true);
+    fetchCategories();
+    setPath([]);
+  };
 
   const currentItems = selectedKeys.length
     ? getNestedItems(categories, selectedKeys)
@@ -77,8 +106,8 @@ const CreateItemPage = () => {
         language === "kz"
           ? item.titleKz
           : language === "en"
-          ? item.titleEn
-          : item.titleRu;
+            ? item.titleEn
+            : item.titleRu;
 
       const children = item.children ? transformData(item.children) : null;
 
@@ -117,7 +146,7 @@ const CreateItemPage = () => {
   const handleSubmit = async () => {
     const categoryId = form.getFieldValue("categoryId");
     const categoryRu = selectedPath.find(
-      (path) => path.key === categoryId
+      (path) => path.key === categoryId,
     )?.title;
     const data = {
       title: form.getFieldValue("title"),
@@ -138,7 +167,7 @@ const CreateItemPage = () => {
             ? await useUploadFile(image.file)
             : image.previewURL;
           return { url, priority: index };
-        })
+        }),
       );
 
       data.images = uploadedImageURLs;
@@ -206,35 +235,17 @@ const CreateItemPage = () => {
             <Input placeholder="Введите название" size="large" />
           </Form.Item>
 
+          {/* <Form.Item label="Категория" name="categoryId">
+            <Input placeholder="Категория" size="large" />
+          </Form.Item> */}
+
           <Form.Item label="Категория" name="categoryId">
-            <List
-              bordered
-              dataSource={[...selectedPath, ...currentItems]}
-              className="category-list"
-              renderItem={(item, index) => {
-                const isSelected = index < selectedPath.length;
-                const isThislastItem =
-                  currentItems.length === 0 &&
-                  selectedPath.length - 1 === index;
-                return (
-                  <List.Item
-                    onClick={() => {
-                      if (isSelected) {
-                        handleBackToLevel(index);
-                      } else {
-                        handleClick(item.key);
-                      }
-                    }}
-                    className={`category-list-item ${
-                      isSelected ? "selected" : ""
-                    } ${isThislastItem ? "last-item" : ""}`}
-                  >
-                    {item.title}
-                    {isSelected && !isThislastItem && <DownCircleOutlined />}
-                    {isSelected && isThislastItem && <CheckCircleOutlined />}
-                  </List.Item>
-                );
-              }}
+            <Input
+              placeholder="Выберите категорию"
+              size="large"
+              value={selectedCategory}
+              onClick={showModal}
+              readOnly
             />
           </Form.Item>
 

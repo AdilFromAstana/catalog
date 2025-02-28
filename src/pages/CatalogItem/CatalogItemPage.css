@@ -3,6 +3,10 @@
   color: #fefbea;
 }
 
+.ant-form-item .ant-form-item-label > label {
+  color: #fefbea;
+}
+
 .wrapper {
   display: flex;
   flex-direction: column;

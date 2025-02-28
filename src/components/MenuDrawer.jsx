@@ -26,6 +26,12 @@ const menuItems = [
     label: "Корзина",
     path: "/cart",
   },
+  {
+    key: "/my-products",
+    icon: <ShoppingCartOutlined style={{ fontSize: "24px" }} />,
+    label: "Корзина",
+    path: "/my-products",
+  },
 ];
 
 const MenuDrawer = ({ isDrawerVisible, setIsDrawerVisible }) => {

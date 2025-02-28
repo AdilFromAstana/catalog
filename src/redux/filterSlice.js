@@ -3,7 +3,6 @@ import { initialFlowers, initialFilters } from "../common/initialData";
 
 const initialProducts = initialFlowers;
 
-// Определяем минимальную и максимальную цену из всех товаров
 const allPrices = initialProducts.flatMap((product) => [
   product.price,
   product.originalPrice,
