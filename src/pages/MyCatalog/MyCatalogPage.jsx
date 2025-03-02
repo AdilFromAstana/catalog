@@ -24,7 +24,7 @@ const statusTitleObj = {
   activeBtn: "Активировать",
 };
 
-const fetchCatalog = async () => {
+const fetchItems = async () => {
   const { data } = await api.get("/items/getAll?businessId=1");
   return data;
 };
@@ -60,8 +60,8 @@ const MyCatalog = () => {
     error,
     isLoading,
   } = useQuery({
-    queryKey: ["catalog", "cool-store"],
-    queryFn: fetchCatalog,
+    queryKey: ["items", {}],
+    queryFn: fetchItems,
     staleTime: 5 * 60 * 1000, // 5 minutes
     cacheTime: 10 * 60 * 1000, // 10 minutes
   });

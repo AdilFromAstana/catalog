@@ -56,25 +56,6 @@ const CreateItemPage = () => {
     setPath([]);
   };
 
-  const transformData = (items) => {
-    return items.map((item) => {
-      const title =
-        language === "kz"
-          ? item.titleKz
-          : language === "en"
-            ? item.titleEn
-            : item.titleRu;
-
-      const children = item.children ? transformData(item.children) : null;
-
-      return {
-        key: item.key,
-        title: title,
-        children: children,
-      };
-    });
-  };
-
   const handleFileChange = (event) => {
     const files = Array.from(event.target.files);
     const imageFiles = files.map((file) => ({
@@ -120,6 +101,8 @@ const CreateItemPage = () => {
 
     // Финальные данные для отправки
     const data = {
+      businessId: 1,
+      typeId: 1,
       ...values,
       categoryId,
       attributes: attributesArray, // Заменяем объект attributes на массив

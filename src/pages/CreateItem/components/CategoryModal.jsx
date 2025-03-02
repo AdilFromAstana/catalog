@@ -45,7 +45,7 @@ const CategoryModal = ({
     selectedThirdLevelCategory: null,
   });
 
-  const { data: data, isLoading } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: [
       "getCategoriesByLevelAndParent",
       {

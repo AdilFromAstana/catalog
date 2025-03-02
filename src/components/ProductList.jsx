@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/alt-text */
 import { Button, List, Result } from "antd";
 import {
   HeartOutlined,
@@ -13,9 +14,7 @@ import useCart from "../hooks/useCart";
 const ProductList = ({ favorites, toggleFavorite, handleSortChange, sort }) => {
   const width = useWindowWidth();
   const nav = useNavigate();
-  const filteredProducts = useSelector(
-    (state) => state.filters.filteredProducts,
-  );
+  const filteredProducts = useSelector((state) => state.items);
   const { addToCart, removeFromCart, cart } = useCart();
 
   const getColumnCount = () => (width < 768 ? 1 : 2);
@@ -67,6 +66,14 @@ const ProductList = ({ favorites, toggleFavorite, handleSortChange, sort }) => {
             const cartItem = cart?.find(
               (cartItem) => item?.id === cartItem?.id,
             );
+            const images =
+              item?.images?.length > 0
+                ? item?.images
+                : [
+                    {
+                      url: "https://cdn3.iconfinder.com/data/icons/basic-element-line/3873/394_-_Photo-1024.png",
+                    },
+                  ];
             return (
               <List.Item className="list-item">
                 <img
@@ -80,7 +87,7 @@ const ProductList = ({ favorites, toggleFavorite, handleSortChange, sort }) => {
                   }}
                 />
                 <img
-                  src={item?.images[0]?.url}
+                  src={images[0]?.url}
                   alt={item?.title}
                   className="product-image"
                   onClick={() => nav(`/${item.id}`)}

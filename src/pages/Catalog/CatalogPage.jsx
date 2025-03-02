@@ -1,16 +1,35 @@
 import React, { useEffect, useRef, useState } from "react";
 import ProductList from "../../components/ProductList";
 import CategoryNavigation from "../../components/CategoryNavigation";
-import Filters from "../../components/Filters";
 import DrawerFilters from "../../components/DrawerFilters";
 import useFavorites from "../../hooks/useFavorites";
 import "./CatalogPage.css";
 import { Drawer, Spin } from "antd";
 import useCategory from "../../hooks/useCategory";
 import InlineFilters from "../../components/InlineFilters";
+import { useDispatch } from "react-redux";
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
+import { setItems } from "../../redux/itemsSlice";
+import { setCategories } from "../../redux/categorySlice";
+
+const API_URL = "http://localhost:5000/api";
+
+const api = axios.create({
+  baseURL: API_URL,
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
+
+const fetchItems = async () => {
+  const { data } = await api.get("/items/getAll?businessId=1");
+  return data;
+};
 
 const CatalogPage = () => {
-  const [categoryFiltersContainerPadding, setCategoryFiltersContainerPadding] = useState(0)
+  const [categoryFiltersContainerPadding, setCategoryFiltersContainerPadding] =
+    useState(0);
   const [isSortDrawerVisible, setSortDrawerVisible] = useState(false);
   const [isPriceDrawerVisible, setPriceDrawerVisible] = useState(false);
   const [sort, setSort] = useState({
@@ -21,41 +40,40 @@ const CatalogPage = () => {
   const [selectedColors, setSelectedColors] = useState([]);
   const [minPrice, setMinPrice] = useState(0);
   const [maxPrice, setMaxPrice] = useState(0);
-  const [isLoading, setIsLoading] = useState(false);
   const [tempMinValue, setTempMinValue] = useState(null);
   const [tempMaxValue, setTempMaxValue] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [productsTotalSize, setProductsTotalSize] = useState(1);
-  const [lastVisible, setLastVisible] = useState(null);
   const itemsPerPage = 12;
   const ref = useRef(null);
 
-  function collectKeysWithoutChildren() {
-    const result = [];
-    function traverse(node) {
-      if (!node.children) {
-        result.push(node.key);
-      } else {
-        node.children.forEach((child) => traverse(child));
-      }
-    }
-    const lastElement = selectedCategories[selectedCategories.length - 1];
-    if (lastElement) {
-      traverse(lastElement);
-    }
-    return result;
-  }
-
+  const dispatch = useDispatch();
   const {
-    availableCategories,
-    selectedCategoryKeys,
-    selectCategory,
-    categoryTitle,
-    selectedCategories,
-    isCategoryLoading,
-    backToAlreadySelectedCategory,
-    returnToPreviousCategory,
-  } = useCategory();
+    data: items = [],
+    isLoading: isItemsLoading,
+    error: itemsError,
+  } = useQuery({
+    queryKey: ["items"],
+    queryFn: fetchItems,
+    staleTime: 5 * 60 * 1000,
+    cacheTime: 10 * 60 * 1000,
+  });
+
+  useEffect(() => {
+    if (items.length > 0) {
+      dispatch(setItems(items));
+    }
+  }, [items, dispatch]);
+
+  // const {
+  //   availableCategories,
+  //   selectedCategoryKeys,
+  //   selectCategory,
+  //   categoryTitle,
+  //   selectedCategories,
+  //   backToAlreadySelectedCategory,
+  //   returnToPreviousCategory,
+  // } = useCategory();
 
   const { favorites, toggleFavorite } = useFavorites();
 
@@ -68,7 +86,7 @@ const CatalogPage = () => {
     setSelectedColors((prev) =>
       prev.includes(color)
         ? prev.filter((selectedColor) => selectedColor !== color)
-        : [...prev, color]
+        : [...prev, color],
     );
   };
 
@@ -103,47 +121,35 @@ const CatalogPage = () => {
 
   const isFilterSelected = !tempMaxValue && !tempMinValue;
 
-  // const {
-  //   data: products,
-  //   isLoading,
-  //   lastVisible: newLastVisible,
-  //   totalSize,
-  // } = useGetPaginatedData({
-  //   collectionName: "items/getAll",
-  //   pageSize: itemsPerPage,
-  //   currentPage: currentPage,
-  //   lastVisible: lastVisible,
-  //   sort: sort,
-  //   maxPriceFilter: tempMaxValue,
-  //   minPriceFilter: tempMinValue,
-  //   categoryIdsFilter: collectKeysWithoutChildren(),
-  // });
-
   useEffect(() => {
     if (ref.current) {
-      setCategoryFiltersContainerPadding(ref.current.getBoundingClientRect().height);
+      setCategoryFiltersContainerPadding(
+        ref.current.getBoundingClientRect().height,
+      );
     }
   }, []);
 
-
   return (
     <>
-      <Spin spinning={isLoading && isCategoryLoading} wrapperClassName="main-page-container">
+      {/* <ItemsProvider /> */}
+      <Spin spinning={false} wrapperClassName="main-page-container">
         <div className="category-filters-container" ref={ref}>
           <CategoryNavigation
-            isLoading={isLoading}
-            categoryTitle={categoryTitle}
-            availableCategories={availableCategories}
-            returnToPreviousCategory={returnToPreviousCategory}
-            isFilterSelected={isFilterSelected}
-            productsTotalSize={productsTotalSize}
-            toggleSortDrawer={toggleSortDrawer}
-            togglePriceDrawer={togglePriceDrawer}
-            selectCategory={selectCategory}
+          // categoryTitle={categoryTitle}
+          // availableCategories={availableCategories}
+          // returnToPreviousCategory={returnToPreviousCategory}
+          // isFilterSelected={isFilterSelected}
+          // productsTotalSize={productsTotalSize}
+          // toggleSortDrawer={toggleSortDrawer}
+          // togglePriceDrawer={togglePriceDrawer}
+          // selectCategory={selectCategory}
           />
           <InlineFilters />
         </div>
-        <div className="catalog-container" style={{ paddingTop: `${categoryFiltersContainerPadding + 10}px` }}>
+        <div
+          className="catalog-container"
+          style={{ paddingTop: `${categoryFiltersContainerPadding + 10}px` }}
+        >
           {/* <div className="filter-component-desktop">
             <Filters
               productsTotalSize={productsTotalSize}
@@ -166,7 +172,6 @@ const CatalogPage = () => {
             />
           </div> */}
           <ProductList
-            isLoading={isLoading}
             favorites={favorites}
             toggleFavorite={toggleFavorite}
             handleSortChange={handleSortChange}
@@ -196,18 +201,22 @@ const CatalogPage = () => {
           wrapper: {
             height: "100%",
           },
-          header: { backgroundColor: "#091235", color: "#FEFBEA", fontSize: "24px" },
+          header: {
+            backgroundColor: "#091235",
+            color: "#FEFBEA",
+            fontSize: "24px",
+          },
           body: {
             color: "#FEFBEA",
             fontSize: "24px",
-            background: "#091235"
+            background: "#091235",
           },
         }}
         rootClassName="inline-filters-header"
         onClose={() => togglePriceDrawer(false)}
         open={isPriceDrawerVisible}
       >
-        <Filters
+        {/* <Filters
           productsTotalSize={productsTotalSize}
           minPrice={minPrice}
           maxPrice={maxPrice}
@@ -225,7 +234,7 @@ const CatalogPage = () => {
           backToAlreadySelectedCategory={backToAlreadySelectedCategory}
           selectedCategories={selectedCategories}
           categoryTitle={categoryTitle}
-        />
+        /> */}
       </Drawer>
     </>
   );

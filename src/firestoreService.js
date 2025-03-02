@@ -88,7 +88,7 @@ export const useGetDataByCategory = ({
   return useQuery({
     queryKey: [endPoint, level, parentId, titleRu],
     queryFn: async () => {
-      const response = await api.get(`/${endPoint}`, {
+      const response = await api.get(`/${endPoint}?businessId=1`, {
         params: { level, parentId, titleRu },
       });
       return response.data;

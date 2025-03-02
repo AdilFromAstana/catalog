@@ -1,15 +1,11 @@
 import { Drawer, Radio } from "antd";
 import { memo } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { setSortOrder } from "../redux/filterSlice";
 
 const DrawerFilters = memo(({ isSortDrawerVisible, toggleSortDrawer }) => {
-  const dispatch = useDispatch();
-  const sortOrder = useSelector((state) => state.filters.sortOrder);
 
   const handleSortChange = (value) => {
     const [by, order] = value.split("_"); // Разделяем строку "price_asc" на ["price", "asc"]
-    dispatch(setSortOrder({ by, order })); // Обновляем Redux
     toggleSortDrawer(false);
   };
 
@@ -36,7 +32,6 @@ const DrawerFilters = memo(({ isSortDrawerVisible, toggleSortDrawer }) => {
       <Radio.Group
         className="radio-group"
         onChange={(e) => handleSortChange(e.target.value)} // Вызывает сортировку
-        value={`${sortOrder.by}_${sortOrder.order}`} // Формируем строку "price_asc"
       >
         {[
           {
