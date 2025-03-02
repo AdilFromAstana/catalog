@@ -27,10 +27,10 @@ const menuItems = [
     path: "/cart",
   },
   {
-    key: "/my-products",
+    key: "/my-catalog",
     icon: <ShoppingCartOutlined style={{ fontSize: "24px" }} />,
-    label: "Корзина",
-    path: "/my-products",
+    label: "Мои товары",
+    path: "/my-catalog",
   },
 ];
 

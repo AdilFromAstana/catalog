@@ -46,7 +46,7 @@ const CategoryModal = ({
         code: "",
         titleRu: "",
         titleKz: "",
-        dataType: "string",
+        dataType: "",
       },
     ];
     setAttributes(newAttributes);
@@ -57,7 +57,7 @@ const CategoryModal = ({
 
   const saveChanges = () => {
     console.log("Сохраненные атрибуты:", attributes);
-    mutate(attributes); // Отправляем данные на сервер
+    mutate(attributes);
   };
 
   return (
@@ -88,7 +88,7 @@ const CategoryModal = ({
             code: attr.code,
             attributeRu: attr.titleRu,
             attributeKz: attr.titleKz,
-            dataType: attr.dataType || "string",
+            dataType: attr.dataType,
             index,
           }))}
           columns={[
