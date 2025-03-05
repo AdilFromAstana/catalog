@@ -10,13 +10,20 @@ import { useSelector } from "react-redux";
 import useWindowWidth from "../hooks/useWindowWidth";
 import { formatNumber } from "../common/common";
 import useCart from "../hooks/useCart";
+import { useDispatch } from "react-redux";
+import { useEffect } from "react";
+import { fetchItemsByCategory } from "../redux/itemsSlice";
 
 const ProductList = ({ favorites, toggleFavorite, handleSortChange, sort }) => {
   const width = useWindowWidth();
   const nav = useNavigate();
-  const filteredProducts = useSelector((state) => state.items);
+  const dispatch = useDispatch();
   const { addToCart, removeFromCart, cart } = useCart();
 
+  // Получаем товары из Redux
+  const { items = [], isLoading, error } = useSelector((state) => state.items);
+
+  // Определяем количество колонок для отображения
   const getColumnCount = () => (width < 768 ? 1 : 2);
 
   return (
@@ -58,10 +65,10 @@ const ProductList = ({ favorites, toggleFavorite, handleSortChange, sort }) => {
         ))}
       </div>
 
-      {filteredProducts.length > 0 ? (
+      {items.length > 0 ? (
         <List
           grid={{ gutter: 16, column: getColumnCount() }}
-          dataSource={filteredProducts}
+          dataSource={items}
           renderItem={(item) => {
             const cartItem = cart?.find(
               (cartItem) => item?.id === cartItem?.id,

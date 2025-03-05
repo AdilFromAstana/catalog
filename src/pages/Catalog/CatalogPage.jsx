@@ -59,11 +59,11 @@ const CatalogPage = () => {
     cacheTime: 10 * 60 * 1000,
   });
 
-  useEffect(() => {
-    if (items.length > 0) {
-      dispatch(setItems(items));
-    }
-  }, [items, dispatch]);
+  // useEffect(() => {
+  //   if (items.length > 0) {
+  //     dispatch(setItems(items));
+  //   }
+  // }, [items, dispatch]);
 
   // const {
   //   availableCategories,

@@ -1,5 +1,7 @@
 import { useQuery, useMutation, useInfiniteQuery } from "@tanstack/react-query";
 import axios from "axios";
+import { useDispatch } from "react-redux";
+import { setItems } from "./redux/itemsSlice";
 
 // ✅ Настройка базового URL API
 const API_URL = "http://localhost:5000/api";
@@ -119,4 +121,55 @@ export const useGetDataByIds = ({ collectionName, ids = [] }) => {
     },
     { enabled: Array.isArray(ids) && ids.length > 0 },
   );
+};
+//////////////////////////////
+const fetchCategoryHierarchiesByBusiness = async (businessId) => {
+  if (!businessId) {
+    throw new Error("businessId является обязательным параметром");
+  }
+
+  const { data } = await api.get(
+    `categories/getCategoryHierarchiesByBusiness`,
+    {
+      params: { businessId },
+    },
+  );
+
+  return data;
+};
+
+export const useGetCategoryHierarchiesByBusiness = (
+  businessId,
+  options = {},
+) => {
+  return useQuery({
+    queryKey: ["getCategoryHierarchiesByBusiness", businessId], // Ключ для кэширования
+    queryFn: () => fetchCategoryHierarchiesByBusiness(businessId),
+    enabled: !!businessId, // Запрос выполняется только если передан businessId
+    ...options, // Дополнительные настройки (например, refetchInterval)
+    staleTime: 60000,
+  });
+};
+
+// Функция запроса данных
+const fetchItems = async ({ queryKey }) => {
+  const [, categoryId, businessId] = queryKey;
+  if (!businessId) throw new Error("businessId обязателен");
+
+  const response = await api.get("items/getItemsByCategory", {
+    params: {
+      categoryId: categoryId || null,
+      businessId,
+    },
+  });
+
+  return response.data;
+};
+
+// Кастомный хук для получения данных
+export const useFetchItemsByCategory = async ({ categoryId, businessId }) => {
+  const { data } = await fetchItems({
+    queryKey: ["items", categoryId, businessId],
+  });
+  return data;
 };
