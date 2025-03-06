@@ -21,7 +21,9 @@ const ProductList = ({ favorites, toggleFavorite, handleSortChange, sort }) => {
   const { addToCart, removeFromCart, cart } = useCart();
 
   // Получаем товары из Redux
-  const { items = [], isLoading, error } = useSelector((state) => state.items);
+  const { items, isLoading, error } = useSelector((state) => state.items);
+
+  console.log("items: ", items);
 
   // Определяем количество колонок для отображения
   const getColumnCount = () => (width < 768 ? 1 : 2);
@@ -65,7 +67,7 @@ const ProductList = ({ favorites, toggleFavorite, handleSortChange, sort }) => {
         ))}
       </div>
 
-      {items.length > 0 ? (
+      {items?.length > 0 && (
         <List
           grid={{ gutter: 16, column: getColumnCount() }}
           dataSource={items}
@@ -199,7 +201,9 @@ const ProductList = ({ favorites, toggleFavorite, handleSortChange, sort }) => {
             );
           }}
         />
-      ) : (
+      )}
+
+      {items?.length === 0 && (
         <Result
           status="404"
           title="Товары не найдены"

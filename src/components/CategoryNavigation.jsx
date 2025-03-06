@@ -1,5 +1,5 @@
 import React, { memo, useEffect } from "react";
-import { Badge, Button, Breadcrumb, Spin } from "antd";
+import { Badge, Button, Breadcrumb } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import {
   ControlOutlined,
@@ -7,28 +7,50 @@ import {
   OrderedListOutlined,
 } from "@ant-design/icons";
 import {
-  useGetCategoryHierarchiesByBusiness,
   useFetchItemsByCategory,
+  useGetAttributeCounts,
+  useGetCategoryHierarchiesByBusiness,
 } from "../firestoreService";
 import {
   setCategories,
   selectCategory,
   goBackCategory,
 } from "../redux/categorySlice";
-import { setItems } from "../redux/itemsSlice";
+import { resetItems, setItems, resetAllFilters } from "../redux/itemsSlice";
+import { setAttributes } from "../redux/attributesSlice";
 
 const CategoryNavigation = memo(() => {
   const dispatch = useDispatch();
   const { categories, selectedCategory, categoryPath } = useSelector(
     (state) => state.categories,
   );
+
   const { data } = useGetCategoryHierarchiesByBusiness(1);
 
-  // Используем React Query для запроса товаровя
-  const { items } = useFetchItemsByCategory({
-    categoryId: selectedCategory,
+  console.log("selectedCategory: ", selectedCategory);
+
+  const { data: items, isLoading: isItemsLoading } = useFetchItemsByCategory({
+    categoryId: selectedCategory?.id || null,
     businessId: 1,
   });
+
+  const { data: attributes } = useGetAttributeCounts({
+    categoryId: selectedCategory?.id || null,
+    businessId: 1,
+    enabled: selectedCategory?.hasChild === false,
+  });
+
+  useEffect(() => {
+    dispatch(setAttributes(attributes));
+  }, [attributes]);
+
+  useEffect(() => {
+    if (!items) {
+      console.error("❌ filteredItems не получены, не отправляем в Redux.");
+      return;
+    }
+    dispatch(setItems(items));
+  }, [items]);
 
   useEffect(() => {
     if (data) {
@@ -37,31 +59,55 @@ const CategoryNavigation = memo(() => {
   }, [data, dispatch]);
 
   const handleCategoryClick = (category) => {
-    if (!category || selectedCategory?.id === category.id) return;
-    dispatch(selectCategory(category)); // Меняем категорию
+    dispatch(selectCategory(category));
+    dispatch(resetItems()); // Сбрасываем предыдущие товары
   };
 
   const handleBack = () => {
     dispatch(goBackCategory());
+    dispatch(resetAllFilters());
   };
 
-  useEffect(() => {
-    dispatch(setItems(items));
-  }, []);
+  const handleBreadcrumbClick = (index) => {
+    const newPath = categoryPath.slice(0, index + 1);
+    dispatch(
+      setCategories(
+        newPath.length > 0 ? newPath[newPath.length - 1].children : data,
+      ),
+    );
+  };
+
+  const currentCategories = selectedCategory
+    ? selectedCategory.children || []
+    : categories;
+
+  const breadcrumbItems = [
+    {
+      title: "Главная",
+      onClick: () => handleBreadcrumbClick(-1),
+    },
+    ...categoryPath.map((category, index) => ({
+      title: category.titleRu,
+      onClick: () => handleBreadcrumbClick(index),
+    })),
+  ];
 
   return (
     <div className="category-navigation">
-      <Breadcrumb style={{ marginBottom: "16px" }}>
-        <Breadcrumb.Item>Главная</Breadcrumb.Item>
-        {categoryPath.map((category, index) => (
-          <Breadcrumb.Item key={category.id}>
-            {category.titleRu}
-          </Breadcrumb.Item>
-        ))}
-      </Breadcrumb>
+      {/* <Breadcrumb
+        style={{ marginBottom: "16px", color: "white" }}
+        items={breadcrumbItems}
+      /> */}
 
       <div className="nav-wrapper">
-        <div className="nav-item" onClick={handleBack}>
+        <div
+          className="nav-item"
+          onClick={handleBack}
+          style={{
+            cursor: categoryPath.length > 0 ? "pointer" : "default",
+            opacity: categoryPath.length > 0 ? 1 : 0.5,
+          }}
+        >
           <LeftOutlined className="icon" />
         </div>
         <div className="category-info">
@@ -79,9 +125,9 @@ const CategoryNavigation = memo(() => {
         </div>
       </div>
 
-      <div className="scrollable-row">
-        {categories.length > 0 ? (
-          categories.map((category) => (
+      {currentCategories.length > 0 && (
+        <div className="scrollable-row">
+          {currentCategories.map((category) => (
             <Button
               key={category.id}
               type="primary"
@@ -89,11 +135,9 @@ const CategoryNavigation = memo(() => {
             >
               {category.titleRu}
             </Button>
-          ))
-        ) : (
-          <p>Нет подкатегорий</p>
-        )}
-      </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 });

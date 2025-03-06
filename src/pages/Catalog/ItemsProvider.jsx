@@ -19,23 +19,6 @@ const fetchItems = async () => {
 };
 
 const ItemsProvider = () => {
-  const dispatch = useDispatch();
-  const {
-    data: items = [],
-    isLoading,
-    error,
-  } = useQuery({
-    queryKey: ["items"],
-    queryFn: fetchItems,
-    staleTime: 5 * 60 * 1000,
-    cacheTime: 10 * 60 * 1000,
-  });
-
-  useEffect(() => {
-    if (items.length > 0) {
-      dispatch(setItems(items));
-    }
-  }, [items, dispatch]);
 
   return null; // Этот компонент просто загружает данные и передаёт их в Redux
 };

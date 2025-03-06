@@ -6,6 +6,7 @@ const itemSlice = createSlice({
     items: [],
     isLoading: false,
     error: null,
+    tempFilters: {}, // 👈 Добавили tempFilters в хранилище
   },
   reducers: {
     setItems: (state, action) => {
@@ -18,8 +19,22 @@ const itemSlice = createSlice({
       state.isLoading = false;
       state.error = null;
     },
+    setFilter: (state, action) => {
+      const { key, value } = action.payload;
+      state.tempFilters[key] = state.tempFilters[key]?.includes(value)
+        ? state.tempFilters[key].filter((item) => item !== value)
+        : [...(state.tempFilters[key] || []), value];
+    },
+    resetFilter: (state, action) => {
+      const { key } = action.payload;
+      state.tempFilters[key] = [];
+    },
+    resetAllFilters: (state) => {
+      state.tempFilters = {};
+    },
   },
 });
 
-export const { setItems, resetItems } = itemSlice.actions;
+export const { setItems, resetItems, setFilter, resetFilter, resetAllFilters } =
+  itemSlice.actions;
 export default itemSlice.reducer;

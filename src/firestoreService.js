@@ -167,9 +167,60 @@ const fetchItems = async ({ queryKey }) => {
 };
 
 // Кастомный хук для получения данных
-export const useFetchItemsByCategory = async ({ categoryId, businessId }) => {
-  const { data } = await fetchItems({
+export const useFetchItemsByCategory = ({ categoryId, businessId }) => {
+  return useQuery({
     queryKey: ["items", categoryId, businessId],
+    queryFn: fetchItems,
+    staleTime: 5 * 60 * 1000, // 5 минут кэширования
   });
-  return data;
+};
+
+const fetchAttributeCounts = async ({ queryKey }) => {
+  const [, categoryId, businessId] = queryKey;
+  if (!businessId) throw new Error("businessId обязателен");
+
+  const response = await api.get("items/getAttributeCounts", {
+    params: {
+      categoryId: categoryId || null,
+      businessId,
+    },
+  });
+
+  return response.data;
+};
+
+export const useGetAttributeCounts = ({ categoryId, businessId, enabled }) => {
+  return useQuery({
+    queryKey: ["getAttributeCounts", categoryId, businessId],
+    queryFn: fetchAttributeCounts,
+    staleTime: 5 * 60 * 1000, // 5 минут кэширования
+    enabled, // Контролируем выполнение запроса
+  });
+};
+
+const fetchFilteredItems = async ({ queryKey }) => {
+  const [, businessId, categoryId, filters] = queryKey;
+  if (!businessId) throw new Error("businessId обязателен");
+
+  const response = await api.get("items/filterItems", {
+    params: { businessId, categoryId, filters: JSON.stringify(filters) },
+  });
+
+  return response.data;
+};
+
+export const useFilterItems = ({
+  businessId,
+  categoryId,
+  filters,
+  categoryHasChild,
+}) => {
+  const hasFilters = filters && Object.keys(filters).length > 0;
+
+  return useQuery({
+    queryKey: ["filterItems", businessId, categoryId, filters],
+    queryFn: fetchFilteredItems,
+    enabled: categoryHasChild === false && hasFilters,
+    staleTime: 5 * 60 * 1000,
+  });
 };

@@ -72,7 +72,11 @@ const AppRouter = () => {
 
   return (
     <Content
-      style={{ paddingTop: "64px", width: !isMobile && "70vw", margin: "auto" }}
+      style={{
+        paddingTop: "64px",
+        width: !isMobile ? "70vw" : "100%",
+        margin: "auto",
+      }}
     >
       <AnimatePresence mode="wait">
         <Routes location={location} key={location.pathname}>

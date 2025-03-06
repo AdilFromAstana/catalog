@@ -5,13 +5,10 @@ import DrawerFilters from "../../components/DrawerFilters";
 import useFavorites from "../../hooks/useFavorites";
 import "./CatalogPage.css";
 import { Drawer, Spin } from "antd";
-import useCategory from "../../hooks/useCategory";
-import InlineFilters from "../../components/InlineFilters";
 import { useDispatch } from "react-redux";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import { setItems } from "../../redux/itemsSlice";
-import { setCategories } from "../../redux/categorySlice";
+import InlineFilters from "../../components/Attributes/InlineFilters";
 
 const API_URL = "http://localhost:5000/api";
 
@@ -46,18 +43,6 @@ const CatalogPage = () => {
   const [productsTotalSize, setProductsTotalSize] = useState(1);
   const itemsPerPage = 12;
   const ref = useRef(null);
-
-  const dispatch = useDispatch();
-  const {
-    data: items = [],
-    isLoading: isItemsLoading,
-    error: itemsError,
-  } = useQuery({
-    queryKey: ["items"],
-    queryFn: fetchItems,
-    staleTime: 5 * 60 * 1000,
-    cacheTime: 10 * 60 * 1000,
-  });
 
   // useEffect(() => {
   //   if (items.length > 0) {
@@ -131,7 +116,6 @@ const CatalogPage = () => {
 
   return (
     <>
-      {/* <ItemsProvider /> */}
       <Spin spinning={false} wrapperClassName="main-page-container">
         <div className="category-filters-container" ref={ref}>
           <CategoryNavigation
