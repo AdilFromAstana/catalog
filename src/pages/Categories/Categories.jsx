@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import CategoryTable from "./components/CategoryTable";
-import BreadcrumbNavigation from "./components/BreadcrumbNavigation";
 import CategoryModal from "./components/CategoryModal";
+import BreadcrumbNavigation from "../../components/BreadcrumbNavigation";
 
 const Categories = () => {
   const [category, setCategory] = useState({

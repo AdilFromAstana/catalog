@@ -8,9 +8,10 @@ import { Drawer, Spin } from "antd";
 import { useDispatch } from "react-redux";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import InlineFilters from "../../components/Attributes/InlineFilters";
+import InlineFilters from "../../components/InlineAttributes/InlineFilters";
+import Filters from "../../components/DesktopAttributes/Filter";
 
-const API_URL = "http://localhost:5000/api";
+const API_URL = "http://192.168.0.18:5000/api";
 
 const api = axios.create({
   baseURL: API_URL,
@@ -104,38 +105,44 @@ const CatalogPage = () => {
     setPriceDrawerVisible(false);
   };
 
-  const isFilterSelected = !tempMaxValue && !tempMinValue;
-
   useEffect(() => {
-    if (ref.current) {
+    if (!ref.current) return;
+
+    const updateHeight = () => {
       setCategoryFiltersContainerPadding(
         ref.current.getBoundingClientRect().height,
       );
-    }
+    };
+
+    // Создаём ResizeObserver для отслеживания изменений размеров
+    const resizeObserver = new ResizeObserver(() => {
+      updateHeight();
+    });
+
+    resizeObserver.observe(ref.current);
+
+    // Устанавливаем начальную высоту
+    updateHeight();
+
+    return () => {
+      resizeObserver.disconnect();
+    };
   }, []);
 
   return (
     <>
       <Spin spinning={false} wrapperClassName="main-page-container">
         <div className="category-filters-container" ref={ref}>
-          <CategoryNavigation
-          // categoryTitle={categoryTitle}
-          // availableCategories={availableCategories}
-          // returnToPreviousCategory={returnToPreviousCategory}
-          // isFilterSelected={isFilterSelected}
-          // productsTotalSize={productsTotalSize}
-          // toggleSortDrawer={toggleSortDrawer}
-          // togglePriceDrawer={togglePriceDrawer}
-          // selectCategory={selectCategory}
-          />
+          <CategoryNavigation />
           <InlineFilters />
         </div>
         <div
           className="catalog-container"
           style={{ paddingTop: `${categoryFiltersContainerPadding + 10}px` }}
         >
-          {/* <div className="filter-component-desktop">
-            <Filters
+          <div className="filter-component-desktop">
+            <Filters />
+            {/* <Filters
               productsTotalSize={productsTotalSize}
               minPrice={minPrice}
               maxPrice={maxPrice}
@@ -153,8 +160,8 @@ const CatalogPage = () => {
               backToAlreadySelectedCategory={backToAlreadySelectedCategory}
               selectedCategories={selectedCategories}
               categoryTitle={categoryTitle}
-            />
-          </div> */}
+            /> */}
+          </div>
           <ProductList
             favorites={favorites}
             toggleFavorite={toggleFavorite}

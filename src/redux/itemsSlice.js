@@ -14,6 +14,9 @@ const itemSlice = createSlice({
       state.isLoading = false;
       state.error = null;
     },
+    setItemsLoading: (state, action) => {
+      state.isLoading = action.payload;
+    },
     resetItems: (state) => {
       state.items = [];
       state.isLoading = false;
@@ -35,6 +38,12 @@ const itemSlice = createSlice({
   },
 });
 
-export const { setItems, resetItems, setFilter, resetFilter, resetAllFilters } =
-  itemSlice.actions;
+export const {
+  setItems,
+  resetItems,
+  setFilter,
+  resetFilter,
+  resetAllFilters,
+  setItemsLoading,
+} = itemSlice.actions;
 export default itemSlice.reducer;

@@ -2,29 +2,43 @@
 import { useEffect, useState } from "react";
 import "./CatalogItemPage.css";
 import { useParams, useNavigate } from "react-router-dom";
-import { Button, Spin } from "antd";
+import { Button, Flex, Spin } from "antd";
 import RelatedCarousel from "../../components/RelatedCarousel/RelatedCarousel";
 import { formatNumber } from "../../common/common";
 import { initialFlowers } from "../../common/initialData";
 import { HeartOutlined, HeartFilled } from "@ant-design/icons";
 import useFavorites from "../../hooks/useFavorites";
 import useCart from "../../hooks/useCart";
+import {
+  getSource,
+  logProductView,
+  useFetchItemById,
+  useFetchItemsByCategory,
+} from "../../firestoreService";
 
 const CatalogItemPage = () => {
   const { id } = useParams();
   const nav = useNavigate();
   const { toggleFavorite, favorites } = useFavorites();
   const { addToCart, cart, removeFromCart } = useCart();
-  const [catalogItem, setCatalogItem] = useState(null);
   const [isItemLoading, setIsItemLoading] = useState(true);
   const [currentImage, setCurrentImage] = useState(0);
   const [watchedItems, setWatchedItems] = useState([]);
-  const [isWatchedItemsLoading, setIsWatchedItemsLoading] = useState(true);
-  const [sameCategoryItems, setSameCategoryItems] = useState([]);
-  const [isSameCategoryItemsLoading, setIsSameCategoryItemsLoading] =
-    useState(true);
+  const [isWatchedItemsLoading, setIsWatchedItemsLoading] = useState([]);
 
-  const cartItem = cart?.find((cartItem) => cartItem?.id === catalogItem?.id);
+  const { data } = useFetchItemById({ itemId: id });
+
+  const {
+    data: sameCategoryItems = [],
+    isLoading: isSameCategoryItemsLoading,
+  } = useFetchItemsByCategory({
+    categoryId: data?.categoryId,
+    businessId: 1,
+    limit: 10,
+    enabledOn: data?.categoryId !== undefined && data?.categoryId !== null,
+  });
+
+  const cartItem = cart?.find((cartItem) => cartItem?.id === data?.id);
 
   const ViewedItemsKey = "viewedItems";
 
@@ -61,63 +75,51 @@ const CatalogItemPage = () => {
     const fetchData = async () => {
       setIsItemLoading(true);
       setIsWatchedItemsLoading(true);
-      setIsSameCategoryItemsLoading(true);
-
-      const item = initialFlowers.find((flower) => flower.id === id);
-      setCatalogItem(item);
 
       window.scrollTo({ top: 0 });
       setIsItemLoading(false);
       getWatchedItems();
-
-      if (!item) return;
-
-      const itemBouquet = item.bouquetCompositionRu; // Массив видов цветов
-
-      let matchingItems = [];
-
-      // Итерируемся по каждому виду цветка в текущем букете
-      itemBouquet.forEach((flowerType) => {
-        // Фильтруем товары, где присутствует этот вид цветка
-        const itemsWithFlower = initialFlowers.filter(
-          (flower) =>
-            flower.id !== item.id &&
-            flower.bouquetCompositionRu.includes(flowerType),
-        );
-
-        matchingItems.push({
-          title: flowerType,
-          children: itemsWithFlower,
-        });
-      });
-
-      setSameCategoryItems(matchingItems); // Массив [{ title: "Роза", children: [...] }, { title: "Лилия", children: [...] }]
-      setIsSameCategoryItemsLoading(false);
     };
 
     fetchData();
+
+    const source = getSource();
+    const viewStart = Date.now();
+
+    const handleBeforeUnload = () => {
+      const duration = Math.floor((Date.now() - viewStart) / 1000);
+      if (duration > 3) {
+        logProductView({ productId: id, source, duration });
+      }
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
   }, [id]);
 
-  const message = `Здравствуйте!\nПодскажите, есть ли в наличии "${catalogItem?.title}"?\nhttps://catalog-beta.vercel.app/${catalogItem?.id}`;
+  const message = `Здравствуйте!\nПодскажите, есть ли в наличии "${data?.title}"?\nhttps://catalog-beta.vercel.app/${data?.id}`;
   const whatsappUrl = `https://wa.me/77761156416?text=${encodeURIComponent(message)}`;
 
   return (
-    <Spin size="large" spinning={!catalogItem}>
+    <Spin size="large" spinning={!data}>
       <div style={{ margin: "0 20px" }}>
         <div className="wrapper">
           <div className="item-gallery">
             <div className="main-image-container">
               <img
                 className="main-image"
-                src={catalogItem?.images[currentImage]?.url || ""}
+                src={data?.images[currentImage]?.imageUrl || ""}
                 alt="product"
               />
             </div>
             <div className="thumbnail-container">
-              {catalogItem?.images?.map((image, index) => (
+              {data?.images?.map((image, index) => (
                 <img
-                  key={image?.url}
-                  src={image?.url}
+                  key={image?.imageUrl}
+                  src={image?.imageUrl}
                   alt={`Thumbnail ${index}`}
                   className={`thumbnail ${
                     currentImage === index ? "active-thumbnail" : ""
@@ -128,20 +130,20 @@ const CatalogItemPage = () => {
             </div>
           </div>
           <div className="content-wrapper">
-            <h2 className="item-title">{catalogItem?.title}</h2>
+            <h2 className="item-title">{data?.title}</h2>
             <div className="mobile-item-gallery">
               <div className="mobile-image-container">
                 <img
                   className="mobile-image"
-                  src={catalogItem?.images[currentImage].url}
+                  src={data?.images[currentImage].imageUrl}
                   alt="product"
                 />
               </div>
               <div className="thumbnail-container">
-                {catalogItem?.images.map((image, index) => (
+                {data?.images.map((image, index) => (
                   <img
-                    key={image.url}
-                    src={image.url}
+                    key={image.imageUrl}
+                    src={image.imageUrl}
                     alt={`Thumbnail ${index}`}
                     className={`thumbnail ${
                       currentImage === index ? "active-thumbnail" : ""
@@ -153,7 +155,8 @@ const CatalogItemPage = () => {
             </div>
 
             <div className="item-price">
-              {formatNumber(catalogItem?.price ?? 0)}₸
+              {formatNumber(data?.price ?? 0)}{" "}
+              <span style={{ fontSize: 24 }}>₸.</span>
             </div>
 
             <div
@@ -185,7 +188,7 @@ const CatalogItemPage = () => {
                         opacity: cartItem.quantity === 5 ? 0.5 : 1,
                       }}
                       disabled={cartItem.quantity === 5}
-                      onClick={() => addToCart(catalogItem.id)}
+                      onClick={() => addToCart(data.id)}
                     >
                       +
                     </Button>
@@ -206,7 +209,7 @@ const CatalogItemPage = () => {
                         height: "40px",
                         fontSize: 36,
                       }}
-                      onClick={() => removeFromCart(catalogItem.id)}
+                      onClick={() => removeFromCart(data.id)}
                     >
                       -
                     </Button>
@@ -232,7 +235,7 @@ const CatalogItemPage = () => {
                       border: "2px solid #FEFBEA",
                       background: "#091235",
                     }}
-                    onClick={() => addToCart(catalogItem.id)}
+                    onClick={() => addToCart(data.id)}
                   >
                     Добавить в корзину
                   </Button>
@@ -245,9 +248,9 @@ const CatalogItemPage = () => {
                     border: "2px solid #FEFBEA",
                     background: "#091235",
                   }}
-                  onClick={() => toggleFavorite(catalogItem?.id)}
+                  onClick={() => toggleFavorite(data?.id)}
                 >
-                  {favorites.includes(catalogItem?.id) ? (
+                  {favorites.includes(data?.id) ? (
                     <HeartFilled style={{ color: "red", fontSize: "24px" }} />
                   ) : (
                     <HeartOutlined
@@ -269,14 +272,18 @@ const CatalogItemPage = () => {
 
             <div className="specifications">
               <h3>Характеристики</h3>
-              <ul>
-                <li>Кол-во цветов: {catalogItem?.flowerCount}</li>
-                <li>Высота цветов: {catalogItem?.flowerHeight}</li>
-                <li>
-                  Состав букета:{" "}
-                  {catalogItem?.bouquetCompositionRu.map((item) => item)}
-                </li>
-              </ul>
+              {data?.attributes?.map((attribute) => {
+                return (
+                  <div
+                    style={{ display: "grid", gridTemplateColumns: "60% 40%" }}
+                  >
+                    <span style={{ fontSize: "16px" }}>
+                      {attribute.titleRu}
+                    </span>
+                    <span style={{ fontSize: "16px" }}>{attribute.value}</span>
+                  </div>
+                );
+              })}
             </div>
           </div>
         </div>
@@ -298,18 +305,15 @@ const CatalogItemPage = () => {
               id={id}
             />
           )}
-          {sameCategoryItems.length > 0 &&
-            sameCategoryItems.map((item) => {
-              return (
-                <RelatedCarousel
-                  title={item?.title}
-                  products={item.children}
-                  isLoading={isSameCategoryItemsLoading}
-                  setIsItemLoading={setIsItemLoading}
-                  id={id}
-                />
-              );
-            })}
+          {sameCategoryItems?.length > 0 && (
+            <RelatedCarousel
+              title={`Другие из "${data?.categoryTitleRu}"`}
+              products={sameCategoryItems}
+              isLoading={isSameCategoryItemsLoading}
+              setIsItemLoading={setIsItemLoading}
+              id={id}
+            />
+          )}
         </div>
       </div>
     </Spin>

@@ -1,10 +1,14 @@
 /* eslint-disable react-hooks/rules-of-hooks */
-import { useEffect, useState } from "react";
-import { Modal, Spin, Splitter, Button } from "antd";
+import { CheckOutlined, RightOutlined } from "@ant-design/icons";
+import { useEffect, useMemo, useState } from "react";
+import { Modal, Spin, Button, List } from "antd";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
+import useWindowWidth from "../../../hooks/useWindowWidth";
+import DesktopCategory from "./DesktopCategory";
+import BreadcrumbNavigation from "../../../components/BreadcrumbNavigation";
 
-const API_URL = "http://localhost:5000/api";
+const API_URL = "http://192.168.0.18:5000/api";
 
 const api = axios.create({
   baseURL: API_URL,
@@ -33,24 +37,30 @@ const CategoryModal = ({
   setSelectedCategory,
   selectedCategory,
 }) => {
+  const width = useWindowWidth();
   const queryClient = useQueryClient();
   const [level, setLevel] = useState(1);
   const [parentId, setParentId] = useState(null);
   const [firstLevelCategories, setFirstLevelCategories] = useState([]);
   const [secondLevelCategories, setSecondLevelCategories] = useState([]);
   const [thirdLevelCategories, setThirdLevelCategories] = useState([]);
-  const [path, setPath] = useState({
-    selectedFirstLevelCategory: null,
-    selectedSecondLevelCategory: null,
-    selectedThirdLevelCategory: null,
-  });
+
+  const [breadcrumb, setBreadcrumb] = useState([
+    {
+      id: null,
+      titleRu: "Все категории",
+      level: 1,
+      parentId: null,
+      hasChild: true,
+    },
+  ]);
 
   const { data, isLoading } = useQuery({
     queryKey: [
       "getCategoriesByLevelAndParent",
       {
-        level,
-        parentId,
+        level: selectedCategory.level || 1,
+        parentId: selectedCategory.parentId,
       },
     ],
     queryFn: async ({ queryKey }) => {
@@ -69,18 +79,90 @@ const CategoryModal = ({
     keepPreviousData: true,
     staleTime: 5 * 60 * 1000,
     cacheTime: 10 * 60 * 1000,
-    enabled: !!level,
+    enabled: !!selectedCategory.level,
   });
 
+  const selectCategory = (newCategory) => {
+    if (!newCategory.hasChild) {
+      setSelectedCategory(newCategory);
+      setIsModalCategoryOpen(true);
+    } else {
+      const existsInBreadcrumb = breadcrumb.some(
+        (item) => item.id === newCategory.id,
+      );
+
+      if (!existsInBreadcrumb) {
+        console.log("Добавляем новую категорию в breadcrumb:", newCategory);
+
+        setSelectedCategory({
+          level: newCategory.level + 1,
+          parentId: newCategory?.id,
+          hasChild: newCategory.hasChild ?? true,
+        });
+
+        setLevel(newCategory.level + 1);
+        setParentId(newCategory?.id);
+
+        setBreadcrumb((prev) => [
+          ...prev,
+          { ...newCategory, level: newCategory.level + 1 },
+        ]);
+      }
+    }
+  };
+
+  const getIcon = (category, selectedCategory, breadcrumb) => {
+    if (selectedCategory?.id === category.id && !category.hasChild) {
+      return <CheckOutlined style={{ color: "green" }} />;
+    }
+
+    if (
+      category.hasChild ||
+      breadcrumb.some((item) => item.id === category.id)
+    ) {
+      return <RightOutlined />;
+    }
+
+    return null;
+  };
+
+  const memoizedIcon = useMemo(
+    () => (category) => getIcon(category, selectedCategory, breadcrumb),
+    [selectedCategory, breadcrumb],
+  );
+
+  const goBack = () => {
+    if (breadcrumb.length > 1) {
+      const newBreadcrumb = breadcrumb.slice(0, -1);
+      const previousCategory = newBreadcrumb[newBreadcrumb.length - 1];
+
+      setSelectedCategory({
+        level: previousCategory.level,
+        parentId: previousCategory?.id,
+        hasChild: previousCategory.hasChild ?? true,
+      });
+
+      setBreadcrumb(newBreadcrumb);
+    }
+  };
+
   useEffect(() => {
-    if (level === 1) {
+    if (selectedCategory.level === 1) {
       setFirstLevelCategories(data?.categories || []);
-    } else if (level === 2) {
+    } else if (selectedCategory.level === 2) {
       setSecondLevelCategories(data?.categories || []);
-    } else if (level === 3) {
+    } else if (selectedCategory.level === 3) {
       setThirdLevelCategories(data?.categories || []);
     }
   }, [data]);
+
+  useEffect(() => {
+    if (isModalCategoryOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+    }
+  }, [isModalCategoryOpen]);
 
   return (
     <Modal
@@ -88,164 +170,61 @@ const CategoryModal = ({
       title="Выберите категорию"
       open={isModalCategoryOpen}
       onCancel={() => setIsModalCategoryOpen(false)}
+      style={{
+        top: "5svh",
+      }}
+      styles={{
+        body: {
+          overflow: "auto",
+          height: "70svh",
+        },
+      }}
       footer={[
         <Button
           type="primary"
-          disabled={selectedCategory?.hasChild}
+          disabled={selectedCategory.hasChild}
           onClick={() => {
-            form.setFieldValue("categoryId", selectedCategory.titleRu);
+            form.setFieldValue("categoryId", selectedCategory?.titleRu);
             setIsModalCategoryOpen(false);
           }}
         >
           Выбрать
         </Button>,
       ]}
-      width="75vw"
+      width={"95vw"}
     >
       <Spin spinning={isLoading}>
-        <Splitter style={{ height: "400px" }}>
-          <Splitter.Panel
-            size={400}
-            style={{ background: "#fff" }}
-            resizable={false}
-          >
-            {isLoading ? (
-              <Spin spinning />
-            ) : (
-              firstLevelCategories?.map((cat) => (
-                <div
-                  key={cat.id}
-                  style={{
-                    padding: 10,
-                    cursor: "pointer",
-                    borderRadius: 5,
-                    backgroundColor:
-                      path.selectedFirstLevelCategory?.id === cat.id
-                        ? "#007bff"
-                        : "#f5f5f5", // Синий фон для выбранного
-                    color:
-                      path.selectedFirstLevelCategory?.id === cat.id
-                        ? "#fff"
-                        : "#000", // Белый текст для выбранного
-                    border:
-                      path.selectedFirstLevelCategory?.id === cat.id
-                        ? "2px solid #0056b3"
-                        : "1px solid #ddd", // Граница
-                    transition: "all 0.3s ease-in-out", // Плавный переход
-                  }}
-                  onClick={() => {
-                    setSelectedCategory(cat);
-                    setPath({
-                      selectedSecondLevelCategory: null,
-                      selectedThirdLevelCategory: null,
-                      selectedFirstLevelCategory: cat,
-                    });
-                    setLevel(2);
-                    setParentId(cat.id);
-                    setSecondLevelCategories([]);
-                    setThirdLevelCategories([]);
-                  }}
-                >
-                  {cat.titleRu}
-                </div>
-              ))
-            )}
-          </Splitter.Panel>
-
-          <Splitter.Panel
-            size={400}
-            style={{ background: "#fff" }}
-            resizable={false}
-          >
-            {secondLevelCategories.length > 0 &&
-              (isLoading ? (
-                <Spin />
-              ) : (
-                secondLevelCategories.map((cat) => (
-                  <div
-                    key={cat.id}
-                    style={{
-                      padding: 10,
-                      cursor: "pointer",
-                      borderRadius: 5,
-                      backgroundColor:
-                        path.selectedSecondLevelCategory?.id === cat.id
-                          ? "#007bff"
-                          : "#f5f5f5", // Синий фон для выбранного
-                      color:
-                        path.selectedSecondLevelCategory?.id === cat.id
-                          ? "#fff"
-                          : "#000", // Белый текст для выбранного
-                      border:
-                        path.selectedSecondLevelCategory?.id === cat.id
-                          ? "2px solid #0056b3"
-                          : "1px solid #ddd", // Граница
-                      transition: "all 0.3s ease-in-out", // Плавный переход
-                    }}
-                    onClick={() => {
-                      setSelectedCategory(cat);
-                      setPath((prev) => ({
-                        ...prev,
-                        selectedSecondLevelCategory: cat,
-                        selectedThirdLevelCategory: null,
-                      }));
-                      setLevel(3);
-                      setParentId(cat.id);
-                      setThirdLevelCategories([]);
-                    }}
-                  >
-                    {cat.titleRu}
-                  </div>
-                ))
-              ))}
-          </Splitter.Panel>
-
-          <Splitter.Panel
-            size={400}
-            style={{ background: "#fff" }}
-            resizable={false}
-          >
-            {thirdLevelCategories.length > 1 &&
-              (isLoading ? (
-                <Spin />
-              ) : (
-                thirdLevelCategories.map((cat) => (
-                  <div
-                    key={cat.id}
-                    style={{
-                      padding: 10,
-                      cursor: "pointer",
-                      borderRadius: 5,
-                      backgroundColor:
-                        path.selectedThirdLevelCategory?.id === cat.id
-                          ? "#007bff"
-                          : "#f5f5f5", // Синий фон для выбранного
-                      color:
-                        path.selectedThirdLevelCategory?.id === cat.id
-                          ? "#fff"
-                          : "#000", // Белый текст для выбранного
-                      border:
-                        path.selectedThirdLevelCategory?.id === cat.id
-                          ? "2px solid #0056b3"
-                          : "1px solid #ddd", // Граница
-                      transition: "all 0.3s ease-in-out", // Плавный переход
-                    }}
-                    onClick={() => {
-                      setSelectedCategory(cat);
-                      setPath((prev) => ({
-                        ...prev,
-                        selectedThirdLevelCategory: cat,
-                      }));
-                      setLevel(4);
-                      setParentId(cat.id);
-                    }}
-                  >
-                    {cat.titleRu}
-                  </div>
-                ))
-              ))}
-          </Splitter.Panel>
-        </Splitter>
+        {width >= 768 ? (
+          <DesktopCategory
+            firstLevelCategories={firstLevelCategories}
+            setFirstLevelCategories={setFirstLevelCategories}
+            secondLevelCategories={secondLevelCategories}
+            setSecondLevelCategories={setSecondLevelCategories}
+            thirdLevelCategories={thirdLevelCategories}
+            setThirdLevelCategories={setThirdLevelCategories}
+            isLoading={isLoading}
+            setSelectedCategory={setSelectedCategory}
+          />
+        ) : (
+          <>
+            <BreadcrumbNavigation
+              breadcrumb={breadcrumb}
+              onSelectCategory={selectCategory}
+              onGoBack={goBack}
+            />
+            <List
+              dataSource={data?.categories || []}
+              renderItem={(category) => {
+                return (
+                  <List.Item onClick={() => selectCategory(category)}>
+                    <List.Item.Meta title={category.titleRu} />
+                    {memoizedIcon(category)}
+                  </List.Item>
+                );
+              }}
+            />
+          </>
+        )}
       </Spin>
     </Modal>
   );

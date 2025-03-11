@@ -4,9 +4,9 @@ import { useDispatch } from "react-redux";
 import { setItems } from "./redux/itemsSlice";
 
 // ✅ Настройка базового URL API
-const API_URL = "http://localhost:5000/api";
+const API_URL = "http://192.168.0.18:5000/api";
 
-const api = axios.create({
+export const api = axios.create({
   baseURL: API_URL,
   headers: {
     "Content-Type": "application/json",
@@ -34,6 +34,7 @@ export const useUpdateCategoryAttributes = (categoryId) => {
 };
 export const useAddData = (collectionName) => {
   return useMutation(async (data) => {
+    console.log("data: ", data);
     const response = await api.post(`/${collectionName}`, data);
     return response.data;
   });
@@ -100,6 +101,23 @@ export const useGetDataByCategory = ({
     keepPreviousData: true, // Сохраняет предыдущие данные до получения новых
   });
 };
+export const useGetDataByAttribute = ({
+  endPoint,
+  level = 1,
+  parentId = null,
+  titleRu = "",
+}) => {
+  return useQuery({
+    queryKey: [endPoint],
+    queryFn: async () => {
+      const response = await api.get(`/${endPoint}?businessId=1`);
+      return response.data;
+    },
+    staleTime: 5 * 60 * 1000, // Данные считаются актуальными в течение 5 минут
+    cacheTime: 10 * 60 * 1000, // Данные остаются в кэше 10 минут после последнего использования
+    keepPreviousData: true, // Сохраняет предыдущие данные до получения новых
+  });
+};
 export const useUploadFile = () => {
   return useMutation(async (file) => {
     const formData = new FormData();
@@ -151,27 +169,49 @@ export const useGetCategoryHierarchiesByBusiness = (
   });
 };
 
-// Функция запроса данных
+const fetchItem = async ({ queryKey }) => {
+  const [, itemId] = queryKey;
+  if (!itemId) throw new Error("businessId обязателен");
+
+  const response = await api.get(`items/getById/${itemId}`);
+
+  return response.data;
+};
+
+export const useFetchItemById = ({ itemId }) => {
+  return useQuery({
+    queryKey: ["item", itemId],
+    queryFn: fetchItem,
+    staleTime: 5 * 60 * 1000, // 5 минут кэширования
+  });
+};
+
 const fetchItems = async ({ queryKey }) => {
-  const [, categoryId, businessId] = queryKey;
+  const [, categoryId, businessId, limit] = queryKey;
   if (!businessId) throw new Error("businessId обязателен");
 
   const response = await api.get("items/getItemsByCategory", {
     params: {
       categoryId: categoryId || null,
       businessId,
+      limit,
     },
   });
 
   return response.data;
 };
 
-// Кастомный хук для получения данных
-export const useFetchItemsByCategory = ({ categoryId, businessId }) => {
+export const useFetchItemsByCategory = ({
+  categoryId,
+  businessId,
+  limit,
+  enabledOn,
+}) => {
   return useQuery({
-    queryKey: ["items", categoryId, businessId],
+    queryKey: ["items", categoryId, businessId, limit],
     queryFn: fetchItems,
-    staleTime: 5 * 60 * 1000, // 5 минут кэширования
+    staleTime: 5 * 60 * 1000,
+    enabled: enabledOn,
   });
 };
 
@@ -222,5 +262,41 @@ export const useFilterItems = ({
     queryFn: fetchFilteredItems,
     enabled: categoryHasChild === false && hasFilters,
     staleTime: 5 * 60 * 1000,
+  });
+};
+
+export const getSource = () => {
+  const referrer = document.referrer;
+  if (!referrer) return "direct";
+  if (referrer.includes(window.location.host)) {
+    return sessionStorage.getItem("prevPage") || "internal";
+  }
+  return `external:${new URL(referrer).hostname}`;
+};
+
+export const logProductView = async ({ productId, source, duration }) => {
+  try {
+    await api.post("views/log", { productId, source, duration });
+  } catch (error) {
+    console.error(
+      "Error logging product view:",
+      error.response?.data || error.message,
+    );
+  }
+};
+
+const fetchAttributes = async ({ queryKey }) => {
+  const response = await api.get("attributes/getAll", {
+    params: {},
+  });
+
+  return response.data;
+};
+
+export const useFetchAttributes = ({}) => {
+  return useQuery({
+    queryKey: ["attributes/getAll"],
+    queryFn: fetchAttributes,
+    staleTime: 5 * 60 * 1000, // 5 минут кэширования
   });
 };

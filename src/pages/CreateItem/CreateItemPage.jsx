@@ -11,7 +11,7 @@ import { useWatch } from "antd/es/form/Form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 
-const API_URL = "http://localhost:5000/api";
+const API_URL = "http://192.168.0.18:5000/api";
 
 const api = axios.create({
   baseURL: API_URL,
@@ -37,7 +37,7 @@ const CreateItemPage = () => {
   const nav = useNavigate();
 
   const [isModalCategoryOpen, setIsModalCategoryOpen] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState({ level: 1 });
 
   const mutation = useMutation({
     mutationFn: updateFormData,

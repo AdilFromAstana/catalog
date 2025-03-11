@@ -152,12 +152,7 @@
 }
 
 .filter-component-desktop {
-  margin: 0 20px;
   display: none;
-}
-
-.category-navigation {
-  display: block;
 }
 
 .main-page-container .ant-spin-container {
@@ -166,6 +161,7 @@
 }
 
 .category-filters-container {
+  display: block;
   width: 100%;
   position: fixed;
   background: #091235;
@@ -197,6 +193,9 @@
 }
 
 @media (min-width: 768px) {
+  .category-filters-container {
+    display: none;
+  }
   .ant-list .ant-list-item.list-item {
     position: relative;
     display: flex;
@@ -249,13 +248,9 @@
     display: block;
   }
 
-  .category-navigation {
-    display: none;
-  }
-
   .catalog-container {
     gap: 20px;
-    grid-template-columns: 1fr 2fr;
+    grid-template-columns: 1fr 3fr;
     /* Для экранов шире 964px */
   }
 }

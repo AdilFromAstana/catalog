@@ -73,7 +73,7 @@ const RelatedCarousel = memo(
               }}
             />
           )}
-          {products.length > 0 && (
+          {products?.length > 0 && (
             <List
               grid={null}
               dataSource={products}
@@ -86,8 +86,8 @@ const RelatedCarousel = memo(
                   >
                     <div className="related-carousel-item-content">
                       <img
-                        src={item.images[0].url}
-                        alt={item.images[0].url || "Продукт"}
+                        src={item.imageUrl}
+                        alt={item.imageUrl || "Продукт"}
                         className="related-carousel-item-image"
                       />
                       <div className="related-carousel-item-details">
@@ -95,7 +95,7 @@ const RelatedCarousel = memo(
                           <Link
                             className="related-carousel-item-title"
                             onClick={() => setIsItemLoading(true)}
-                            to={`/${item.id}`}
+                            to={`/${item?.id}`}
                           >
                             {item.title}
                           </Link>
@@ -108,9 +108,9 @@ const RelatedCarousel = memo(
                         </div>
                         <div
                           className="related-carousel-item-favorite"
-                          onClick={() => toggleFavorite(item.id)}
+                          onClick={() => toggleFavorite(item?.id)}
                         >
-                          {favorites.includes(item.id) ? (
+                          {favorites.includes(item?.id) ? (
                             <HeartFilled
                               style={{ color: "red", fontSize: "24px" }}
                             />

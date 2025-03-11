@@ -1,0 +1,8 @@
+.ant-collapse-header-text,
+.ant-collapse-expand-icon {
+  color: #fefbea;
+}
+
+.ant-collapse-content-box label {
+  color: #fefbea !important;
+}

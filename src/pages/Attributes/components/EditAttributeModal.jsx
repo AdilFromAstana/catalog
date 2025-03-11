@@ -1,30 +1,32 @@
 import { Button, Input, Modal, Select, Table } from "antd";
 import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
-import { useEffect } from "react";
-import { useUpdateCategoryAttributes } from "../../../firestoreService";
+import { useEffect, useState } from "react";
+// import { useUpdateAttributeAttributes } from "../../../firestoreService";
 
-const category_attributes = "category_attributes";
+const attribute_attributes = "attribute_attributes";
 
-const CategoryModal = ({
+const EditAttributeModal = ({
   isOpen,
   onClose,
   attributes,
   setAttributes,
-  isEditing,
-  setIsEditing,
   selectedItem,
 }) => {
+  const [isEditing, setIsEditing] = useState(false);
+
   useEffect(() => {
-    const savedAttributes = localStorage.getItem(category_attributes);
+    const savedAttributes = localStorage.getItem(attribute_attributes);
     if (savedAttributes) {
       setAttributes(JSON.parse(savedAttributes));
     }
   }, []);
 
+  const isLoading = false;
+
   // Сохраняем атрибуты в localStorage при каждом изменении
   useEffect(() => {
     if (attributes.length > 0) {
-      localStorage.setItem(category_attributes, JSON.stringify(attributes));
+      localStorage.setItem(attribute_attributes, JSON.stringify(attributes));
     }
   }, [attributes]);
 
@@ -52,12 +54,11 @@ const CategoryModal = ({
     setAttributes(newAttributes);
   };
 
-  // Мутация для обновления атрибутов
-  const { mutate, isLoading } = useUpdateCategoryAttributes(selectedItem?.id);
+  // const { mutate, isLoading } = useUpdateAttribute(selectedItem?.id);
 
   const saveChanges = () => {
     console.log("Сохраненные атрибуты:", attributes);
-    mutate(attributes);
+    // mutate(attributes);
   };
 
   return (
@@ -208,4 +209,4 @@ const CategoryModal = ({
   );
 };
 
-export default CategoryModal;
+export default EditAttributeModal;

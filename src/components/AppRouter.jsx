@@ -10,6 +10,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import CartPage from "../pages/Cart/CartPage";
 import { useEffect, useState } from "react";
 import Categories from "../pages/Categories/Categories";
+import Attributes from "../pages/Attributes/Attributes";
 
 const pageVariants = {
   initial: { opacity: 0, y: 40 },
@@ -63,6 +64,10 @@ const AppRouter = () => {
     {
       path: "/admin/categories",
       element: <Categories />,
+    },
+    {
+      path: "/admin/attributes",
+      element: <Attributes />,
     },
     {
       path: "/admin/*",

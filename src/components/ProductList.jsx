@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/alt-text */
-import { Button, List, Result } from "antd";
+import { Button, List, Result, Skeleton } from "antd";
 import {
   HeartOutlined,
   HeartFilled,
@@ -11,8 +11,6 @@ import useWindowWidth from "../hooks/useWindowWidth";
 import { formatNumber } from "../common/common";
 import useCart from "../hooks/useCart";
 import { useDispatch } from "react-redux";
-import { useEffect } from "react";
-import { fetchItemsByCategory } from "../redux/itemsSlice";
 
 const ProductList = ({ favorites, toggleFavorite, handleSortChange, sort }) => {
   const width = useWindowWidth();
@@ -23,10 +21,10 @@ const ProductList = ({ favorites, toggleFavorite, handleSortChange, sort }) => {
   // Получаем товары из Redux
   const { items, isLoading, error } = useSelector((state) => state.items);
 
-  console.log("items: ", items);
+  console.log("isLoading: ", isLoading);
 
   // Определяем количество колонок для отображения
-  const getColumnCount = () => (width < 768 ? 1 : 2);
+  const getColumnCount = () => (width < 768 ? 1 : 3);
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
@@ -67,6 +65,16 @@ const ProductList = ({ favorites, toggleFavorite, handleSortChange, sort }) => {
         ))}
       </div>
 
+      {isLoading && (
+        <>
+          <Skeleton active />
+          <Skeleton active />
+          <Skeleton active />
+          <Skeleton active />
+          <Skeleton active />
+        </>
+      )}
+
       {items?.length > 0 && (
         <List
           grid={{ gutter: 16, column: getColumnCount() }}
@@ -75,14 +83,9 @@ const ProductList = ({ favorites, toggleFavorite, handleSortChange, sort }) => {
             const cartItem = cart?.find(
               (cartItem) => item?.id === cartItem?.id,
             );
-            const images =
-              item?.images?.length > 0
-                ? item?.images
-                : [
-                    {
-                      url: "https://cdn3.iconfinder.com/data/icons/basic-element-line/3873/394_-_Photo-1024.png",
-                    },
-                  ];
+            const image =
+              item?.imageUrl ||
+              "https://cdn3.iconfinder.com/data/icons/basic-element-line/3873/394_-_Photo-1024.png";
             return (
               <List.Item className="list-item">
                 <img
@@ -96,7 +99,7 @@ const ProductList = ({ favorites, toggleFavorite, handleSortChange, sort }) => {
                   }}
                 />
                 <img
-                  src={images[0]?.url}
+                  src={image}
                   alt={item?.title}
                   className="product-image"
                   onClick={() => nav(`/${item.id}`)}
@@ -107,7 +110,7 @@ const ProductList = ({ favorites, toggleFavorite, handleSortChange, sort }) => {
                       {item.title}
                     </Link>
                     <div className="product-category">
-                      {item.categoryRu || "Не указано"}
+                      {item?.categoryTitleRu || "Не указано"}
                     </div>
                     <div className="product-price">
                       {formatNumber(item.price || 0)} ₸

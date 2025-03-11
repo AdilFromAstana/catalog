@@ -13,8 +13,6 @@ const InlineFilters = memo(() => {
   const { tempFilters } = useSelector((state) => state.items); // 👈 Берем фильтры из Redux
   const dispatch = useDispatch();
 
-  console.log("tempFilters: ", tempFilters);
-
   const [activeFilter, setActiveFilter] = useState(null);
   const [visible, setVisible] = useState(false);
   const [priceVisible, setPriceVisible] = useState(false);
@@ -59,8 +57,6 @@ const InlineFilters = memo(() => {
     filters: tempFilters,
     categoryHasChild: selectedCategory?.hasChild,
   });
-
-  console.log("filteredItems: ", filteredItems);
 
   useEffect(() => {
     if (!filteredItems) {

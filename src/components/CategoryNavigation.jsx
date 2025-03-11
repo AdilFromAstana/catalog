@@ -16,7 +16,12 @@ import {
   selectCategory,
   goBackCategory,
 } from "../redux/categorySlice";
-import { resetItems, setItems, resetAllFilters } from "../redux/itemsSlice";
+import {
+  resetItems,
+  setItems,
+  resetAllFilters,
+  setItemsLoading,
+} from "../redux/itemsSlice";
 import { setAttributes } from "../redux/attributesSlice";
 
 const CategoryNavigation = memo(() => {
@@ -26,8 +31,6 @@ const CategoryNavigation = memo(() => {
   );
 
   const { data } = useGetCategoryHierarchiesByBusiness(1);
-
-  console.log("selectedCategory: ", selectedCategory);
 
   const { data: items, isLoading: isItemsLoading } = useFetchItemsByCategory({
     categoryId: selectedCategory?.id || null,
@@ -45,12 +48,14 @@ const CategoryNavigation = memo(() => {
   }, [attributes]);
 
   useEffect(() => {
-    if (!items) {
-      console.error("❌ filteredItems не получены, не отправляем в Redux.");
-      return;
-    }
+    if (!items) return;
+
     dispatch(setItems(items));
   }, [items]);
+
+  useEffect(() => {
+    dispatch(setItemsLoading(isItemsLoading));
+  }, [isItemsLoading]);
 
   useEffect(() => {
     if (data) {
