@@ -71,7 +71,7 @@ export const initialFlowers = [
     features: ["Гипоаллергенные"],
     images: [
       {
-        url: "https://ibb.org.ru/images/2025/02/21/457497584_18452816635033595_196479712356391460_n.jpg",
+        url: "https://main-cdn.sbermegamarket.ru/big2/hlr-system/-15/202/842/411/125/183/7/600014279832b1.jpeg",
       },
     ],
   },
