@@ -5,11 +5,11 @@ import { setSortOrder } from "../redux/filterSlice";
 
 const DrawerFilters = memo(({ isSortDrawerVisible, toggleSortDrawer }) => {
   const dispatch = useDispatch();
-  const sortOrder = useSelector((state) => state.filters.sortOrder);
+  const sortOrder = useSelector((state) => state.filters.order);
+  console.log("sortOrder: ", sortOrder);
 
   const handleSortChange = (value) => {
-    const [by, order] = value.split("_"); // Разделяем строку "price_asc" на ["price", "asc"]
-    dispatch(setSortOrder({ by, order })); // Обновляем Redux
+    dispatch(setSortOrder(value));
     toggleSortDrawer(false);
   };
 
@@ -35,8 +35,7 @@ const DrawerFilters = memo(({ isSortDrawerVisible, toggleSortDrawer }) => {
     >
       <Radio.Group
         className="radio-group"
-        onChange={(e) => handleSortChange(e.target.value)} // Вызывает сортировку
-        value={`${sortOrder.by}_${sortOrder.order}`} // Формируем строку "price_asc"
+        value={sortOrder?.value} // Формируем строку "price_asc"
       >
         {[
           {
@@ -51,20 +50,21 @@ const DrawerFilters = memo(({ isSortDrawerVisible, toggleSortDrawer }) => {
             order: "desc",
             label: "Сначала дорогие",
           },
-          {
-            value: "createAt_asc",
-            by: "createAt",
-            order: "asc",
-            label: "Новинки",
-          },
-          {
-            value: "createAt_desc",
-            by: "createAt",
-            order: "desc",
-            label: "Старые",
-          },
+          // {
+          //   value: "createAt_asc",
+          //   by: "createAt",
+          //   order: "asc",
+          //   label: "Новинки",
+          // },
+          // {
+          //   value: "createAt_desc",
+          //   by: "createAt",
+          //   order: "desc",
+          //   label: "Старые",
+          // },
         ].map((option) => (
           <Radio
+            onChange={(e) => handleSortChange(option)} // Вызывает сортировку
             key={option.value}
             value={option.value} // Передаем "price_asc", "price_desc" и т. д.
             style={{ color: "#FEFBEA", fontSize: "20px" }}

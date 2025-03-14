@@ -1,7 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { initialFlowers, initialFilters } from "../common/initialData";
 
-// Определяем минимальную и максимальную цену из всех товаров
 const allPrices = initialFlowers.flatMap((flower) => [
   flower.price,
   flower.originalPrice,
@@ -45,7 +44,6 @@ const filterSlice = createSlice({
         ),
       );
 
-      // Фильтрация по цене "от" и "до", если переданы параметры
       if (state.filters.price) {
         const [min, max] = state.filters.price;
         filtered = filtered.filter(
@@ -54,9 +52,9 @@ const filterSlice = createSlice({
       }
 
       // Применяем сортировку
-      if (state.sortOrder === "asc") {
+      if (state.order === "asc") {
         filtered = filtered.sort((a, b) => a.price - b.price);
-      } else if (state.sortOrder === "desc") {
+      } else if (state.order === "desc") {
         filtered = filtered.sort((a, b) => b.price - a.price);
       }
 
@@ -93,21 +91,19 @@ const filterSlice = createSlice({
       }
     },
 
-    // Устанавливаем диапазон цены (фильтр по "от" и "до")
     setPriceRange: (state, action) => {
       const { min, max } = action.payload;
       state.filters.price = [min, max];
-
       state.filteredFlowers = initialFlowers.filter(
         (flower) => flower.price >= min && flower.price <= max,
       );
 
       // Применяем текущую сортировку
-      if (state.sortOrder === "asc") {
+      if (state.order === "asc") {
         state.filteredFlowers = state.filteredFlowers.sort(
           (a, b) => a.price - b.price,
         );
-      } else if (state.sortOrder === "desc") {
+      } else if (state.order === "desc") {
         state.filteredFlowers = state.filteredFlowers.sort(
           (a, b) => b.price - a.price,
         );
@@ -116,13 +112,12 @@ const filterSlice = createSlice({
 
     // Устанавливаем порядок сортировки
     setSortOrder: (state, action) => {
-      state.sortOrder = action.payload;
-
-      if (state.sortOrder === "asc") {
+      state.order = action.payload;
+      if (state.order.order === "asc") {
         state.filteredFlowers = [...state.filteredFlowers].sort(
           (a, b) => a.price - b.price,
         );
-      } else if (state.sortOrder === "desc") {
+      } else if (state.order.order === "desc") {
         state.filteredFlowers = [...state.filteredFlowers].sort(
           (a, b) => b.price - a.price,
         );
@@ -135,7 +130,7 @@ const filterSlice = createSlice({
       state.filteredOptions = initialFilters;
       state.firstSelectedFilter = null;
       state.initialFiltersState = initialFilters;
-      state.sortOrder = "default"; // Сбрасываем сортировку
+      state.order = "default"; // Сбрасываем сортировку
       state.priceRange = { min: minPrice, max: maxPrice }; // Возвращаем стандартные границы
     },
   },

@@ -50,7 +50,9 @@ const ProductList = ({ favorites, toggleFavorite, handleSortChange, sort }) => {
           <Button
             key={option.value}
             type={sort.value === option.value ? "primary" : "default"}
-            onClick={() => handleSortChange(option)}
+            onClick={() => {
+              handleSortChange(option);
+            }}
           >
             {option.label}
           </Button>

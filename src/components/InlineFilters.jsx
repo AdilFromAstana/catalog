@@ -9,8 +9,6 @@ const InlineFilters = memo(() => {
   const filteredOptions = useSelector((state) => state.filters.filteredOptions);
   const priceRange = filteredOptions.price?.range || { min: 0, max: 0 };
 
-  console.log("filters: ", filters);
-
   const [activeFilter, setActiveFilter] = useState(null);
   const [visible, setVisible] = useState(false);
   const [tempFilters, setTempFilters] = useState({});

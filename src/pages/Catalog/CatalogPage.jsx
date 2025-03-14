@@ -92,6 +92,7 @@ const CatalogPage = () => {
   };
 
   const handleSortChange = (value) => {
+    console.log("value: ", value);
     setSort(value);
     toggleSortDrawer();
   };
