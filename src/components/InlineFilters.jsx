@@ -9,6 +9,8 @@ const InlineFilters = memo(() => {
   const filteredOptions = useSelector((state) => state.filters.filteredOptions);
   const priceRange = filteredOptions.price?.range || { min: 0, max: 0 };
 
+  console.log("filters: ", filters);
+
   const [activeFilter, setActiveFilter] = useState(null);
   const [visible, setVisible] = useState(false);
   const [tempFilters, setTempFilters] = useState({});
@@ -74,10 +76,19 @@ const InlineFilters = memo(() => {
     closeDrawer();
   }, [dispatch, activeFilter, tempFilters, closeDrawer]);
 
+  const resetPriceFilter = useCallback(() => {
+    setTempPrice([priceRange.min, priceRange.max]);
+  }, [dispatch, tempPrice, closePriceDrawer]);
+
   const applyPriceFilter = useCallback(() => {
     dispatch(setPriceRange({ min: tempPrice[0], max: tempPrice[1] }));
     closePriceDrawer();
   }, [dispatch, tempPrice, closePriceDrawer]);
+
+  const isMinMaxPriceChanged = filters?.price
+    ? filters?.price?.[0] !== priceRange?.min ||
+      filters?.price?.[1] !== priceRange?.max
+    : false;
 
   return (
     <div>
@@ -126,21 +137,14 @@ const InlineFilters = memo(() => {
           onClick={() => showDrawer("price")}
           style={{
             borderRadius: "20px",
-            backgroundColor:
-              tempPrice[0] !== priceRange.min || tempPrice[1] !== priceRange.max
-                ? "#091235"
-                : "#FEFBEA",
-            color:
-              tempPrice[0] !== priceRange.min || tempPrice[1] !== priceRange.max
-                ? "#FEFBEA"
-                : "#091235",
-            borderColor:
-              tempPrice[0] !== priceRange.min || tempPrice[1] !== priceRange.max
-                ? "#FEFBEA"
-                : "#091235",
+            backgroundColor: isMinMaxPriceChanged ? "#091235" : "#FEFBEA",
+            color: isMinMaxPriceChanged ? "#FEFBEA" : "#091235",
+            borderColor: isMinMaxPriceChanged ? "#FEFBEA" : "#091235",
           }}
         >
-          Цена: {tempPrice[0]}₸ - {tempPrice[1]}₸
+          {isMinMaxPriceChanged
+            ? `Цена: ${filters.price?.[0]}₸ - ${filters.price?.[1]}₸`
+            : "Цена"}
         </Button>
       </div>
 
@@ -233,35 +237,59 @@ const InlineFilters = memo(() => {
           },
           body: {
             backgroundColor: "#091235",
-            padding: "20px",
+            display: "flex",
+            flexDirection: "column",
+            height: "100%",
+            paddingTop: 12,
           },
         }}
       >
-        <Slider
-          range
-          min={priceRange.min}
-          max={priceRange.max}
-          value={tempPrice}
-          onChange={(values) => setTempPrice(values)}
-        />
+        <div style={{ flex: 1, marginTop: 10 }}>
+          <Slider
+            range
+            min={priceRange.min}
+            max={priceRange.max}
+            value={tempPrice}
+            onChange={(values) => setTempPrice(values)}
+          />
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              color: "#FEFBEA",
+            }}
+          >
+            <span>{tempPrice[0]}₸</span>
+            <span>{tempPrice[1]}₸</span>
+          </div>
+        </div>
         <div
           style={{
             display: "flex",
             justifyContent: "space-between",
-            color: "#FEFBEA",
+            alignItems: "center",
+            gap: "10px",
+            paddingTop: "20px",
+            borderTop: "2px solid black",
           }}
         >
-          <span>{tempPrice[0]}₸</span>
-          <span>{tempPrice[1]}₸</span>
+          <Button
+            size="large"
+            onClick={resetPriceFilter}
+            type="default"
+            style={{ width: "100%" }}
+          >
+            Сбросить
+          </Button>
+          <Button
+            size="large"
+            onClick={applyPriceFilter}
+            type="primary"
+            style={{ width: "100%" }}
+          >
+            Применить
+          </Button>
         </div>
-        <Button
-          size="large"
-          onClick={applyPriceFilter}
-          type="primary"
-          style={{ width: "100%", marginTop: "20px" }}
-        >
-          Применить
-        </Button>
       </Drawer>
     </div>
   );

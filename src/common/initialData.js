@@ -14,7 +14,7 @@ export const initialFlowers = [
     features: ["Ароматные", "Гипоаллергенные"],
     images: [
       {
-        url: "https://ibb.org.ru/images/2025/02/21/463889941_18461595037033595_7841603756903345320_n.jpg",
+        url: "https://content2.flowwow-images.com/data/flowers/524x524/59/1689246001_48974859.jpg",
       },
     ],
   },
@@ -33,7 +33,7 @@ export const initialFlowers = [
     features: ["Экзотические"],
     images: [
       {
-        url: "https://ibb.org.ru/images/2025/02/21/465128731_18464301664033595_5556778435451487257_n.jpg",
+        url: "https://resources.cdn-kaspi.kz/img/m/p/h83/hb6/65132280250398.jpg?format=gallery-large",
       },
     ],
   },
@@ -52,7 +52,7 @@ export const initialFlowers = [
     features: ["Ароматные"],
     images: [
       {
-        url: "https://ibb.org.ru/images/2025/02/21/465208620_18464302867033595_7619758182404541123_n.jpg",
+        url: "https://cdn1.ozone.ru/s3/multimedia-m/c600/6786788206.jpg",
       },
     ],
   },
@@ -90,7 +90,8 @@ export const initialFlowers = [
     features: ["Ароматные"],
     images: [
       {
-        url: "https://ibb.org.ru/images/2025/02/21/347393520_526739509492692_3372425150512456820_n.jpg",
+        url: "https://content2.flowwow-images.com/data/flowers/524x524/30/1549098965_85620930.jpg",
+        url: "https://yandex-images.clstorage.net/H50GdG234/3bd5de8JB-/tNQ1k2Oh3HKsSSP_ei3FRxBztdbM8xtnckQtgC6aOx2rX67ZpPVV8YcOu9-4OyNm673cDs8ZrT1qn_10uvrSOqKUO999985wvU1ntWwhk1UIPvvX2v8EFkNgGO0WsB15gWaJw-qqA6TNEumS0ksxY5zFq1mLbvQXeN6uF9zogky84En-JqPLQYxHGeoeKNJVT1mE1fDDCyB5bA_9PrYkRb5MlN3fnRS1xVj0o_99SH6TwYdWm0vlEGXcgBzw-bxSjcZ5_wOI6V6yfx3gEibPUlJOnszu3ho_V3gN5C61LmCUaaLryqASpOJN05n3eXxmsv6-Tb1H5DZNzaAP7M-wZarBRPU5h8Zcmm4i9iU5wkBVY5bM3OwLEGpPCt0IsydljECg3MeILbjZUfOPwGBoV7brpW-cfcQOXcCEPdDhgG298kTQKpHLf5lDMOoSLNtxaFu_3cTVKSpmThbeHoUjYqxfsc_vtAyH7X3an_lYY16_7Jpwtn_7LFv_vDzLz5BHtONH0gu523qKXCjhHSbYckhfmfzFxAA9TXst5R6XDWqKW4Hg5Lw0iuBG15z7cnVBqc-5U7JN2xB8xp8qz-iVYariQPgKhttcq14Q6CwL8XxVa6Tz5fMPLFVCDdcBpQ5HqHaI98KOHbLNVtS9yVxjf7DGlmeWRtE7TNu0LOf-q1mL9XnuILH7UJtyPuEcD8N4dmi79tvbGwd7VTDMIIsHU5N4kP7mrQag0VbNv_9-RXWz56REkn3kGmb8iBX-0bdwhu5m6CCa-3CqTD32GxXLclJihvXB9y0AWmAt7AenLVKgTI_ozqwekMxK9Y3sY3pSlu6bU5hr-B5pxYICwO2IZKjyaPEciM9QtGk8yyQRxnlNRbLf6dUxG3JgEN8xtSJ-vl-O_vuCAYT_UPGBxGRAd77sjUuHTvAISu64D8PMiX6S7WDGD7nSSb5fCfYdNcplTnyy-971IAV1SBjmBYw",
       },
     ],
   },
@@ -109,7 +110,7 @@ export const initialFlowers = [
     features: ["Экзотические"],
     images: [
       {
-        url: "https://ibb.org.ru/images/2025/02/21/455728685_18449665051033595_3835388020595925492_n.jpg",
+        url: "https://venusinfleurs.ru/image/catalog/product/4193/4193_1.jpg",
       },
     ],
   },
@@ -166,7 +167,7 @@ export const initialFlowers = [
     features: ["Гипоаллергенные"],
     images: [
       {
-        url: "https://ibb.org.ru/images/2025/02/21/456627195_18450486223033595_8577062239828475913_n.jpg",
+        url: "https://content2.flowwow-images.com/data/flowers/524x524/30/1549098965_85620930.jpg",
       },
     ],
   },

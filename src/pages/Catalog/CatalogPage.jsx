@@ -10,7 +10,8 @@ import useCategory from "../../hooks/useCategory";
 import InlineFilters from "../../components/InlineFilters";
 
 const CatalogPage = () => {
-  const [categoryFiltersContainerPadding, setCategoryFiltersContainerPadding] = useState(0)
+  const [categoryFiltersContainerPadding, setCategoryFiltersContainerPadding] =
+    useState(0);
   const [isSortDrawerVisible, setSortDrawerVisible] = useState(false);
   const [isPriceDrawerVisible, setPriceDrawerVisible] = useState(false);
   const [sort, setSort] = useState({
@@ -68,7 +69,7 @@ const CatalogPage = () => {
     setSelectedColors((prev) =>
       prev.includes(color)
         ? prev.filter((selectedColor) => selectedColor !== color)
-        : [...prev, color]
+        : [...prev, color],
     );
   };
 
@@ -121,14 +122,18 @@ const CatalogPage = () => {
 
   useEffect(() => {
     if (ref.current) {
-      setCategoryFiltersContainerPadding(ref.current.getBoundingClientRect().height);
+      setCategoryFiltersContainerPadding(
+        ref.current.getBoundingClientRect().height,
+      );
     }
   }, []);
 
-
   return (
     <>
-      <Spin spinning={isLoading && isCategoryLoading} wrapperClassName="main-page-container">
+      <Spin
+        spinning={isLoading && isCategoryLoading}
+        wrapperClassName="main-page-container"
+      >
         <div className="category-filters-container" ref={ref}>
           <CategoryNavigation
             isLoading={isLoading}
@@ -143,7 +148,10 @@ const CatalogPage = () => {
           />
           <InlineFilters />
         </div>
-        <div className="catalog-container" style={{ paddingTop: `${categoryFiltersContainerPadding + 10}px` }}>
+        <div
+          className="catalog-container"
+          style={{ paddingTop: `${categoryFiltersContainerPadding + 10}px` }}
+        >
           {/* <div className="filter-component-desktop">
             <Filters
               productsTotalSize={productsTotalSize}
@@ -196,11 +204,15 @@ const CatalogPage = () => {
           wrapper: {
             height: "100%",
           },
-          header: { backgroundColor: "#091235", color: "#FEFBEA", fontSize: "24px" },
+          header: {
+            backgroundColor: "#091235",
+            color: "#FEFBEA",
+            fontSize: "24px",
+          },
           body: {
             color: "#FEFBEA",
             fontSize: "24px",
-            background: "#091235"
+            background: "#091235",
           },
         }}
         rootClassName="inline-filters-header"
