@@ -156,7 +156,7 @@ export const initialFlowers = [
     bouquetCompositionRu: ["Альстромерия"],
     price: 9500,
     originalPrice: 10000,
-    flowerCount: 11,
+    flowerCount: 11, 
     flowerHeight: 50,
     discount: 5,
     features: ["Гипоаллергенные"],
