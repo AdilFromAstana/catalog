@@ -4,14 +4,16 @@ export const initialFlowers = [
     title: "Микс роз (букет из премиальных цветов)",
     categoryRu: "Цветы",
     categoryCode: "flowers",
-    bouquetComposition: ["rose"],
-    bouquetCompositionRu: ["Роза"],
+    bouquetComposition: [{ code: "rose", title: "Роза" }],
     price: 20250,
     originalPrice: 22500,
     flowerCount: 15,
     flowerHeight: 60,
-    discount: "10%",
-    features: ["Ароматные", "Гипоаллергенные"],
+    discount: 10,
+    features: [
+      { code: "fragrant", title: "Ароматные" },
+      { code: "hypoallergenic", title: "Гипоаллергенные" },
+    ],
     images: [
       {
         url: "https://content2.flowwow-images.com/data/flowers/524x524/59/1689246001_48974859.jpg",
@@ -23,14 +25,13 @@ export const initialFlowers = [
     title: "Кустовые розы (букет из премиальных цветов)",
     categoryRu: "Цветы",
     categoryCode: "flowers",
-    bouquetComposition: ["rose"],
-    bouquetCompositionRu: ["Роза"],
+    bouquetComposition: [{ code: "rose", title: "Роза" }],
     price: 38675,
     originalPrice: 45500,
     flowerCount: 25,
     flowerHeight: 70,
-    discount: "15%",
-    features: ["Экзотические"],
+    discount: 15,
+    features: [{ title: "Экзотические", code: "exotic" }],
     images: [
       {
         url: "https://resources.cdn-kaspi.kz/img/m/p/h83/hb6/65132280250398.jpg?format=gallery-large",
@@ -42,14 +43,13 @@ export const initialFlowers = [
     title: "51 роза (букет из премиальных цветов)",
     categoryRu: "Цветы",
     categoryCode: "flowers",
-    bouquetComposition: ["rose"],
-    bouquetCompositionRu: ["Роза"],
+    bouquetComposition: [{ code: "rose", title: "Роза" }],
     price: 36575,
     originalPrice: 38500,
     flowerCount: 51,
     flowerHeight: 60,
-    discount: "5%",
-    features: ["Ароматные"],
+    discount: 5,
+    features: [{ code: "fragrant", title: "Ароматные" }],
     images: [
       {
         url: "https://cdn1.ozone.ru/s3/multimedia-m/c600/6786788206.jpg",
@@ -61,14 +61,13 @@ export const initialFlowers = [
     title: "Juliette Roses (букет из премиальных цветов)",
     categoryRu: "Цветы",
     categoryCode: "flowers",
-    bouquetComposition: ["hydrangeas"],
-    bouquetCompositionRu: ["Гортензия"],
+    bouquetComposition: [{ code: "hydrangeas", title: "Гортензия" }],
     price: 16200,
     originalPrice: 18000,
     flowerCount: 11,
     flowerHeight: 55,
-    discount: "10%",
-    features: ["Гипоаллергенные"],
+    discount: 10,
+    features: [{ code: "hypoallergenic", title: "Гипоаллергенные" }],
     images: [
       {
         url: "https://main-cdn.sbermegamarket.ru/big2/hlr-system/-15/202/842/411/125/183/7/600014279832b1.jpeg",
@@ -80,14 +79,13 @@ export const initialFlowers = [
     title: "Пионы розовые (букет 7 шт.)",
     categoryRu: "Цветы",
     categoryCode: "flowers",
-    bouquetComposition: ["peonies"],
-    bouquetCompositionRu: ["Пионы"],
+    bouquetComposition: [{ code: "peonies", title: "Пионы" }],
     price: 20000,
     originalPrice: 20000,
     flowerCount: 7,
     flowerHeight: 50,
-    discount: "0%",
-    features: ["Ароматные"],
+    discount: 0,
+    features: [{ code: "fragrant", title: "Ароматные" }],
     images: [
       {
         url: "https://content2.flowwow-images.com/data/flowers/524x524/30/1549098965_85620930.jpg",
@@ -100,14 +98,13 @@ export const initialFlowers = [
     title: "Орхидеи фиолетовые (2 ветки)",
     categoryRu: "Цветы",
     categoryCode: "flowers",
-    bouquetComposition: ["orchids"],
-    bouquetCompositionRu: ["Орхидеи"],
+    bouquetComposition: [{ code: "orchids", title: "Орхидеи" }],
     price: 17600,
     originalPrice: 22000,
     flowerCount: 3,
     flowerHeight: 80,
-    discount: "20%",
-    features: ["Экзотические"],
+    discount: 20,
+    features: [{ title: "Экзотические", code: "exotic" }],
     images: [
       {
         url: "https://venusinfleurs.ru/image/catalog/product/4193/4193_1.jpg",
@@ -119,14 +116,13 @@ export const initialFlowers = [
     title: "Лилии белые (букет 5 шт.)",
     categoryRu: "Цветы",
     categoryCode: "flowers",
-    bouquetComposition: ["lilies"],
-    bouquetCompositionRu: ["Лилии"],
+    bouquetComposition: [{ code: "lilies", title: "Лилии" }],
     price: 13300,
     originalPrice: 14000,
     flowerCount: 5,
     flowerHeight: 65,
-    discount: "5%",
-    features: ["Гипоаллергенные"],
+    discount: 5,
+    features: [{ title: "Гипоаллергенные", code: "hypoallergenic" }],
     images: [
       {
         url: "https://flor2u.ru/images/uploads/conversion/1f9/1f90052c1012489f9e826f9a4b10be85/1f90052c1012489f9e826f9a4b10be85-flor.detail.gallery.jpg",
@@ -138,14 +134,13 @@ export const initialFlowers = [
     title: "Гвоздики красные (букет 9 шт.)",
     categoryRu: "Цветы",
     categoryCode: "flowers",
-    bouquetComposition: ["carnations"],
-    bouquetCompositionRu: ["Гвоздики"],
+    bouquetComposition: [{ code: "carnations", title: "Гвоздики" }],
     price: 9000,
     originalPrice: 9000,
     flowerCount: 9,
     flowerHeight: 45,
-    discount: "0%",
-    features: ["Ароматные"],
+    discount: 0,
+    features: [{ code: "fragrant", title: "Ароматные" }],
     images: [
       {
         url: "https://i2.storeland.net/2/8891/188900145/afacdb/buketkrasnyhgvozdik1-jpg.jpg",
@@ -163,7 +158,7 @@ export const initialFlowers = [
     originalPrice: 10000,
     flowerCount: 11,
     flowerHeight: 50,
-    discount: "5%",
+    discount: 5,
     features: ["Гипоаллергенные"],
     images: [
       {
@@ -182,7 +177,7 @@ export const initialFlowers = [
     originalPrice: 16000,
     flowerCount: 21,
     flowerHeight: 70,
-    discount: "10%",
+    discount: 10,
     features: ["Бенто-торт"],
     images: [
       {
@@ -204,7 +199,7 @@ export const initialFlowers = [
     originalPrice: 19000,
     flowerCount: 7,
     flowerHeight: 55,
-    discount: "15%",
+    discount: 15,
     features: ["Экзотические"],
     images: [
       {
@@ -223,7 +218,7 @@ export const initialFlowers = [
     originalPrice: 30000,
     flowerCount: 21,
     flowerHeight: 60,
-    discount: "10%",
+    discount: 10,
     features: ["Ароматные"],
     images: [
       {
@@ -242,7 +237,7 @@ export const initialFlowers = [
     originalPrice: 20000,
     flowerCount: 11,
     flowerHeight: 70,
-    discount: "10%",
+    discount: 10,
     features: ["Гипоаллергенные"],
     images: [
       {
@@ -261,7 +256,7 @@ export const initialFlowers = [
     originalPrice: 15000,
     flowerCount: 15,
     flowerHeight: 50,
-    discount: "25%",
+    discount: 25,
     features: ["Ароматные", "Гипоаллергенные"],
     images: [
       {
@@ -280,7 +275,7 @@ export const initialFlowers = [
     originalPrice: 50000,
     flowerCount: 51,
     flowerHeight: 70,
-    discount: "10%",
+    discount: 10,
     features: ["Ароматные"],
     images: [
       {
@@ -299,7 +294,7 @@ export const initialFlowers = [
     originalPrice: 35000,
     flowerCount: 21,
     flowerHeight: 60,
-    discount: "10%",
+    discount: 10,
     features: ["Гипоаллергенные", "Экзотические"],
     images: [
       {
@@ -318,7 +313,7 @@ export const initialFlowers = [
     originalPrice: 20000,
     flowerCount: 15,
     flowerHeight: 55,
-    discount: "10%",
+    discount: 10,
     features: ["Экзотические"],
     images: [
       {
@@ -337,7 +332,7 @@ export const initialFlowers = [
     originalPrice: 50000,
     flowerCount: 51,
     flowerHeight: 60,
-    discount: "15%",
+    discount: 15,
     features: ["Ароматные", "Экзотические"],
     images: [
       {
@@ -356,7 +351,7 @@ export const initialFlowers = [
     originalPrice: 12000,
     flowerCount: 11,
     flowerHeight: 50,
-    discount: "25%",
+    discount: 25,
     features: ["Гипоаллергенные"],
     images: [
       {
@@ -375,7 +370,7 @@ export const initialFlowers = [
     originalPrice: 25000,
     flowerCount: 15,
     flowerHeight: 70,
-    discount: "10%",
+    discount: 10,
     features: ["Гипоаллергенные", "Экзотические"],
     images: [
       {
@@ -394,7 +389,7 @@ export const initialFlowers = [
     originalPrice: 30000,
     flowerCount: 21,
     flowerHeight: 70,
-    discount: "10%",
+    discount: 10,
     features: ["Ароматные"],
     images: [
       {
@@ -413,7 +408,7 @@ export const initialFlowers = [
     originalPrice: 25000,
     flowerCount: 15,
     flowerHeight: 60,
-    discount: "10%",
+    discount: 10,
     features: ["Гипоаллергенные"],
     images: [
       {
@@ -432,7 +427,7 @@ export const initialFlowers = [
     originalPrice: 20000,
     flowerCount: 21,
     flowerHeight: 50,
-    discount: "25%",
+    discount: 25,
     features: ["Гипоаллергенные"],
     images: [
       {
@@ -451,7 +446,7 @@ export const initialFlowers = [
     originalPrice: 22000,
     flowerCount: 15,
     flowerHeight: 55,
-    discount: "15%",
+    discount: 15,
     features: ["Экзотические"],
     images: [
       {
@@ -470,7 +465,7 @@ export const initialFlowers = [
     originalPrice: 22000,
     flowerCount: 15,
     flowerHeight: 70,
-    discount: "10%",
+    discount: 10,
     features: ["Ароматные"],
     images: [
       {
@@ -489,7 +484,7 @@ export const initialFlowers = [
     originalPrice: 19000,
     flowerCount: 11,
     flowerHeight: 60,
-    discount: "10%",
+    discount: 10,
     features: ["Гипоаллергенные", "Экзотические"],
     images: [
       { url: "https://venusinfleurs.ru/image/catalog/product/4161/4161_1.jpg" },
@@ -506,7 +501,7 @@ export const initialFlowers = [
     originalPrice: 45000,
     flowerCount: 51,
     flowerHeight: 50,
-    discount: "15%",
+    discount: 15,
     features: ["Ароматные"],
     images: [
       {
@@ -525,7 +520,7 @@ export const initialFlowers = [
     originalPrice: 23000,
     flowerCount: 15,
     flowerHeight: 70,
-    discount: "10%",
+    discount: 10,
     features: ["Ароматные"],
     images: [
       { url: "https://flowers-deliver.ru/wp-content/uploads/2021/12/27-2.jpg" },
@@ -542,7 +537,7 @@ export const initialFlowers = [
     originalPrice: 50000,
     flowerCount: 51,
     flowerHeight: 70,
-    discount: "10%",
+    discount: 10,
     features: ["Гипоаллергенные"],
     images: [
       {
@@ -561,7 +556,7 @@ export const initialFlowers = [
     originalPrice: 18000,
     flowerCount: 21,
     flowerHeight: 50,
-    discount: "15%",
+    discount: 15,
     features: ["Гипоаллергенные"],
     images: [
       {
@@ -580,7 +575,7 @@ export const initialFlowers = [
     originalPrice: 52000,
     flowerCount: 51,
     flowerHeight: 70,
-    discount: "10%",
+    discount: 10,
     features: ["Ароматные"],
     images: [
       {
@@ -599,7 +594,7 @@ export const initialFlowers = [
     originalPrice: 37000,
     flowerCount: 21,
     flowerHeight: 60,
-    discount: "10%",
+    discount: 10,
     features: ["Гипоаллергенные", "Экзотические"],
     images: [
       {
@@ -618,7 +613,7 @@ export const initialFlowers = [
     originalPrice: 15000,
     flowerCount: 15,
     flowerHeight: 50,
-    discount: "20%",
+    discount: 20,
     features: ["Ароматные", "Гипоаллергенные"],
     images: [
       {
@@ -637,7 +632,7 @@ export const initialFlowers = [
     originalPrice: 19000,
     flowerCount: 11,
     flowerHeight: 55,
-    discount: "15%",
+    discount: 15,
     features: ["Экзотические"],
     images: [
       {
@@ -656,7 +651,7 @@ export const initialFlowers = [
     originalPrice: 25000,
     flowerCount: 15,
     flowerHeight: 70,
-    discount: "15%",
+    discount: 15,
     features: ["Ароматные"],
     images: [
       { url: "https://dostavka-tsvety.ru/wp-content/uploads/2020/06/19-1.jpg" },
@@ -673,7 +668,7 @@ export const initialFlowers = [
     originalPrice: 26000,
     flowerCount: 15,
     flowerHeight: 70,
-    discount: "10%",
+    discount: 10,
     features: ["Гипоаллергенные", "Экзотические"],
     images: [
       {
@@ -692,7 +687,7 @@ export const initialFlowers = [
     originalPrice: 46000,
     flowerCount: 51,
     flowerHeight: 50,
-    discount: "15%",
+    discount: 15,
     features: ["Гипоаллергенные"],
     images: [
       {
@@ -711,7 +706,7 @@ export const initialFlowers = [
     originalPrice: 32000,
     flowerCount: 21,
     flowerHeight: 55,
-    discount: "10%",
+    discount: 10,
     features: ["Экзотические"],
     images: [
       { url: "https://venusinfleurs.ru/image/catalog/product/4195/4195_1.jpg" },
@@ -728,7 +723,7 @@ export const initialFlowers = [
     originalPrice: 30000,
     flowerCount: 21,
     flowerHeight: 60,
-    discount: "10%",
+    discount: 10,
     features: ["Ароматные", "Экзотические"],
     images: [
       { url: "https://ir-3.ozone.ru/s3/multimedia-7/c1000/6067212547.jpg" },
@@ -745,7 +740,7 @@ export const initialFlowers = [
     originalPrice: 19500,
     flowerCount: 11,
     flowerHeight: 60,
-    discount: "10%",
+    discount: 10,
     features: ["Гипоаллергенные"],
     images: [
       { url: "https://venusinfleurs.ru/image/catalog/category/428/428_1.jpg" },

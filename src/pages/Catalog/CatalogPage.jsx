@@ -8,8 +8,12 @@ import "./CatalogPage.css";
 import { Drawer, Spin } from "antd";
 import useCategory from "../../hooks/useCategory";
 import InlineFilters from "../../components/InlineFilters";
+import { useDispatch } from "react-redux";
+import { initializeData } from "../../redux/filterSlice";
+import { initialFlowers } from "../../common/initialData";
 
 const CatalogPage = () => {
+  const dispatch = useDispatch();
   const [categoryFiltersContainerPadding, setCategoryFiltersContainerPadding] =
     useState(0);
   const [isSortDrawerVisible, setSortDrawerVisible] = useState(false);
@@ -30,22 +34,6 @@ const CatalogPage = () => {
   const [lastVisible, setLastVisible] = useState(null);
   const itemsPerPage = 12;
   const ref = useRef(null);
-
-  function collectKeysWithoutChildren() {
-    const result = [];
-    function traverse(node) {
-      if (!node.children) {
-        result.push(node.key);
-      } else {
-        node.children.forEach((child) => traverse(child));
-      }
-    }
-    const lastElement = selectedCategories[selectedCategories.length - 1];
-    if (lastElement) {
-      traverse(lastElement);
-    }
-    return result;
-  }
 
   const {
     availableCategories,
@@ -128,6 +116,14 @@ const CatalogPage = () => {
       );
     }
   }, []);
+
+  useEffect(() => {
+    dispatch(
+      initializeData({
+        items: initialFlowers,
+      })
+    );
+  }, [dispatch]);
 
   return (
     <>

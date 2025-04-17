@@ -1,13 +1,17 @@
-import React, { memo, useRef, useState, useCallback } from "react";
+import React, { memo, useState, useCallback } from "react";
 import { Button, Checkbox, Drawer, List, Slider } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { updateFilter, setPriceRange } from "../redux/filterSlice";
 
 const InlineFilters = memo(() => {
   const dispatch = useDispatch();
+
   const filters = useSelector((state) => state.filters.filters);
   const filteredOptions = useSelector((state) => state.filters.filteredOptions);
-  const priceRange = filteredOptions.price?.range || { min: 0, max: 0 };
+  const priceRange = useSelector(
+    (state) =>
+      state.filters.filteredOptions?.price?.range || { min: 0, max: 0 },
+  );
 
   const [activeFilter, setActiveFilter] = useState(null);
   const [visible, setVisible] = useState(false);
@@ -18,7 +22,12 @@ const InlineFilters = memo(() => {
     filters.price?.[1] || priceRange.max,
   ]);
 
-  const listRef = useRef(null);
+  const getButtonStyle = (isActive) => ({
+    borderRadius: "20px",
+    backgroundColor: isActive ? "#091235" : "#FEFBEA",
+    color: isActive ? "#FEFBEA" : "#091235",
+    borderColor: isActive ? "#FEFBEA" : "#091235",
+  });
 
   const showDrawer = useCallback(
     (key) => {
@@ -33,36 +42,32 @@ const InlineFilters = memo(() => {
     [filters],
   );
 
-  const closeDrawer = useCallback(() => {
+  const closeDrawer = () => {
     setVisible(false);
     setActiveFilter(null);
-  }, []);
+  };
 
-  const closePriceDrawer = useCallback(() => {
-    setPriceVisible(false);
-  }, []);
+  const closePriceDrawer = () => setPriceVisible(false);
 
-  const onSelectItem = useCallback((paramKey, optionValue) => {
+  const onSelectItem = (paramKey, optionValue) => {
     setTempFilters((prev) => ({
       ...prev,
       [paramKey]: prev[paramKey]?.includes(optionValue)
         ? prev[paramKey].filter((item) => item !== optionValue)
         : [...(prev[paramKey] || []), optionValue],
     }));
-  }, []);
+  };
 
-  const resetFilterForActiveCategory = useCallback(() => {
+  const resetFilterForActiveCategory = () => {
     if (!activeFilter) return;
-
     dispatch(updateFilter({ param: activeFilter, values: [] }));
-
     setTempFilters((prev) => ({
       ...prev,
       [activeFilter]: [],
     }));
-  }, [dispatch, activeFilter]);
+  };
 
-  const applyFilterChanges = useCallback(() => {
+  const applyFilterChanges = () => {
     if (activeFilter) {
       dispatch(
         updateFilter({
@@ -72,73 +77,58 @@ const InlineFilters = memo(() => {
       );
     }
     closeDrawer();
-  }, [dispatch, activeFilter, tempFilters, closeDrawer]);
+  };
 
-  const resetPriceFilter = useCallback(() => {
-    setTempPrice([priceRange.min, priceRange.max]);
-  }, [dispatch, tempPrice, closePriceDrawer]);
+  const resetPriceFilter = () => setTempPrice([priceRange.min, priceRange.max]);
 
-  const applyPriceFilter = useCallback(() => {
-    dispatch(setPriceRange({ min: tempPrice[0], max: tempPrice[1] }));
+  const applyPriceFilter = () => {
+    dispatch(updateFilter({ param: "price", values: tempPrice }));
     closePriceDrawer();
-  }, [dispatch, tempPrice, closePriceDrawer]);
+  };
 
   const isMinMaxPriceChanged = filters?.price
-    ? filters?.price?.[0] !== priceRange?.min ||
-      filters?.price?.[1] !== priceRange?.max
+    ? filters.price[0] !== priceRange.min || filters.price[1] !== priceRange.max
     : false;
 
   return (
     <div>
       <div className="scrollable-row">
-        {Object.entries(filteredOptions)
-          .sort(([keyA], [keyB]) => {
-            const hasValueA = (filters[keyA] || []).length > 0;
-            const hasValueB = (filters[keyB] || []).length > 0;
-            return hasValueB - hasValueA;
-          })
-          .map(([key, param]) => {
-            if (key === "price") return null; // Пропускаем price
+        {filteredOptions &&
+          Object.entries(filteredOptions)
+            .sort(([keyA], [keyB]) => {
+              const hasValueA = (filters[keyA] || []).length > 0;
+              const hasValueB = (filters[keyB] || []).length > 0;
+              return hasValueB - hasValueA;
+            })
+            .map(([key, param]) => {
+              if (key === "price") return null;
 
-            const selectedValues = filters[key] || [];
-            const selectedLabels = param?.options
-              ?.filter((opt) => selectedValues.includes(opt.value))
-              .map((opt) => opt.name);
+              const selectedValues = filters[key] || [];
+              const selectedLabels = param?.options
+                ?.filter((opt) => selectedValues.includes(opt.value))
+                .map((opt) => opt.name);
 
-            let buttonText = param.name;
-            if (selectedLabels?.length === 1) {
-              buttonText = selectedLabels[0];
-            } else if (selectedLabels?.length > 1) {
-              buttonText = `${selectedLabels[0]}, +${selectedLabels.length - 1}`;
-            }
+              let buttonText = param.name;
+              if (selectedLabels?.length === 1) {
+                buttonText = selectedLabels[0];
+              } else if (selectedLabels?.length > 1) {
+                buttonText = `${selectedLabels[0]}, +${selectedLabels.length - 1}`;
+              }
 
-            return (
-              <Button
-                key={key}
-                onClick={() => showDrawer(key)}
-                style={{
-                  borderRadius: "20px",
-                  backgroundColor: selectedValues.length
-                    ? "#091235"
-                    : "#FEFBEA",
-                  color: selectedValues.length ? "#FEFBEA" : "#091235",
-                  borderColor: selectedValues.length ? "#FEFBEA" : "#091235",
-                }}
-              >
-                {buttonText}
-              </Button>
-            );
-          })}
+              return (
+                <Button
+                  key={key}
+                  onClick={() => showDrawer(key)}
+                  style={getButtonStyle(selectedValues.length > 0)}
+                >
+                  {buttonText}
+                </Button>
+              );
+            })}
 
-        {/* Отдельная кнопка для цены, показывающая выбранный диапазон */}
         <Button
           onClick={() => showDrawer("price")}
-          style={{
-            borderRadius: "20px",
-            backgroundColor: isMinMaxPriceChanged ? "#091235" : "#FEFBEA",
-            color: isMinMaxPriceChanged ? "#FEFBEA" : "#091235",
-            borderColor: isMinMaxPriceChanged ? "#FEFBEA" : "#091235",
-          }}
+          style={getButtonStyle(isMinMaxPriceChanged)}
         >
           {isMinMaxPriceChanged
             ? `Цена: ${filters.price?.[0]}₸ - ${filters.price?.[1]}₸`
@@ -146,9 +136,8 @@ const InlineFilters = memo(() => {
         </Button>
       </div>
 
-      {/* Drawer для обычных фильтров */}
       <Drawer
-        title={filteredOptions[activeFilter]?.name}
+        title={filteredOptions?.[activeFilter]?.name || "Фильтр"}
         placement="bottom"
         onClose={closeDrawer}
         open={visible}
@@ -170,10 +159,7 @@ const InlineFilters = memo(() => {
         rootClassName="inline-filters-header"
       >
         {activeFilter && (
-          <div
-            ref={listRef}
-            style={{ flex: 1, overflowY: "auto", marginTop: 10 }}
-          >
+          <div style={{ flex: 1, overflowY: "auto", marginTop: 10 }}>
             <List
               dataSource={filteredOptions[activeFilter]?.options || []}
               renderItem={(option) => (
@@ -195,7 +181,6 @@ const InlineFilters = memo(() => {
           style={{
             display: "flex",
             justifyContent: "space-between",
-            alignItems: "center",
             gap: "10px",
             paddingTop: "20px",
             borderTop: "2px solid black",
@@ -204,7 +189,6 @@ const InlineFilters = memo(() => {
           <Button
             size="large"
             onClick={resetFilterForActiveCategory}
-            type="default"
             style={{ width: "100%" }}
           >
             Сбросить
@@ -220,7 +204,6 @@ const InlineFilters = memo(() => {
         </div>
       </Drawer>
 
-      {/* Drawer для фильтрации по цене */}
       <Drawer
         title="Цена"
         placement="bottom"
@@ -261,11 +244,11 @@ const InlineFilters = memo(() => {
             <span>{tempPrice[1]}₸</span>
           </div>
         </div>
+
         <div
           style={{
             display: "flex",
             justifyContent: "space-between",
-            alignItems: "center",
             gap: "10px",
             paddingTop: "20px",
             borderTop: "2px solid black",
@@ -274,7 +257,6 @@ const InlineFilters = memo(() => {
           <Button
             size="large"
             onClick={resetPriceFilter}
-            type="default"
             style={{ width: "100%" }}
           >
             Сбросить

@@ -13,7 +13,7 @@ import useCart from "../hooks/useCart";
 const ProductList = ({ favorites, toggleFavorite, handleSortChange, sort }) => {
   const width = useWindowWidth();
   const nav = useNavigate();
-  const filteredFlowers = useSelector((state) => state.filters.filteredFlowers);
+  const filteredItems = useSelector((state) => state.filters.filteredItems);
   const { addToCart, removeFromCart, cart } = useCart();
 
   const getColumnCount = () => (width < 768 ? 1 : 2);
@@ -59,10 +59,10 @@ const ProductList = ({ favorites, toggleFavorite, handleSortChange, sort }) => {
         ))}
       </div>
 
-      {filteredFlowers.length > 0 ? (
+      {filteredItems.length > 0 ? (
         <List
           grid={{ gutter: 16, column: getColumnCount() }}
-          dataSource={filteredFlowers}
+          dataSource={filteredItems}
           renderItem={(item) => {
             const cartItem = cart?.find(
               (cartItem) => item?.id === cartItem?.id,

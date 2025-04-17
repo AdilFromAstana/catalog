@@ -5,16 +5,17 @@ import {
   LeftOutlined,
   OrderedListOutlined,
 } from "@ant-design/icons";
-import { useGetDataByCategory } from "../firestoreService";
 import { useSelector } from "react-redux";
 
 const CategoryNavigation = memo(
   ({ toggleSortDrawer, togglePriceDrawer, isFilterSelected }) => {
     const [level, setLevel] = useState(1);
     const [parentId, setParentId] = useState(null);
-    const filteredFlowers = useSelector((state) => state.filters.filteredFlowers);
+    const filteredFlowers = useSelector((state) => state.filters.allItems);
     const [history, setHistory] = useState([]); // Стек истории переходов
-    const [selectedCategory, setSelectedCategory] = useState({ titleRu: "Цветы" }); // Выбранная категория на последнем уровне
+    const [selectedCategory, setSelectedCategory] = useState({
+      titleRu: "Цветы",
+    }); // Выбранная категория на последнем уровне
 
     const handleCategoryClick = (category) => {
       setSelectedCategory(category);
@@ -46,10 +47,7 @@ const CategoryNavigation = memo(
           </div>
           <div className="category-info">
             <div className="category-title">
-              {selectedCategory
-                ? selectedCategory?.titleRu
-                : "-"
-              }
+              {selectedCategory ? selectedCategory?.titleRu : "-"}
             </div>
             <div>{filteredFlowers.length}</div>
           </div>
@@ -77,7 +75,7 @@ const CategoryNavigation = memo(
         )} */}
       </div>
     );
-  }
+  },
 );
 
 export default CategoryNavigation;
