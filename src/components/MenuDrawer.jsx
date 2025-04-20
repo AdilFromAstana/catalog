@@ -39,18 +39,18 @@ const menuItems = [
     label: "Статистика",
     path: "/statistics",
   },
-  {
-    key: "/create",
-    icon: <PlusCircleOutlined style={{ fontSize: "24px" }} />,
-    label: "Создать",
-    path: "/create",
-  },
-  {
-    key: "/my-catalog",
-    icon: <ShopOutlined style={{ fontSize: "24px" }} />,
-    label: "Мой каталог",
-    path: "/my-catalog",
-  },
+  // {
+  //   key: "/create",
+  //   icon: <PlusCircleOutlined style={{ fontSize: "24px" }} />,
+  //   label: "Создать",
+  //   path: "/create",
+  // },
+  // {
+  //   key: "/my-catalog",
+  //   icon: <ShopOutlined style={{ fontSize: "24px" }} />,
+  //   label: "Мой каталог",
+  //   path: "/my-catalog",
+  // },
 ];
 
 const MenuDrawer = ({ isDrawerVisible, setIsDrawerVisible }) => {
