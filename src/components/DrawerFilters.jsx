@@ -5,11 +5,10 @@ import { setSortOrder } from "../redux/filterSlice";
 
 const DrawerFilters = memo(({ isSortDrawerVisible, toggleSortDrawer }) => {
   const dispatch = useDispatch();
-  const sortOrder = useSelector((state) => state.filters.order);
-  console.log("sortOrder: ", sortOrder);
+  const sortOrder = useSelector((state) => state.filters.sortOrder);
 
-  const handleSortChange = (value) => {
-    dispatch(setSortOrder(value));
+  const handleSortChange = (option) => {
+    dispatch(setSortOrder(option));
     toggleSortDrawer(false);
   };
 
@@ -33,10 +32,7 @@ const DrawerFilters = memo(({ isSortDrawerVisible, toggleSortDrawer }) => {
       }}
       rootClassName="inline-filters-header"
     >
-      <Radio.Group
-        className="radio-group"
-        value={sortOrder?.value} // Формируем строку "price_asc"
-      >
+      <Radio.Group value={sortOrder?.value}>
         {[
           {
             value: "price_asc",
@@ -50,25 +46,24 @@ const DrawerFilters = memo(({ isSortDrawerVisible, toggleSortDrawer }) => {
             order: "desc",
             label: "Сначала дорогие",
           },
-          // {
-          //   value: "createAt_asc",
-          //   by: "createAt",
-          //   order: "asc",
-          //   label: "Новинки",
-          // },
-          // {
-          //   value: "createAt_desc",
-          //   by: "createAt",
-          //   order: "desc",
-          //   label: "Старые",
-          // },
+          {
+            value: "createAt_desc",
+            by: "createAt",
+            order: "desc",
+            label: "Сначала новые",
+          },
+          {
+            value: "createAt_asc",
+            by: "createAt",
+            order: "asc",
+            label: "Сначала старые",
+          },
         ].map((option) => (
           <Radio
-            onChange={(e) => handleSortChange(option)} // Вызывает сортировку
             key={option.value}
-            value={option.value} // Передаем "price_asc", "price_desc" и т. д.
+            value={option.value}
+            onChange={() => handleSortChange(option)}
             style={{ color: "#FEFBEA", fontSize: "20px" }}
-            className="radio-option"
           >
             {option.label}
           </Radio>

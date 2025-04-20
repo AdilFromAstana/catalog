@@ -7,31 +7,35 @@ const initialState = {
   filteredOptions: {},
   initialFiltersState: {},
   firstSelectedFilter: null,
-  sortOrder: "default", // asc | desc | default
+  sortOrder: "default",
   priceRange: { min: 0, max: 0 },
 };
 
-// Вспомогательная функция для фильтрации и сортировки
 function applyFiltersAndSorting(state) {
   const { allItems, filters, sortOrder } = state;
 
   let filtered = allItems.filter((item) =>
     Object.entries(filters).every(([param, values]) => {
-      if (param === "price") return true; // цену фильтруем отдельно
-      return values.length
-        ? values.some((v) =>
-            Array.isArray(item[param])
-              ? item[param].includes(v)
-              : item[param] === v,
-          )
-        : true;
-    }),
+      if (param === "price") return true;
+
+      const itemValue = item[param];
+
+      if (Array.isArray(itemValue)) {
+        // Если массив объектов с value/title
+        const extractedValues = itemValue.map((el) =>
+          typeof el === "object" ? el.value || el.code || el.title : el,
+        );
+        return values.some((v) => extractedValues.includes(v));
+      }
+
+      return values.includes(itemValue);
+    })
   );
 
   if (filters.price) {
     const [min, max] = filters.price;
     filtered = filtered.filter(
-      (item) => item.price >= min && item.price <= max,
+      (item) => item.price >= min && item.price <= max
     );
   }
 
@@ -63,15 +67,14 @@ const filterSlice = createSlice({
         range: { min, max },
       };
 
-      state.filteredOptions = {
+      const fullFilters = {
         ...filters,
         price: priceFilter,
       };
 
-      state.initialFiltersState = {
-        ...JSON.parse(JSON.stringify(filters || {})),
-        price: JSON.parse(JSON.stringify(priceFilter)), // обязательно добавить
-      };
+      state.initialFiltersState = fullFilters;
+      state.filteredOptions = JSON.parse(JSON.stringify(fullFilters));
+
       state.allItems = items;
       state.filteredItems = items;
       state.filters = {};
@@ -90,7 +93,11 @@ const filterSlice = createSlice({
           : {};
       }
 
-      state.filters[param] = values.length ? values : [];
+      if (values.length) {
+        state.filters[param] = values;
+      } else {
+        delete state.filters[param]; // удаляем фильтр, если пустой
+      }
 
       state.filteredItems = applyFiltersAndSorting(state);
 
@@ -106,8 +113,12 @@ const filterSlice = createSlice({
                 ...option,
                 count: state.filteredItems.filter((item) =>
                   Array.isArray(item[key])
-                    ? item[key].includes(option.value)
-                    : item[key] === option.value,
+                    ? item[key].some((el) =>
+                      typeof el === "object"
+                        ? el.value === option.value || el.title === option.value || el.code === option.value
+                        : el === option.value
+                    )
+                    : item[key] === option.value
                 ).length,
               }))
               .filter((option) => option.count > 0);
@@ -118,9 +129,9 @@ const filterSlice = createSlice({
         {},
       );
 
-      const priceList = state.filteredItems.map((item) => item.price);
-      const minPrice = priceList.length ? Math.min(...priceList) : 0;
-      const maxPrice = priceList.length ? Math.max(...priceList) : 0;
+      const allPrices = state.allItems.map((item) => item.price);
+      const minPrice = allPrices.length ? Math.min(...allPrices) : 0;
+      const maxPrice = allPrices.length ? Math.max(...allPrices) : 0;
 
       state.filteredOptions.price = {
         name: "Цена",
@@ -140,8 +151,25 @@ const filterSlice = createSlice({
     },
 
     setSortOrder: (state, action) => {
-      state.sortOrder = action.payload;
-      state.filteredItems = applyFiltersAndSorting(state);
+      const sort = action.payload;
+      state.sortOrder = sort;
+
+      const { by, order } = sort;
+
+      if (order === "asc" || order === "desc") {
+        state.filteredItems = [...state.filteredItems].sort((a, b) => {
+          const aVal = a[by];
+          const bVal = b[by];
+
+          if (typeof aVal === "string") {
+            return order === "asc"
+              ? aVal.localeCompare(bVal)
+              : bVal.localeCompare(aVal);
+          }
+
+          return order === "asc" ? aVal - bVal : bVal - aVal;
+        });
+      }
     },
 
     resetFilters: (state) => {

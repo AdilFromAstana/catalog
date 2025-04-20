@@ -7,13 +7,9 @@ import useFavorites from "../../hooks/useFavorites";
 import "./CatalogPage.css";
 import { Drawer, Spin } from "antd";
 import useCategory from "../../hooks/useCategory";
-import InlineFilters from "../../components/InlineFilters";
-import { useDispatch } from "react-redux";
-import { initializeData } from "../../redux/filterSlice";
-import { initialFlowers } from "../../common/initialData";
+import InlineFilters from "../../components/InlineFilters/InlineFilters";
 
 const CatalogPage = () => {
-  const dispatch = useDispatch();
   const [categoryFiltersContainerPadding, setCategoryFiltersContainerPadding] =
     useState(0);
   const [isSortDrawerVisible, setSortDrawerVisible] = useState(false);
@@ -80,7 +76,6 @@ const CatalogPage = () => {
   };
 
   const handleSortChange = (value) => {
-    console.log("value: ", value);
     setSort(value);
     toggleSortDrawer();
   };
@@ -93,37 +88,13 @@ const CatalogPage = () => {
 
   const isFilterSelected = !tempMaxValue && !tempMinValue;
 
-  // const {
-  //   data: products,
-  //   isLoading,
-  //   lastVisible: newLastVisible,
-  //   totalSize,
-  // } = useGetPaginatedData({
-  //   collectionName: "items/getAll",
-  //   pageSize: itemsPerPage,
-  //   currentPage: currentPage,
-  //   lastVisible: lastVisible,
-  //   sort: sort,
-  //   maxPriceFilter: tempMaxValue,
-  //   minPriceFilter: tempMinValue,
-  //   categoryIdsFilter: collectKeysWithoutChildren(),
-  // });
-
   useEffect(() => {
     if (ref.current) {
       setCategoryFiltersContainerPadding(
         ref.current.getBoundingClientRect().height,
       );
     }
-  }, []);
-
-  useEffect(() => {
-    dispatch(
-      initializeData({
-        items: initialFlowers,
-      })
-    );
-  }, [dispatch]);
+  }, [ref.current]);
 
   return (
     <>
@@ -147,29 +118,8 @@ const CatalogPage = () => {
         </div>
         <div
           className="catalog-container"
-          style={{ paddingTop: `${categoryFiltersContainerPadding + 10}px` }}
+          style={{ marginTop: `${categoryFiltersContainerPadding}px` }}
         >
-          {/* <div className="filter-component-desktop">
-            <Filters
-              productsTotalSize={productsTotalSize}
-              minPrice={minPrice}
-              maxPrice={maxPrice}
-              tempMinValue={tempMinValue}
-              tempMaxValue={tempMaxValue}
-              // colorsWithCounts={colorsWithCounts}
-              selectedColors={selectedColors}
-              handleColorChange={handleColorChange}
-              setTempMinValue={setTempMinValue}
-              setTempMaxValue={setTempMaxValue}
-              handlePriceReset={handlePriceReset}
-              availableCategories={availableCategories}
-              selectedCategoryKeys={selectedCategoryKeys}
-              selectCategory={selectCategory}
-              backToAlreadySelectedCategory={backToAlreadySelectedCategory}
-              selectedCategories={selectedCategories}
-              categoryTitle={categoryTitle}
-            />
-          </div> */}
           <ProductList
             isLoading={isLoading}
             favorites={favorites}

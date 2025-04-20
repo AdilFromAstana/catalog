@@ -1,5 +1,5 @@
 import React, { memo, useState } from "react";
-import { Badge, Button } from "antd";
+import { Badge } from "antd";
 import {
   ControlOutlined,
   LeftOutlined,
@@ -11,11 +11,11 @@ const CategoryNavigation = memo(
   ({ toggleSortDrawer, togglePriceDrawer, isFilterSelected }) => {
     const [level, setLevel] = useState(1);
     const [parentId, setParentId] = useState(null);
-    const filteredFlowers = useSelector((state) => state.filters.allItems);
+    const filteredFlowers = useSelector((state) => state.filters.filteredItems);
     const [history, setHistory] = useState([]); // Стек истории переходов
     const [selectedCategory, setSelectedCategory] = useState({
       titleRu: "Цветы",
-    }); // Выбранная категория на последнем уровне
+    });
 
     const handleCategoryClick = (category) => {
       setSelectedCategory(category);
@@ -60,19 +60,6 @@ const CategoryNavigation = memo(
             </Badge>
           </div>
         </div>
-        {/* {!availableCategories ? null : (
-          <div className="scrollable-row">
-            {availableCategories?.categories?.map((category) => (
-              <Button
-                key={category.id}
-                type="primary"
-                onClick={() => handleCategoryClick(category)}
-              >
-                {category.titleRu}
-              </Button>
-            ))}
-          </div>
-        )} */}
       </div>
     );
   },

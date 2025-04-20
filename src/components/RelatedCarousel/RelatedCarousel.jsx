@@ -1,7 +1,6 @@
 import { List, Skeleton } from "antd";
 import { HeartOutlined, HeartFilled } from "@ant-design/icons";
 import { Link } from "react-router-dom";
-import useWindowWidth from "../../hooks/useWindowWidth";
 import useFavorites from "../../hooks/useFavorites";
 import { memo, useEffect, useRef, useState } from "react";
 import { formatNumber } from "../../common/common";

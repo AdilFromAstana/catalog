@@ -96,8 +96,9 @@ const Filters = memo(
                       }
                     }
                   }}
-                  className={`category-list-item ${isSelected ? "selected" : ""
-                    } ${isDisabled ? "" : "last-item"}`}
+                  className={`category-list-item ${
+                    isSelected ? "selected" : ""
+                  } ${isDisabled ? "" : "last-item"}`}
                 >
                   {item.title}
                 </List.Item>
@@ -185,7 +186,7 @@ const Filters = memo(
         </div>
       </div>
     );
-  }
+  },
 );
 
 export default Filters;

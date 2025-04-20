@@ -9,6 +9,10 @@ import { Content } from "antd/es/layout/layout";
 import { AnimatePresence, motion } from "framer-motion";
 import CartPage from "../pages/Cart/CartPage";
 import { useEffect, useState } from "react";
+import { initializeData } from "../redux/filterSlice";
+import { useDispatch } from "react-redux";
+import { initialFilters, initialFlowers } from "../common/initialData";
+import ProductAnalyticsPage from "../pages/Statistics/ProductAnalyticsPage";
 
 const pageVariants = {
   initial: { opacity: 0, y: 40 },
@@ -38,8 +42,18 @@ const MobileOnlyPage = () => (
 );
 
 const AppRouter = () => {
+  const dispatch = useDispatch();
   const location = useLocation();
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+  useEffect(() => {
+    dispatch(
+      initializeData({
+        items: initialFlowers,
+        filters: initialFilters,
+      }),
+    );
+  }, [dispatch]);
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768);
@@ -59,6 +73,7 @@ const AppRouter = () => {
     { path: "/cart", element: <CartPage /> },
     { path: "/my-catalog", element: <MyCatalogPage /> },
     { path: "/my-catalog/:my-item", element: <UpdateItemPage /> },
+    { path: "/statistics", element: <ProductAnalyticsPage /> },
   ];
 
   return (

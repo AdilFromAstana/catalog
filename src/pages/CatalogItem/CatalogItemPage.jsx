@@ -1,16 +1,20 @@
-/* eslint-disable react-hooks/rules-of-hooks */
-import { useEffect, useState } from "react";
-import "./CatalogItemPage.css";
-import { useParams, useNavigate } from "react-router-dom";
-import { Button, Spin } from "antd";
-import RelatedCarousel from "../../components/RelatedCarousel/RelatedCarousel";
-import { formatNumber } from "../../common/common";
-import { initialFlowers } from "../../common/initialData";
-import { HeartOutlined, HeartFilled } from "@ant-design/icons";
+import { memo, useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import MobileProductGallery from "./Components/MobileProductGallery";
+import ProductGallery from "./Components/ProductGallery";
+import ProductActions from "./Components/ProductActions";
+import BackButton from "./Components/BackButton";
+import ProductSpecifications from "./Components/ProductSpecifications";
 import useFavorites from "../../hooks/useFavorites";
 import useCart from "../../hooks/useCart";
+import { Spin } from "antd";
+import { formatNumber } from "../../common/common";
+import { initialFlowers } from "../../common/initialData";
+import RelatedCarousel from "../../components/RelatedCarousel/RelatedCarousel";
+import "./CatalogItemPage.css";
+import ImageModal from "./Components/ImageModal";
 
-const CatalogItemPage = () => {
+const CatalogItemPage = memo(() => {
   const { id } = useParams();
   const nav = useNavigate();
   const { toggleFavorite, favorites } = useFavorites();
@@ -24,36 +28,33 @@ const CatalogItemPage = () => {
   const [isSameCategoryItemsLoading, setIsSameCategoryItemsLoading] =
     useState(true);
 
+  console.log(sameCategoryItems);
+
   const cartItem = cart?.find((cartItem) => cartItem?.id === catalogItem?.id);
+  const isFavorite = favorites.includes(catalogItem?.id);
+  const handleImageClick = (index) => setCurrentImage(index);
 
   const ViewedItemsKey = "viewedItems";
-
-  const handleImageClick = (index) => {
-    setCurrentImage(index);
-  };
 
   const getWatchedItems = async () => {
     const viewedItemIds =
       JSON.parse(localStorage.getItem(ViewedItemsKey)) || [];
 
-    let updatedViewedItems = viewedItemIds.filter((itemId) => itemId !== id); // Убираем текущий товар
-    updatedViewedItems.unshift(id); // Добавляем в начало
+    let updatedViewedItems = viewedItemIds.filter((itemId) => itemId !== id);
+    updatedViewedItems.unshift(id);
 
-    // Ограничиваем список до 10 элементов
     if (updatedViewedItems.length > 10) {
       updatedViewedItems = updatedViewedItems.slice(0, 10);
     }
 
-    // Сохраняем в локальное хранилище (включая текущий товар)
     localStorage.setItem(ViewedItemsKey, JSON.stringify(updatedViewedItems));
 
-    // Получаем данные товаров, **но исключаем текущий элемент (id)**
     const viewedItemsData = updatedViewedItems
-      .filter((itemId) => itemId !== id) // Исключаем текущий товар
+      .filter((itemId) => itemId !== id)
       .map((itemId) => initialFlowers.find((item) => item.id === itemId))
-      .filter(Boolean); // Убираем `undefined`, если товар удален
+      .filter(Boolean);
 
-    setWatchedItems(viewedItemsData); // Обновляем отображаемые товары
+    setWatchedItems(viewedItemsData);
     setIsWatchedItemsLoading(false);
   };
 
@@ -72,17 +73,15 @@ const CatalogItemPage = () => {
 
       if (!item) return;
 
-      const itemBouquet = item.bouquetCompositionRu; // Массив видов цветов
+      const itemBouquet = item.bouquetComposition.map((b) => b.title);
 
       let matchingItems = [];
 
-      // Итерируемся по каждому виду цветка в текущем букете
       itemBouquet.forEach((flowerType) => {
-        // Фильтруем товары, где присутствует этот вид цветка
         const itemsWithFlower = initialFlowers.filter(
           (flower) =>
             flower.id !== item.id &&
-            flower.bouquetCompositionRu.includes(flowerType),
+            flower.bouquetComposition?.some((b) => b.title === flowerType),
         );
 
         matchingItems.push({
@@ -91,12 +90,33 @@ const CatalogItemPage = () => {
         });
       });
 
-      setSameCategoryItems(matchingItems); // Массив [{ title: "Роза", children: [...] }, { title: "Лилия", children: [...] }]
+      setSameCategoryItems(matchingItems);
       setIsSameCategoryItemsLoading(false);
     };
 
     fetchData();
   }, [id]);
+
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalImageIndex, setModalImageIndex] = useState(0);
+
+  const handleImageZoom = (index) => {
+    setModalImageIndex(index);
+    setModalVisible(true);
+  };
+
+  const handleNextImage = () => {
+    setModalImageIndex(
+      (prevIndex) => (prevIndex + 1) % catalogItem.images.length,
+    );
+  };
+
+  const handlePrevImage = () => {
+    setModalImageIndex(
+      (prevIndex) =>
+        (prevIndex - 1 + catalogItem.images.length) % catalogItem.images.length,
+    );
+  };
 
   const message = `Здравствуйте!\nПодскажите, есть ли в наличии "${catalogItem?.title}"?\nhttps://catalog-beta.vercel.app/${catalogItem?.id}`;
   const whatsappUrl = `https://wa.me/77761156416?text=${encodeURIComponent(message)}`;
@@ -104,182 +124,52 @@ const CatalogItemPage = () => {
   return (
     <Spin size="large" spinning={!catalogItem}>
       <div style={{ margin: "0 20px" }}>
+        <BackButton onClick={() => nav(-1)} />
+
         <div className="wrapper">
-          <div className="item-gallery">
-            <div className="main-image-container">
-              <img
-                className="main-image"
-                src={catalogItem?.images[currentImage]?.url || ""}
-                alt="product"
-              />
-            </div>
-            <div className="thumbnail-container">
-              {catalogItem?.images?.map((image, index) => (
-                <img
-                  key={image?.url}
-                  src={image?.url}
-                  alt={`Thumbnail ${index}`}
-                  className={`thumbnail ${
-                    currentImage === index ? "active-thumbnail" : ""
-                  }`}
-                  onClick={() => handleImageClick(index)}
-                />
-              ))}
-            </div>
-          </div>
+          <ProductGallery
+            images={catalogItem?.images || []}
+            currentImage={currentImage}
+            onImageClick={setCurrentImage}
+            onImageZoom={handleImageZoom}
+          />
+
           <div className="content-wrapper">
             <h2 className="item-title">{catalogItem?.title}</h2>
-            <div className="mobile-item-gallery">
-              <div className="mobile-image-container">
-                <img
-                  className="mobile-image"
-                  src={catalogItem?.images[currentImage].url}
-                  alt="product"
-                />
-              </div>
-              <div className="thumbnail-container">
-                {catalogItem?.images.map((image, index) => (
-                  <img
-                    key={image.url}
-                    src={image.url}
-                    alt={`Thumbnail ${index}`}
-                    className={`thumbnail ${
-                      currentImage === index ? "active-thumbnail" : ""
-                    }`}
-                    onClick={() => handleImageClick(index)}
-                  />
-                ))}
-              </div>
-            </div>
+
+            <MobileProductGallery
+              images={catalogItem?.images || []}
+              currentImage={currentImage}
+              onImageClick={setCurrentImage}
+              onImageZoom={handleImageZoom}
+            />
 
             <div className="item-price">
               {formatNumber(catalogItem?.price ?? 0)}₸
             </div>
 
-            <div
-              className="buttons"
-              style={{ display: "flex", flexDirection: "column" }}
-            >
-              <div
-                style={{
-                  display: "grid",
-                  gridTemplateColumns: "1fr 40px",
-                  gap: 10,
-                }}
-              >
-                {cartItem ? (
-                  <div
-                    style={{
-                      display: "grid",
-                      gridTemplateColumns: "40px 40px 40px 1fr",
-                      gap: 10,
-                    }}
-                  >
-                    <Button
-                      style={{
-                        color: "#FEFBEA",
-                        border: "2px solid #FEFBEA",
-                        background: "#091235",
-                        height: "40px",
-                        fontSize: 36,
-                        opacity: cartItem.quantity === 5 ? 0.5 : 1,
-                      }}
-                      disabled={cartItem.quantity === 5}
-                      onClick={() => addToCart(catalogItem.id)}
-                    >
-                      +
-                    </Button>
-                    <div
-                      style={{
-                        fontSize: "20px",
-                        color: "#FEFBEA",
-                        margin: "auto",
-                      }}
-                    >
-                      {cartItem?.quantity}
-                    </div>
-                    <Button
-                      style={{
-                        color: "#FEFBEA",
-                        border: "2px solid #FEFBEA",
-                        background: "#091235",
-                        height: "40px",
-                        fontSize: 36,
-                      }}
-                      onClick={() => removeFromCart(catalogItem.id)}
-                    >
-                      -
-                    </Button>
-                    <Button
-                      type="primary"
-                      size="large"
-                      style={{
-                        color: "#FEFBEA",
-                        border: "2px solid #FEFBEA",
-                        background: "#091235",
-                      }}
-                      onClick={() => nav("/cart")}
-                    >
-                      В корзину
-                    </Button>
-                  </div>
-                ) : (
-                  <Button
-                    type="primary"
-                    size="large"
-                    style={{
-                      color: "#FEFBEA",
-                      border: "2px solid #FEFBEA",
-                      background: "#091235",
-                    }}
-                    onClick={() => addToCart(catalogItem.id)}
-                  >
-                    Добавить в корзину
-                  </Button>
-                )}
-                <Button
-                  type="primary"
-                  size="large"
-                  style={{
-                    color: "#FEFBEA",
-                    border: "2px solid #FEFBEA",
-                    background: "#091235",
-                  }}
-                  onClick={() => toggleFavorite(catalogItem?.id)}
-                >
-                  {favorites.includes(catalogItem?.id) ? (
-                    <HeartFilled style={{ color: "red", fontSize: "24px" }} />
-                  ) : (
-                    <HeartOutlined
-                      style={{ color: "#FEFBEA", fontSize: "24px" }}
-                    />
-                  )}
-                </Button>
-              </div>
-              <Button
-                onClick={() => window.open(whatsappUrl, "_blank")}
-                className="add-to-cart"
-                type="primary"
-                size="large"
-                style={{ color: "#091235" }}
-              >
-                Узнать наличие товара
-              </Button>
-            </div>
+            <ProductActions
+              cartItem={cartItem}
+              isFavorite={isFavorite}
+              onAddToCart={() => addToCart(catalogItem.id)}
+              onToggleFavorite={() => toggleFavorite(catalogItem.id)}
+              onNavigateToCart={() => nav("/cart")}
+              onRemoveFromCart={() => removeFromCart(catalogItem.id)}
+              whatsappUrl={whatsappUrl}
+            />
 
-            <div className="specifications">
-              <h3>Характеристики</h3>
-              <ul>
-                <li>Кол-во цветов: {catalogItem?.flowerCount}</li>
-                <li>Высота цветов: {catalogItem?.flowerHeight}</li>
-                <li>
-                  Состав букета:{" "}
-                  {catalogItem?.bouquetCompositionRu.map((item) => item)}
-                </li>
-              </ul>
-            </div>
+            <ProductSpecifications product={catalogItem} />
           </div>
+          <ImageModal
+            images={catalogItem?.images || []}
+            currentIndex={modalImageIndex}
+            visible={modalVisible}
+            onClose={() => setModalVisible(false)}
+            onNext={handleNextImage}
+            onPrev={handlePrevImage}
+          />
         </div>
+
         <div
           style={{
             maxWidth: "900px",
@@ -298,22 +188,24 @@ const CatalogItemPage = () => {
               id={id}
             />
           )}
-          {sameCategoryItems.length > 0 &&
-            sameCategoryItems.map((item) => {
+          {sameCategoryItems.map((item) => {
+            if (item.children.length > 0) {
               return (
                 <RelatedCarousel
-                  title={item?.title}
+                  key={item.title}
+                  title={item.title}
                   products={item.children}
                   isLoading={isSameCategoryItemsLoading}
                   setIsItemLoading={setIsItemLoading}
                   id={id}
                 />
               );
-            })}
+            }
+          })}
         </div>
       </div>
     </Spin>
   );
-};
+});
 
 export default CatalogItemPage;
