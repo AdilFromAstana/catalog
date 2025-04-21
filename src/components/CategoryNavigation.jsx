@@ -42,7 +42,7 @@ const CategoryNavigation = memo(
     return (
       <div className="category-navigation">
         <div className="nav-wrapper">
-          <div className="nav-item" onClick={returnToPreviousCategory}>
+          <div className="nav-item">
             <LeftOutlined className="icon" />
           </div>
           <div className="category-info">
@@ -56,7 +56,7 @@ const CategoryNavigation = memo(
           </div>
           <div className="nav-item">
             <Badge dot={!isFilterSelected}>
-              <ControlOutlined className="icon" onClick={togglePriceDrawer} />
+              <ControlOutlined className="icon" />
             </Badge>
           </div>
         </div>

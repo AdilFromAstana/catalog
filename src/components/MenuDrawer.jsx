@@ -1,16 +1,10 @@
 import React from "react";
 import { Drawer, Menu } from "antd";
 import {
-  PhoneOutlined,
   HeartOutlined,
-  UserOutlined,
   ShoppingCartOutlined,
-  SettingOutlined,
-  InfoCircleOutlined,
   HomeOutlined,
-  ShopOutlined,
   LineChartOutlined,
-  PlusCircleOutlined,
 } from "@ant-design/icons";
 import { Link, useLocation } from "react-router-dom";
 

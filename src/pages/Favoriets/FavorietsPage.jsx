@@ -169,7 +169,7 @@ const FavorietsPage = () => {
             }}
           />
         ) : (
-          <div style={{ textAlign: "center", padding: "20px" }}>
+          <div style={{ textAlign: "center", padding: "20px", color: "#FEFBEA" }}>
             Нет доступных продуктов
           </div>
         )}

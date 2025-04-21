@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Row, Col, Card, Typography, Button, Space } from "antd";
+import { Row, Col, Card, Typography, Button } from "antd";
 import WeeklyVisitsChart from "./components/WeeklyVisitsChart";
 import TopVisitedProduct from "./components/TopVisitedProduct";
 import ProductStatsTable from "./components/ProductStatsTable";

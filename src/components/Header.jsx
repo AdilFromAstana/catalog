@@ -6,7 +6,7 @@ const Header = ({ setIsDrawerVisible }) => {
   return (
     <AntHeader className="header">
       <Link className="header-title" to="/">
-        Ваш бренд
+        <img src="logo512.png" alt="logo512" />
       </Link>
       <MenuOutlined className="icon" onClick={() => setIsDrawerVisible(true)} />
     </AntHeader>

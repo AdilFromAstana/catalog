@@ -16,10 +16,14 @@
   padding: 0 16px;
 }
 
-.header-title {
+.header-title{
+  display: flex;
+  align-items: center;
+}
+
+.header-title img {
   color: #fefbea;
-  margin: 0;
-  font-size: 18px;
+  height: 40px;
 }
 
 .header-title:hover {
