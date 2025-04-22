@@ -61,14 +61,10 @@ const MenuDrawer = ({ isDrawerVisible, setIsDrawerVisible }) => {
     <Drawer
       styles={{
         header: {
-          backgroundColor: "#091235",
-          color: "#FEFBEA",
           fontSize: "24px",
         },
         body: {
-          color: "#FEFBEA",
           padding: 0,
-          background: "#091235",
         },
       }}
       placement="right"
@@ -79,19 +75,11 @@ const MenuDrawer = ({ isDrawerVisible, setIsDrawerVisible }) => {
     >
       <Menu
         mode="inline"
-        style={{ height: "100%", background: "#091235" }}
+        style={{ height: "100%" }}
         selectedKeys={[location.pathname]}
       >
         {menuItems.map((item) => (
-          <Menu.Item
-            key={item.key}
-            style={{
-              color: "#FEFBEA",
-              backgroundColor:
-                location.pathname === item.path ? "#FEFBEA" : "#091235",
-              color: location.pathname === item.path ? "#091235" : "#FEFBEA",
-            }}
-          >
+          <Menu.Item key={item.key}>
             <Link
               to={item.path}
               onClick={() => {

@@ -25,11 +25,10 @@ export const DrawerProvider = ({ children }) => {
         onClose={closeDrawer}
         open={isVisible}
         styles={{
-          header: { backgroundColor: "#091235", color: "#FEFBEA", fontSize: "24px" },
+          header: { color: "#4f4f4f", fontSize: "24px" },
           body: {
-            color: "#FEFBEA",
+            color: "#4f4f4f",
             fontSize: "24px",
-            background: "#091235"
           },
         }}
         rootClassName="inline-filters-header"

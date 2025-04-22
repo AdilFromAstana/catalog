@@ -89,7 +89,7 @@ const CartPage = () => {
 
   return (
     <Content style={{ padding: "0px 10px" }}>
-      <h1 style={{ color: "#FEFBEA" }}>Корзина</h1>
+      <h1 style={{ color: "#4f4f4f" }}>Корзина</h1>
       <Spin size="large" spinning={loading}>
         {items.length > 0 ? (
           <>
@@ -106,7 +106,10 @@ const CartPage = () => {
                     />
                     <div className="product-details">
                       <div className="product-info">
-                        <Link className="product-title" to={`/items/${item.id}`}>
+                        <Link
+                          className="product-title"
+                          to={`/items/${item.id}`}
+                        >
                           {item.title}
                         </Link>
                         <div className="product-category">
@@ -124,7 +127,7 @@ const CartPage = () => {
                           />
                         ) : (
                           <HeartOutlined
-                            style={{ color: "#FEFBEA", fontSize: "24px" }}
+                            style={{ color: "#4f4f4f", fontSize: "24px" }}
                           />
                         )}
                       </div>
@@ -133,9 +136,8 @@ const CartPage = () => {
                   <div className="cart-item-buttons">
                     <Button
                       style={{
-                        color: "#FEFBEA",
-                        border: "2px solid #FEFBEA",
-                        background: "#091235",
+                        color: "#4f4f4f",
+                        border: "2px solid #4f4f4f",
                         height: "40px",
                         fontSize: 36,
                         opacity: item.quantity === 5 ? 0.5 : 1,
@@ -148,7 +150,7 @@ const CartPage = () => {
                     <div
                       style={{
                         fontSize: "20px",
-                        color: "#FEFBEA",
+                        color: "#4f4f4f",
                         margin: "auto",
                       }}
                     >
@@ -156,9 +158,8 @@ const CartPage = () => {
                     </div>
                     <Button
                       style={{
-                        color: "#FEFBEA",
-                        border: "2px solid #FEFBEA",
-                        background: "#091235",
+                        color: "#4f4f4f",
+                        border: "2px solid #4f4f4f",
                         height: "40px",
                         fontSize: 36,
                       }}
@@ -169,19 +170,19 @@ const CartPage = () => {
                     <div
                       style={{
                         fontSize: "24px",
-                        color: "#FEFBEA",
+                        color: "#4f4f4f",
                         fontWeight: 700,
                         justifySelf: "end",
                       }}
                     >
-                       = {item.price * item.quantity} ₸
+                      = {item.price * item.quantity} ₸
                     </div>
                   </div>
                 </List.Item>
               )}
             />
             <div className="cart-summary">
-              <h2 style={{ color: "#FEFBEA" }}>Общая сумма: {totalPrice} ₸</h2>
+              <h2 style={{ color: "#4f4f4f" }}>Общая сумма: {totalPrice} ₸</h2>
               <div
                 style={{
                   display: "flex",
@@ -193,7 +194,7 @@ const CartPage = () => {
                   icon={<ShoppingCartOutlined />}
                   type="primary"
                   size="large"
-                  style={{ background: "#FEFBEA", color: "#091235" }}
+                  style={{ background: "#f5f5f5", color: "#4f4f4f" }}
                   onClick={getActualData}
                 >
                   Узнать о наличии
@@ -202,7 +203,7 @@ const CartPage = () => {
                   icon={<ShareAltOutlined />}
                   type="primary"
                   size="large"
-                  style={{ background: "#FEFBEA", color: "#091235" }}
+                  style={{ background: "#f5f5f5", color: "#4f4f4f" }}
                   onClick={handleShare}
                 >
                   Поделиться корзиной
@@ -212,12 +213,11 @@ const CartPage = () => {
           </>
         ) : (
           <div className="empty-cart">
-            <div style={{ fontSize: 24, color: "#FEFBEA" }}>Корзина пуста</div>
+            <div style={{ fontSize: 24, color: "#4f4f4f" }}>Корзина пуста</div>
             <Button
               onClick={() => nav("/")}
               style={{
-                color: "#091235",
-                backgroundColor: "#FEFBEA",
+                backgroundColor: "#4f4f4f",
                 fontSize: 20,
               }}
               size="large"

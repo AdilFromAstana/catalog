@@ -9,7 +9,7 @@
   position: fixed;
   width: 100%;
   z-index: 10;
-  background: #091235;
+  background: white;
   border-bottom: 1px solid #ddd;
   display: flex;
   justify-content: space-between;
@@ -22,10 +22,10 @@
 }
 
 .header-title img {
-  color: #fefbea;
+  color: #4f4f4f;
   height: 40px;
 }
 
 .header-title:hover {
-  color: #fefbea;
+  color: #4f4f4f;
 }

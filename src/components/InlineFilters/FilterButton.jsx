@@ -5,9 +5,9 @@ const FilterButton = memo(
   ({ keyName, param, filters, priceRange, onClick }) => {
     const getButtonStyle = (isActive) => ({
       borderRadius: "20px",
-      backgroundColor: isActive ? "#091235" : "#FEFBEA",
-      color: isActive ? "#FEFBEA" : "#091235",
-      borderColor: isActive ? "#FEFBEA" : "#091235",
+      backgroundColor: isActive ? "#4f4f4f" : "#f5f5f5",
+      color: isActive ? "#f5f5f5" : "#4f4f4f",
+      borderColor: isActive ? "#f5f5f5" : "#4f4f4f",
     });
 
     if (keyName === "price") {

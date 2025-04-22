@@ -7,7 +7,7 @@ const BackButton = memo(({ onClick }) => (
     type="primary"
     size="large"
     style={{
-      color: "#FEFBEA",
+      color: "#4f4f4f",
       background: "transparent",
       borderColor: "transparent",
       boxShadow: "none",

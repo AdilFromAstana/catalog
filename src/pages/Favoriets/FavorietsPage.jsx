@@ -47,7 +47,7 @@ const FavorietsPage = () => {
     <Content style={{ padding: "0px 10px" }}>
       <h1
         style={{
-          color: "#FEFBEA",
+          color: "#4f4f4f",
         }}
       >
         Избранное
@@ -101,7 +101,7 @@ const FavorietsPage = () => {
                           />
                         ) : (
                           <HeartOutlined
-                            style={{ color: "#FEFBEA", fontSize: "24px" }}
+                            style={{ color: "#4f4f4f", fontSize: "24px" }}
                           />
                         )}
                       </div>
@@ -115,9 +115,8 @@ const FavorietsPage = () => {
                           >
                             <Button
                               style={{
-                                color: "#FEFBEA",
-                                border: "2px solid #FEFBEA",
-                                background: "#091235",
+                                color: "#4f4f4f",
+                                border: "2px solid #4f4f4f",
                                 height: "36px",
                                 fontSize: 36,
                                 opacity: item.quantity === 5 ? 0.5 : 1,
@@ -130,7 +129,7 @@ const FavorietsPage = () => {
                             <div
                               style={{
                                 fontSize: "20px",
-                                color: "#FEFBEA",
+                                color: "#4f4f4f",
                                 margin: "auto",
                               }}
                             >
@@ -138,9 +137,8 @@ const FavorietsPage = () => {
                             </div>
                             <Button
                               style={{
-                                color: "#FEFBEA",
-                                border: "2px solid #FEFBEA",
-                                background: "#091235",
+                                color: "#4f4f4f",
+                                border: "2px solid #4f4f4f",
                                 height: "36px",
                                 fontSize: 36,
                               }}
@@ -150,15 +148,11 @@ const FavorietsPage = () => {
                             </Button>
                           </div>
                         ) : (
-                          <Button
-                            style={{
-                              background: "#FEFBEA",
-                            }}
-                          >
+                          <Button>
                             <ShoppingCartOutlined
-                              style={{ color: "#091235", fontSize: "24px" }}
+                              style={{ fontSize: "24px" }}
                             />
-                            <div style={{ color: "#091235" }}>В корзину</div>
+                            <div>В корзину</div>
                           </Button>
                         )}
                       </div>
@@ -169,7 +163,9 @@ const FavorietsPage = () => {
             }}
           />
         ) : (
-          <div style={{ textAlign: "center", padding: "20px", color: "#FEFBEA" }}>
+          <div
+            style={{ textAlign: "center", padding: "20px", color: "#4f4f4f" }}
+          >
             Нет доступных продуктов
           </div>
         )}

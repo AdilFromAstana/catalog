@@ -93,13 +93,15 @@ const RelatedCarousel = memo(
                         <div className="related-carousel-item-info">
                           <Link
                             className="related-carousel-item-title"
-                            onClick={() => setIsItemLoading(true)}
                             to={`/items/${item.id}`}
                           >
                             {item.title}
                           </Link>
                           <div className="related-carousel-item-category">
                             {item.categoryRu || "Не указано"}
+                          </div>
+                          <div className="related-carousel-item-priceWithoutDiscount">
+                            {formatNumber(item.originalPrice)}₸
                           </div>
                           <div className="related-carousel-item-price">
                             {formatNumber(item.price)}₸

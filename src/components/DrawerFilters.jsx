@@ -20,14 +20,12 @@ const DrawerFilters = memo(({ isSortDrawerVisible, toggleSortDrawer }) => {
       open={isSortDrawerVisible}
       styles={{
         header: {
-          backgroundColor: "#091235",
-          color: "#FEFBEA",
+          color: "#4f4f4f",
           fontSize: "24px",
         },
         body: {
-          color: "#FEFBEA",
+          color: "#4f4f4f",
           fontSize: "24px",
-          background: "#091235",
         },
       }}
       rootClassName="inline-filters-header"
@@ -63,7 +61,7 @@ const DrawerFilters = memo(({ isSortDrawerVisible, toggleSortDrawer }) => {
             key={option.value}
             value={option.value}
             onChange={() => handleSortChange(option)}
-            style={{ color: "#FEFBEA", fontSize: "20px" }}
+            style={{ color: "#4f4f4f", fontSize: "20px" }}
           >
             {option.label}
           </Radio>

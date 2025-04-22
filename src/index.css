@@ -5,9 +5,9 @@
 body {
   /* background: #013328; */
   /* background: #0D2B1D; */
-  background: #091235;
+  /* background: #091235; */
   font-weight: 500;
-  color: #FEFBEA;
+  color: #4f4f4f;
   margin: 0;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -18,12 +18,6 @@ body {
   border-color: #ffffff;
 }
 
-.ant-btn:hover, 
-.ant-btn-primary:hover, 
-.ant-btn-color-primary:hover {
-  background-color: #091235;
-}
-
 .ant-tree .ant-tree-node-content-wrapper.ant-tree-node-selected {
-  color: #FEFBEA;
+  color: #4f4f4f;
 }

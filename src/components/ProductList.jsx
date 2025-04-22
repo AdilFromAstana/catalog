@@ -117,7 +117,7 @@ const ProductList = ({ favorites, toggleFavorite, handleSortChange, sort }) => {
                         />
                       ) : (
                         <HeartOutlined
-                          style={{ color: "#FEFBEA", fontSize: "24px" }}
+                          style={{ color: "#4f4f4f", fontSize: "24px" }}
                         />
                       )}
                     </div>
@@ -131,9 +131,8 @@ const ProductList = ({ favorites, toggleFavorite, handleSortChange, sort }) => {
                         >
                           <Button
                             style={{
-                              color: "#FEFBEA",
-                              border: "2px solid #FEFBEA",
-                              background: "#091235",
+                              color: "#4f4f4f",
+                              border: "2px solid #4f4f4f",
                               height: "36px",
                               fontSize: 36,
                               opacity: item.quantity === 5 ? 0.5 : 1,
@@ -146,7 +145,7 @@ const ProductList = ({ favorites, toggleFavorite, handleSortChange, sort }) => {
                           <div
                             style={{
                               fontSize: "20px",
-                              color: "#FEFBEA",
+                              color: "#4f4f4f",
                               margin: "auto",
                             }}
                           >
@@ -154,9 +153,8 @@ const ProductList = ({ favorites, toggleFavorite, handleSortChange, sort }) => {
                           </div>
                           <Button
                             style={{
-                              color: "#FEFBEA",
-                              border: "2px solid #FEFBEA",
-                              background: "#091235",
+                              color: "#4f4f4f",
+                              border: "2px solid #4f4f4f",
                               height: "36px",
                               fontSize: 36,
                             }}
@@ -166,16 +164,9 @@ const ProductList = ({ favorites, toggleFavorite, handleSortChange, sort }) => {
                           </Button>
                         </div>
                       ) : (
-                        <Button
-                          style={{
-                            background: "#FEFBEA",
-                          }}
-                          onClick={() => addToCart(item.id)}
-                        >
-                          <ShoppingCartOutlined
-                            style={{ color: "#091235", fontSize: "24px" }}
-                          />
-                          <div style={{ color: "#091235" }}>В корзину</div>
+                        <Button onClick={() => addToCart(item.id)}>
+                          <ShoppingCartOutlined style={{ fontSize: "24px" }} />
+                          <div>В корзину</div>
                         </Button>
                       )}
                     </div>

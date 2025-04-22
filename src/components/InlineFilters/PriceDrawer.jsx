@@ -26,12 +26,10 @@ const PriceDrawer = memo(
         height="60svh"
         styles={{
           header: {
-            backgroundColor: "#091235",
-            color: "#FEFBEA",
+            color: "#4f4f4f",
             fontSize: "24px",
           },
           body: {
-            backgroundColor: "#091235",
             display: "flex",
             flexDirection: "column",
             height: "100%",

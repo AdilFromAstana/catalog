@@ -153,11 +153,11 @@ const CatalogPage = () => {
           },
           header: {
             backgroundColor: "#091235",
-            color: "#FEFBEA",
+            color: "#4f4f4f",
             fontSize: "24px",
           },
           body: {
-            color: "#FEFBEA",
+            color: "#4f4f4f",
             fontSize: "24px",
             background: "#091235",
           },

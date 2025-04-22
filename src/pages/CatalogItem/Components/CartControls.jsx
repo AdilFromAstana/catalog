@@ -14,9 +14,8 @@ const CartControls = memo(({ cartItem, onAdd, onRemove, onNavigateToCart }) => {
     >
       <Button
         style={{
-          color: "#FEFBEA",
-          border: "2px solid #FEFBEA",
-          background: "#091235",
+          color: "#4f4f4f",
+          border: "2px solid #4f4f4f",
           height: "40px",
           fontSize: 36,
           opacity: cartItem.quantity === 5 ? 0.5 : 1,
@@ -29,7 +28,7 @@ const CartControls = memo(({ cartItem, onAdd, onRemove, onNavigateToCart }) => {
       <div
         style={{
           fontSize: "20px",
-          color: "#FEFBEA",
+          color: "#4f4f4f",
           margin: "auto",
         }}
       >
@@ -37,9 +36,8 @@ const CartControls = memo(({ cartItem, onAdd, onRemove, onNavigateToCart }) => {
       </div>
       <Button
         style={{
-          color: "#FEFBEA",
-          border: "2px solid #FEFBEA",
-          background: "#091235",
+          color: "#4f4f4f",
+          border: "2px solid #4f4f4f",
           height: "40px",
           fontSize: 36,
         }}
@@ -50,11 +48,6 @@ const CartControls = memo(({ cartItem, onAdd, onRemove, onNavigateToCart }) => {
       <Button
         type="primary"
         size="large"
-        style={{
-          color: "#FEFBEA",
-          border: "2px solid #FEFBEA",
-          background: "#091235",
-        }}
         onClick={onNavigateToCart}
       >
         В корзину

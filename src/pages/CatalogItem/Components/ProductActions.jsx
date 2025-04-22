@@ -33,32 +33,14 @@ const ProductActions = memo(
           />
         ) : (
           <>
-            <Button
-              type="primary"
-              size="large"
-              style={{
-                color: "#FEFBEA",
-                border: "2px solid #FEFBEA",
-                background: "#091235",
-              }}
-              onClick={onAddToCart}
-            >
+            <Button type="primary" size="large" onClick={onAddToCart}>
               Добавить в корзину
             </Button>
-            <Button
-              type="primary"
-              size="large"
-              style={{
-                color: "#FEFBEA",
-                border: "2px solid #FEFBEA",
-                background: "#091235",
-              }}
-              onClick={onToggleFavorite}
-            >
+            <Button type="primary" size="large" onClick={onToggleFavorite}>
               {isFavorite ? (
                 <HeartFilled style={{ color: "red", fontSize: "24px" }} />
               ) : (
-                <HeartOutlined style={{ color: "#FEFBEA", fontSize: "24px" }} />
+                <HeartOutlined style={{ fontSize: "24px" }} />
               )}
             </Button>
           </>
@@ -66,10 +48,8 @@ const ProductActions = memo(
       </div>
       <Button
         onClick={() => window.open(whatsappUrl, "_blank")}
-        className="add-to-cart"
         type="primary"
         size="large"
-        style={{ color: "#091235" }}
       >
         Узнать наличие товара
       </Button>

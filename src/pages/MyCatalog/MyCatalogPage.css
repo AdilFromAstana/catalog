@@ -39,7 +39,7 @@
 
 .my-catalog-item-title {
   font-size: 16px;
-  color: #FEFBEA;
+  color: #4f4f4f;
   display: -webkit-box; /* Используем flexbox для текстового контейнера */
   -webkit-box-orient: vertical; /* Указываем вертикальную ориентацию */
   overflow: hidden; /* Скрываем текст, выходящий за пределы */
@@ -48,7 +48,7 @@
   line-clamp: 2; /* Для современных браузеров */
 }
 .my-catalog-item-title:hover {
-  color: #FEFBEA;
+  color: #4f4f4f;
 }
 
 .my-catalog-item-category {

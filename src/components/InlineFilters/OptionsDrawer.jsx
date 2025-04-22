@@ -21,12 +21,10 @@ const OptionsDrawer = memo(
       height="90svh"
       styles={{
         header: {
-          backgroundColor: "#091235",
-          color: "#FEFBEA",
+          color: "#4f4f4f",
           fontSize: "24px",
         },
         body: {
-          backgroundColor: "#091235",
           display: "flex",
           flexDirection: "column",
           height: "100%",
@@ -42,7 +40,7 @@ const OptionsDrawer = memo(
             renderItem={(option) => (
               <List.Item>
                 <Checkbox
-                  style={{ width: "100%", color: "#FEFBEA", fontSize: 20 }}
+                  style={{ width: "100%", color: "#4f4f4f", fontSize: 20 }}
                   checked={tempFilters[activeFilter]?.includes(option.value)}
                   onChange={() => onSelectItem(activeFilter, option.value)}
                 >
