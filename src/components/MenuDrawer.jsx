@@ -5,6 +5,7 @@ import {
   ShoppingCartOutlined,
   HomeOutlined,
   LineChartOutlined,
+  ShoppingOutlined,
 } from "@ant-design/icons";
 import { Link, useLocation } from "react-router-dom";
 
@@ -14,6 +15,12 @@ const menuItems = [
     icon: <HomeOutlined style={{ fontSize: "24px" }} />,
     label: "Главное",
     path: "/",
+  },
+  {
+    key: "/items",
+    icon: <ShoppingOutlined style={{ fontSize: "24px" }} />,
+    label: "Все товары",
+    path: "/items",
   },
   {
     key: "/favorites",
