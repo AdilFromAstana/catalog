@@ -96,8 +96,8 @@ const PriceFilter = memo(() => {
           <Button
             size="large"
             type="primary"
-            style={{ width: "100%" }}
             onClick={applyFilterChanges}
+            style={{ width: "100%", background: "#4f4f4f" }}
           >
             Применить
           </Button>

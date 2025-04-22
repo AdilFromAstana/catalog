@@ -43,13 +43,13 @@ const PriceDrawer = memo(
             marks={{
               [priceRange.min]: {
                 style: {
-                  color: "white",
+                  color: "#4f4f4f",
                 },
                 label: <strong>{priceRange.min}₸</strong>,
               },
               [priceRange.max]: {
                 style: {
-                  color: "white",
+                  color: "#4f4f4f",
                 },
                 label: <strong>{priceRange.max}₸</strong>,
               },
@@ -104,7 +104,7 @@ const PriceDrawer = memo(
             size="large"
             onClick={onApply}
             type="primary"
-            style={{ width: "100%" }}
+            style={{ width: "100%", background: "#4f4f4f" }}
           >
             Применить
           </Button>

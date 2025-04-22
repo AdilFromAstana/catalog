@@ -176,8 +176,8 @@ const Filters = memo(
               <Button
                 size="large"
                 type="primary"
-                style={{ width: "100%" }}
                 onClick={submitPrices}
+                style={{ width: "100%", background: "#4f4f4f" }}
               >
                 Применить
               </Button>

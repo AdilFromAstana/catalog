@@ -68,7 +68,7 @@ const OptionsDrawer = memo(
           size="large"
           onClick={onApply}
           type="primary"
-          style={{ width: "100%" }}
+          style={{ width: "100%", background: "#4f4f4f" }}
         >
           Применить
         </Button>

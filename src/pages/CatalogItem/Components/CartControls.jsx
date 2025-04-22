@@ -15,7 +15,8 @@ const CartControls = memo(({ cartItem, onAdd, onRemove, onNavigateToCart }) => {
       <Button
         style={{
           color: "#4f4f4f",
-          border: "2px solid #4f4f4f",
+          border: "1px solid #4f4f4f",
+          background: "#f5f5f5",
           height: "40px",
           fontSize: 36,
           opacity: cartItem.quantity === 5 ? 0.5 : 1,
@@ -37,7 +38,8 @@ const CartControls = memo(({ cartItem, onAdd, onRemove, onNavigateToCart }) => {
       <Button
         style={{
           color: "#4f4f4f",
-          border: "2px solid #4f4f4f",
+          border: "1px solid #4f4f4f",
+          background: "#f5f5f5",
           height: "40px",
           fontSize: 36,
         }}
@@ -46,6 +48,11 @@ const CartControls = memo(({ cartItem, onAdd, onRemove, onNavigateToCart }) => {
         -
       </Button>
       <Button
+        style={{
+          background: "#f5f5f5",
+          borderColor: "#4f4f4f",
+          color: "#4f4f4f",
+        }}
         type="primary"
         size="large"
         onClick={onNavigateToCart}
