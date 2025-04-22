@@ -1,6 +1,7 @@
 import { Route, Routes, useLocation } from "react-router-dom";
 import CatalogPage from "../pages/Catalog/CatalogPage";
 import CatalogItemPage from "../pages/CatalogItem/CatalogItemPage";
+import MainPage from "../pages/Main/MainPage";
 import FavorietsPage from "../pages/Favoriets/FavorietsPage";
 import CreateItemPage from "../pages/CreateItem/CreateItemPage";
 import MyCatalogPage from "../pages/MyCatalog/MyCatalogPage";
@@ -66,8 +67,9 @@ const AppRouter = () => {
   }
 
   const routes = [
-    { path: "/", element: <CatalogPage /> },
-    { path: "/:id", element: <CatalogItemPage /> },
+    { path: "/", element: <MainPage /> },
+    { path: "/items", element: <CatalogPage /> },
+    { path: "/items/:id", element: <CatalogItemPage /> },
     { path: "/favorites", element: <FavorietsPage /> },
     { path: "/create", element: <CreateItemPage /> },
     { path: "/cart", element: <CartPage /> },

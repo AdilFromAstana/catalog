@@ -723,6 +723,18 @@ export const initialFlowers = [
   },
 ];
 
+export const hotFlowers = initialFlowers.filter(
+  (item) => item.id >= 23 && item.id <= 28
+);
+
+export const mostSoldFlowers = initialFlowers.filter(
+  (item) => item.id >= 3 && item.id <= 8
+);
+
+export const roseFlowers = initialFlowers.filter((item) =>
+  item.bouquetComposition?.some((flower) => flower.code === "rose")
+);
+
 export const initialFilters = {
   bouquetComposition: {
     name: "Состав букета",

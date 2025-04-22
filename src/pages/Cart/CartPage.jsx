@@ -106,7 +106,7 @@ const CartPage = () => {
                     />
                     <div className="product-details">
                       <div className="product-info">
-                        <Link className="product-title" to={`/${item.id}`}>
+                        <Link className="product-title" to={`/items/${item.id}`}>
                           {item.title}
                         </Link>
                         <div className="product-category">

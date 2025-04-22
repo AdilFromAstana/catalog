@@ -83,11 +83,11 @@ const ProductList = ({ favorites, toggleFavorite, handleSortChange, sort }) => {
                   src={item?.images[0]?.url}
                   alt={item?.title}
                   className="product-image"
-                  onClick={() => nav(`/${item.id}`)}
+                  onClick={() => nav(`/items/${item.id}`)}
                 />
                 <div className="product-details">
                   <div className="product-info">
-                    <Link className="product-title" to={`/${item.id}`}>
+                    <Link className="product-title" to={`/items/${item.id}`}>
                       {item.title}
                     </Link>
                     <div className="product-category">

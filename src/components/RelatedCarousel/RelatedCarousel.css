@@ -26,7 +26,7 @@
 .related-carousel-title {
   color: #fefbea;
   margin: 10px 0;
-  font-size: 20px;
+  font-size: 24px;
 }
 
 .related-carousel-item-details {
@@ -138,7 +138,7 @@
 @media (max-width: 768px) {
   .related-carousel-item-image {
     margin: 0;
-    max-height: 125px;
+    max-height: 150px;
   }
 }
 

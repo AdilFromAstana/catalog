@@ -94,7 +94,7 @@ const RelatedCarousel = memo(
                           <Link
                             className="related-carousel-item-title"
                             onClick={() => setIsItemLoading(true)}
-                            to={`/${item.id}`}
+                            to={`/items/${item.id}`}
                           >
                             {item.title}
                           </Link>

@@ -118,7 +118,7 @@ const CatalogItemPage = memo(() => {
     );
   };
 
-  const message = `Здравствуйте!\nПодскажите, есть ли в наличии "${catalogItem?.title}"?\nhttps://catalog-git-test-adilfromastanas-projects.vercel.app/${catalogItem?.id}`;
+  const message = `Здравствуйте!\nПодскажите, есть ли в наличии "${catalogItem?.title}"?\nhttps://catalog-git-test-adilfromastanas-projects.vercel.app/items/${catalogItem?.id}`;
   const whatsappUrl = `https://wa.me/77761156416?text=${encodeURIComponent(message)}`;
 
   return (
