@@ -40,7 +40,7 @@ const ProductAnalyticsPage = () => {
         }}
       >
         <Button onClick={handlePrevWeek} icon={<LeftOutlined />} />
-        <Title level={5} style={{ margin: 0, color: "white" }}>
+        <Title level={5} style={{ margin: 0, color: "#4f4f4f" }}>
           {dateRange[0].format("DD.MM")} – {dateRange[1].format("DD.MM.YYYY")}
         </Title>
         <Button
