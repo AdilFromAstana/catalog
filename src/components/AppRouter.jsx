@@ -57,10 +57,14 @@ const AppRouter = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+
+  console.log("window.innerWidth < 768: ", window.innerWidth < 768);
 
   if (!isMobile) {
     return <MobileOnlyPage />;

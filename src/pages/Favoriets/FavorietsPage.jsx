@@ -7,9 +7,11 @@ import useWindowWidth from "../../hooks/useWindowWidth";
 import { Link } from "react-router-dom";
 import useFavorites from "../../hooks/useFavorites";
 import {
+  PlusOutlined,
   HeartOutlined,
   HeartFilled,
   ShoppingCartOutlined,
+  MinusOutlined,
 } from "@ant-design/icons";
 import { initialFlowers } from "../../common/initialData";
 import useCart from "../../hooks/useCart";
@@ -116,16 +118,15 @@ const FavorietsPage = () => {
                             <Button
                               style={{
                                 color: "#4f4f4f",
-                                border: "2px solid #4f4f4f",
+                                border: "1px solid #4f4f4f",
                                 height: "36px",
-                                fontSize: 36,
+                                width: "36px",
                                 opacity: item.quantity === 5 ? 0.5 : 1,
                               }}
                               disabled={item.quantity === 5}
                               onClick={() => addToCart(item.id)}
-                            >
-                              +
-                            </Button>
+                              icon={<PlusOutlined />}
+                            />
                             <div
                               style={{
                                 fontSize: "20px",
@@ -138,17 +139,20 @@ const FavorietsPage = () => {
                             <Button
                               style={{
                                 color: "#4f4f4f",
-                                border: "2px solid #4f4f4f",
+                                border: "1px solid #4f4f4f",
                                 height: "36px",
-                                fontSize: 36,
+                                width: "36px",
                               }}
+                              icon={<MinusOutlined />}
                               onClick={() => removeFromCart(item.id)}
-                            >
-                              -
-                            </Button>
+                            />
                           </div>
                         ) : (
-                          <Button>
+                          <Button
+                            style={{
+                              border: "1px solid #4f4f4f",
+                            }}
+                          >
                             <ShoppingCartOutlined
                               style={{ fontSize: "24px" }}
                             />

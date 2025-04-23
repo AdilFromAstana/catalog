@@ -1,5 +1,6 @@
 import { Button } from "antd";
 import { memo } from "react";
+import { PlusOutlined, MinusOutlined } from "@ant-design/icons";
 
 const CartControls = memo(({ cartItem, onAdd, onRemove, onNavigateToCart }) => {
   if (!cartItem) return null;
@@ -17,15 +18,14 @@ const CartControls = memo(({ cartItem, onAdd, onRemove, onNavigateToCart }) => {
           color: "#4f4f4f",
           border: "1px solid #4f4f4f",
           background: "#f5f5f5",
-          height: "40px",
-          fontSize: 36,
+          height: "36px",
+          width: "36px",
           opacity: cartItem.quantity === 5 ? 0.5 : 1,
         }}
         disabled={cartItem.quantity === 5}
         onClick={onAdd}
-      >
-        +
-      </Button>
+        icon={<PlusOutlined />}
+      />
       <div
         style={{
           fontSize: "20px",
@@ -40,13 +40,12 @@ const CartControls = memo(({ cartItem, onAdd, onRemove, onNavigateToCart }) => {
           color: "#4f4f4f",
           border: "1px solid #4f4f4f",
           background: "#f5f5f5",
-          height: "40px",
-          fontSize: 36,
+          height: "36px",
+          width: "36px",
         }}
         onClick={onRemove}
-      >
-        -
-      </Button>
+        icon={<MinusOutlined />}
+      />
       <Button
         style={{
           background: "#f5f5f5",

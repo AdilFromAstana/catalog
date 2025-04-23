@@ -5,14 +5,14 @@ import "./CartPage.css";
 import { Button, List, Spin } from "antd";
 import useWindowWidth from "../../hooks/useWindowWidth";
 import { Link, useNavigate } from "react-router-dom";
+import {} from "@ant-design/icons";
 import {
-  MinusOutlined,
-  PlusOutlined,
-  DeleteOutlined,
   HeartOutlined,
   HeartFilled,
   ShareAltOutlined,
   ShoppingCartOutlined,
+  PlusOutlined,
+  MinusOutlined,
 } from "@ant-design/icons";
 import { initialFlowers } from "../../common/initialData";
 import useCart from "../../hooks/useCart";
@@ -74,7 +74,7 @@ const CartPage = () => {
     const shareData = {
       title: "Моя корзина",
       text: "Посмотрите мою корзину товаров!",
-      url: window.location.href, // Текущий URL страницы корзины
+      url: window.location.href,
     };
 
     if (navigator.share) {
@@ -137,16 +137,15 @@ const CartPage = () => {
                     <Button
                       style={{
                         color: "#4f4f4f",
-                        border: "2px solid #4f4f4f",
-                        height: "40px",
-                        fontSize: 36,
+                        border: "1px solid #4f4f4f",
+                        height: "36px",
+                        width: "36px",
                         opacity: item.quantity === 5 ? 0.5 : 1,
                       }}
                       disabled={item.quantity === 5}
                       onClick={() => addToCart(item.id)}
-                    >
-                      +
-                    </Button>
+                      icon={<PlusOutlined />}
+                    />
                     <div
                       style={{
                         fontSize: "20px",
@@ -159,14 +158,13 @@ const CartPage = () => {
                     <Button
                       style={{
                         color: "#4f4f4f",
-                        border: "2px solid #4f4f4f",
-                        height: "40px",
-                        fontSize: 36,
+                        border: "1px solid #4f4f4f",
+                        height: "36px",
+                        width: "36px",
                       }}
                       onClick={() => removeFromCart(item.id)}
-                    >
-                      -
-                    </Button>
+                      icon={<MinusOutlined />}
+                    />
                     <div
                       style={{
                         fontSize: "24px",
@@ -194,7 +192,11 @@ const CartPage = () => {
                   icon={<ShoppingCartOutlined />}
                   type="primary"
                   size="large"
-                  style={{ background: "#f5f5f5", color: "#4f4f4f" }}
+                  style={{
+                    background: "#f5f5f5",
+                    color: "#4f4f4f",
+                    border: "1px solid #4f4f4f",
+                  }}
                   onClick={getActualData}
                 >
                   Узнать о наличии
@@ -203,7 +205,11 @@ const CartPage = () => {
                   icon={<ShareAltOutlined />}
                   type="primary"
                   size="large"
-                  style={{ background: "#f5f5f5", color: "#4f4f4f" }}
+                  style={{
+                    background: "#f5f5f5",
+                    color: "#4f4f4f",
+                    border: "1px solid #4f4f4f",
+                  }}
                   onClick={handleShare}
                 >
                   Поделиться корзиной

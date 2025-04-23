@@ -25,16 +25,18 @@ const RelatedCarousel = memo(
     useEffect(() => {
       const updateItemWidth = () => {
         if (carouselWrapperRef.current) {
-          const pageWidth = window.innerWidth; // Получаем ширину страницы
+          const pageWidth = window.innerWidth;
           const carouselWidth = carouselWrapperRef.current.offsetWidth;
+
           let cardWidth;
           if (pageWidth <= 768) {
-            cardWidth = carouselWidth / 2 - 14;
+            cardWidth = carouselWidth / 2 - 12;
           } else if (pageWidth <= 962) {
-            cardWidth = carouselWidth / 3 - 14;
+            cardWidth = carouselWidth / 3 - 12;
           } else {
-            cardWidth = carouselWidth / 4 - 14;
+            cardWidth = carouselWidth / 4 - 12;
           }
+
           setCarouselItemWidth(cardWidth);
         }
       };
@@ -43,7 +45,7 @@ const RelatedCarousel = memo(
 
       window.addEventListener("resize", updateItemWidth);
       return () => window.removeEventListener("resize", updateItemWidth);
-    }, []);
+    }, []); // ✅ зависимостей не нужно, потому что window не реактивный
 
     useEffect(() => {
       scrollToStart();
@@ -81,7 +83,7 @@ const RelatedCarousel = memo(
                 return (
                   <List.Item
                     className="related-carousel-item"
-                    // style={{ width: `${carouselItemWidth}px` }}
+                    style={{ width: `${carouselItemWidth}px` }}
                   >
                     <div className="related-carousel-item-content">
                       <img
@@ -100,11 +102,13 @@ const RelatedCarousel = memo(
                           <div className="related-carousel-item-category">
                             {item.categoryRu || "Не указано"}
                           </div>
-                          <div className="related-carousel-item-priceWithoutDiscount">
-                            {formatNumber(item.originalPrice)}₸
-                          </div>
-                          <div className="related-carousel-item-price">
-                            {formatNumber(item.price)}₸
+                          <div className="related-carousel-item-price-wrapper">
+                            <div className="related-carousel-item-priceWithoutDiscount">
+                              {formatNumber(item.originalPrice)}₸
+                            </div>
+                            <div className="related-carousel-item-price">
+                              {formatNumber(item.price)}₸
+                            </div>
                           </div>
                         </div>
                         <div

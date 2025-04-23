@@ -64,8 +64,6 @@
 }
 
 .ant-list .ant-list-item.related-carousel-item {
-  aspect-ratio: 1 / 1.42;
-  width: 210px;
   position: relative;
   flex: 0 0 auto;
   gap: 10px;
@@ -78,12 +76,12 @@
 }
 
 .related-carousel-item-content {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
+  display: grid;
+  justify-items: center;
+  grid-template-rows: 50% 1fr;
+  gap: 10px;
   height: 100%;
   width: 100%;
-  align-items: center;
 }
 
 .related-carousel-item-details {
@@ -115,23 +113,29 @@
   line-clamp: 2;
 }
 
+.related-carousel-item-price-wrapper {
+  display: flex;
+  flex-direction: column;
+  margin-top: auto;
+  gap: 0;
+}
 .related-carousel-item-price {
   color: #4f4f4f;
   font-weight: 700;
-  margin-top: auto;
   font-size: 20px;
+  line-height: normal;
 }
 .related-carousel-item-priceWithoutDiscount {
   color: #4f4f4f;
   font-weight: 700;
-  margin-top: auto;
   font-size: 14px;
   text-decoration: line-through;
+  line-height: normal;
 }
 
 .related-carousel-item-image {
-  margin: 0;
-  max-height: 150px;
+  margin: auto;
+  height: 100%;
 }
 
 .related-carousel-item-details,

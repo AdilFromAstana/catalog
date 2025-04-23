@@ -108,9 +108,21 @@
   border-bottom: 1px solid #ddd;
 }
 
+.item-price-wrapper {
+  align-items: flex-end;
+  display: flex;
+  gap: 10px;
+}
+
 .item-price {
   color: #4f4f4f;
   font-size: 36px;
+}
+
+.item-priceWithDiscount {
+  text-decoration: line-through;
+  color: #4f4f4f;
+  font-size: 24px;
 }
 
 .installment {

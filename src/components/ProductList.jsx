@@ -1,8 +1,10 @@
 import { Button, List, Result } from "antd";
 import {
+  PlusOutlined,
   HeartOutlined,
   HeartFilled,
   ShoppingCartOutlined,
+  MinusOutlined,
 } from "@ant-design/icons";
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
@@ -132,16 +134,15 @@ const ProductList = ({ favorites, toggleFavorite, handleSortChange, sort }) => {
                           <Button
                             style={{
                               color: "#4f4f4f",
-                              border: "2px solid #4f4f4f",
+                              border: "1px solid #4f4f4f",
                               height: "36px",
-                              fontSize: 36,
+                              width: "36px",
                               opacity: item.quantity === 5 ? 0.5 : 1,
                             }}
                             disabled={item.quantity === 5}
                             onClick={() => addToCart(item.id)}
-                          >
-                            +
-                          </Button>
+                            icon={<PlusOutlined />}
+                          />
                           <div
                             style={{
                               fontSize: "20px",
@@ -154,14 +155,13 @@ const ProductList = ({ favorites, toggleFavorite, handleSortChange, sort }) => {
                           <Button
                             style={{
                               color: "#4f4f4f",
-                              border: "2px solid #4f4f4f",
+                              border: "1px solid #4f4f4f",
                               height: "36px",
-                              fontSize: 36,
+                              width: "36px",
                             }}
                             onClick={() => removeFromCart(item.id)}
-                          >
-                            -
-                          </Button>
+                            icon={<MinusOutlined />}
+                          />
                         </div>
                       ) : (
                         <Button onClick={() => addToCart(item.id)}>

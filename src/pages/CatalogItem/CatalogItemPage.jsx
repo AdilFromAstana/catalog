@@ -144,8 +144,13 @@ const CatalogItemPage = memo(() => {
               onImageZoom={handleImageZoom}
             />
 
-            <div className="item-price">
-              {formatNumber(catalogItem?.price ?? 0)}₸
+            <div className="item-price-wrapper">
+              <div className="item-price">
+                {formatNumber(catalogItem?.price ?? 0)}₸
+              </div>
+              <div className="item-priceWithDiscount">
+                {formatNumber(catalogItem?.originalPrice ?? 0)}₸
+              </div>
             </div>
 
             <ProductActions
