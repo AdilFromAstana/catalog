@@ -1,21 +1,21 @@
 .horizontal-scroll-container .ant-list-items {
   display: flex;
   overflow-x: auto;
-  /* Горизонтальный скролл */
-  gap: 16px;
-  /* Отступ между элементами */
+  gap: 20px;
   scrollbar-width: thin;
-  /* Тонкий скролл для браузеров, поддерживающих CSS Scrollbar */
+}
+
+.categoryQuickAccess .ant-list-split .ant-list-item {
+  margin-bottom: 1px;
+  border: 0px solid transparent;
 }
 
 .horizontal-scroll-container::-webkit-scrollbar {
   height: 8px;
-  /* Высота горизонтального скролла */
 }
 
 .horizontal-scroll-container::-webkit-scrollbar-thumb {
   background: #888;
-  /* Цвет полосы прокрутки */
   border-radius: 4px;
 }
 
@@ -44,22 +44,32 @@
   color: #4f4f4f;
 }
 
+.related-carousel-item-image-wrapper {
+  display: flex;
+  aspect-ratio: 1/1;
+  align-items: flex-start;
+  align-self: center;
+  text-align: center;
+}
+
 .related-carousel-item-image {
-  max-width: 100%;
-  max-height: 150px;
-  margin: auto;
+  aspect-ratio: 1 / 1;
+  width: 100%;
+  object-fit: cover;
+  display: block;
+  border-radius: 8px;
 }
 
 .related-carousel-item-favorite {
   background: white;
   border-radius: 50%;
-  border: 1px solid white;
+  border: 1px solid #4f4f4f;
   align-items: center;
   display: flex;
   justify-content: center;
   padding: 8px;
-  top: 5px;
-  right: 5px;
+  top: 0;
+  right: 0;
   position: absolute;
 }
 
@@ -67,20 +77,17 @@
   position: relative;
   flex: 0 0 auto;
   gap: 10px;
-  padding: 10px;
-  border: 1px solid #4f4f4f;
-  background: #f5f5f5;
   border-radius: 10px;
   box-sizing: border-box;
   overflow: hidden;
 }
 
 .related-carousel-item-content {
-  display: grid;
+  display: flex;
+  flex-direction: column;
   justify-items: center;
-  grid-template-rows: 50% 1fr;
+  align-items: center;
   gap: 10px;
-  height: 100%;
   width: 100%;
 }
 
@@ -90,8 +97,6 @@
   align-items: flex-start;
   justify-content: space-between;
   gap: 10px;
-  flex-grow: 1;
-  width: 100%;
 }
 
 .related-carousel-item-info {
@@ -104,6 +109,8 @@
 }
 .related-carousel-item-title {
   font-size: 16px;
+  font-weight: 700;
+  line-height: normal;
   color: #4f4f4f;
   display: -webkit-box;
   -webkit-box-orient: vertical;
@@ -133,27 +140,21 @@
   line-height: normal;
 }
 
-.related-carousel-item-image {
-  margin: auto;
-  height: 100%;
-}
-
 .related-carousel-item-details,
 .related-carousel-item-info {
   width: 100%;
-  height: 100%;
 }
 
 @media (max-width: 768px) {
-  .related-carousel-item-image {
-    margin: 0;
-    max-height: 150px;
+  .related-carousel-item-image-wrapper {
+    height: 150px;
+    width: 150px;
   }
 }
 
 @media (min-width: 449px) {
-  .related-carousel-item-image {
-    margin: 0;
-    max-height: 150px;
+  .related-carousel-item-image-wrapper {
+    height: 175px;
+    width: 175px;
   }
 }

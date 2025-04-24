@@ -1,5 +1,9 @@
-import { List, Skeleton } from "antd";
-import { HeartOutlined, HeartFilled } from "@ant-design/icons";
+import { Button, List, Skeleton } from "antd";
+import {
+  HeartOutlined,
+  HeartFilled,
+  ShoppingCartOutlined,
+} from "@ant-design/icons";
 import { Link } from "react-router-dom";
 import useFavorites from "../../hooks/useFavorites";
 import { memo, useEffect, useRef, useState } from "react";
@@ -86,11 +90,13 @@ const RelatedCarousel = memo(
                     style={{ width: `${carouselItemWidth}px` }}
                   >
                     <div className="related-carousel-item-content">
-                      <img
-                        src={item.images[0].url}
-                        alt={item.images[0].url || "Продукт"}
-                        className="related-carousel-item-image"
-                      />
+                      <div className="related-carousel-item-image-wrapper">
+                        <img
+                          src={item.images[0].url}
+                          alt={item.images[0].url || "Продукт"}
+                          className="related-carousel-item-image"
+                        />
+                      </div>
                       <div className="related-carousel-item-details">
                         <div className="related-carousel-item-info">
                           <Link
@@ -111,7 +117,7 @@ const RelatedCarousel = memo(
                             </div>
                           </div>
                         </div>
-                        <div
+                        {/* <div
                           className="related-carousel-item-favorite"
                           onClick={() => toggleFavorite(item.id)}
                         >
@@ -122,8 +128,16 @@ const RelatedCarousel = memo(
                           ) : (
                             <HeartOutlined style={{ fontSize: "24px" }} />
                           )}
-                        </div>
+                        </div> */}
                       </div>
+                      <Button
+                        icon={
+                          <ShoppingCartOutlined style={{ fontSize: "24px" }} />
+                        }
+                        style={{ width: "100%" }}
+                      >
+                        В корзину
+                      </Button>
                     </div>
                   </List.Item>
                 );
