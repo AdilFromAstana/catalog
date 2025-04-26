@@ -14,6 +14,7 @@ import { initializeData, setSortOrder } from "../redux/filterSlice";
 import { useDispatch } from "react-redux";
 import { initialFilters, initialFlowers } from "../common/initialData";
 import ProductAnalyticsPage from "../pages/Statistics/ProductAnalyticsPage";
+import Categories from "../pages/Categories/Categories";
 
 const pageVariants = {
   initial: { opacity: 0, y: 40 },
@@ -63,6 +64,7 @@ const AppRouter = () => {
     { path: "/my-catalog", element: <MyCatalogPage /> },
     { path: "/my-catalog/:my-item", element: <UpdateItemPage /> },
     { path: "/statistics", element: <ProductAnalyticsPage /> },
+    { path: "/categories", element: <Categories /> },
   ];
 
   return (

@@ -5,7 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import useWindowWidth from "../../../hooks/useWindowWidth";
 import DesktopCategory from "./DesktopCategory";
-// import BreadcrumbNavigation from "../../../components/BreadcrumbNavigation";
+import BreadcrumbNavigation from "../../../components/BreadcrumbNavigation";
 
 const API_URL = "http://192.168.0.10:5000/api";
 const api = axios.create({
@@ -158,11 +158,11 @@ const CategoryModal = memo(
             />
           ) : (
             <>
-              {/* <BreadcrumbNavigation
+              <BreadcrumbNavigation
                 breadcrumb={breadcrumb}
                 onGoBack={goBack}
                 onSelectCategory={(cat) => selectCategory(cat)}
-              /> */}
+              />
               <List
                 dataSource={categories}
                 renderItem={(cat) => (
