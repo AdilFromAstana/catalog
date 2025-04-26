@@ -1,162 +1,72 @@
-import { Spin, Splitter } from "antd";
-import { memo, useState } from "react";
+import React, { memo } from "react";
+import { Splitter } from "antd";
+import { RightOutlined } from "@ant-design/icons";
+
+const renderCategory = (cat, onClick, selected) => {
+  const clickable = cat.hasChild;
+  const isSelected = selected?.id === cat.id;
+
+  return (
+    <div
+      key={cat.id}
+      style={{
+        padding: 8,
+        cursor: "pointer",
+        borderBottom: "1px solid #eee",
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        backgroundColor: isSelected ? "#e6f7ff" : "#fff",
+        fontWeight: isSelected ? 600 : 400,
+        color: "#000",
+      }}
+      onClick={() => onClick(cat)}
+    >
+      <span>{cat.titleRu}</span>
+      {clickable && <RightOutlined style={{ fontSize: 12 }} />}
+    </div>
+  );
+};
 
 const DesktopCategory = memo(
   ({
-    setSecondLevelCategories,
-    secondLevelCategories,
-    setFirstLevelCategories,
     firstLevelCategories,
-    setThirdLevelCategories,
+    secondLevelCategories,
     thirdLevelCategories,
-    isLoading,
-    setSelectedCategory,
+    onSelectCategory,
+    selectedFirst,
+    selectedSecond,
+    selectedThird,
   }) => {
-    const [path, setPath] = useState({
-      selectedFirstLevelCategory: null,
-      selectedSecondLevelCategory: null,
-      selectedThirdLevelCategory: null,
-    });
-
     return (
-      <Splitter style={{ height: "400px" }}>
+      <Splitter style={{ height: 400 }}>
         <Splitter.Panel
-          size={400}
-          style={{ background: "#fff" }}
           resizable={false}
+          style={{ padding: 8, background: "#fff" }}
         >
-          {isLoading ? (
-            <Spin spinning />
-          ) : (
-            firstLevelCategories?.map((cat) => (
-              <div
-                key={cat.id}
-                style={{
-                  padding: 10,
-                  cursor: "pointer",
-                  borderRadius: 5,
-                  backgroundColor:
-                    path.selectedFirstLevelCategory?.id === cat.id
-                      ? "#007bff"
-                      : "#f5f5f5", // Синий фон для выбранного
-                  color:
-                    path.selectedFirstLevelCategory?.id === cat.id
-                      ? "#fff"
-                      : "#000", // Белый текст для выбранного
-                  border:
-                    path.selectedFirstLevelCategory?.id === cat.id
-                      ? "2px solid #0056b3"
-                      : "1px solid #ddd", // Граница
-                  transition: "all 0.3s ease-in-out", // Плавный переход
-                }}
-                onClick={() => {
-                  setSelectedCategory(cat);
-                  setPath({
-                    selectedSecondLevelCategory: null,
-                    selectedThirdLevelCategory: null,
-                    selectedFirstLevelCategory: cat,
-                  });
-                  setSecondLevelCategories([]);
-                  setThirdLevelCategories([]);
-                }}
-              >
-                {cat.titleRu}
-              </div>
-            ))
+          {firstLevelCategories.map((cat) =>
+            renderCategory(cat, onSelectCategory, selectedFirst),
           )}
         </Splitter.Panel>
-
         <Splitter.Panel
-          size={400}
-          style={{ background: "#fff" }}
           resizable={false}
+          style={{ padding: 8, background: "#fff" }}
         >
-          {secondLevelCategories.length > 0 &&
-            (isLoading ? (
-              <Spin />
-            ) : (
-              secondLevelCategories.map((cat) => (
-                <div
-                  key={cat.id}
-                  style={{
-                    padding: 10,
-                    cursor: "pointer",
-                    borderRadius: 5,
-                    backgroundColor:
-                      path.selectedSecondLevelCategory?.id === cat.id
-                        ? "#007bff"
-                        : "#f5f5f5", // Синий фон для выбранного
-                    color:
-                      path.selectedSecondLevelCategory?.id === cat.id
-                        ? "#fff"
-                        : "#000", // Белый текст для выбранного
-                    border:
-                      path.selectedSecondLevelCategory?.id === cat.id
-                        ? "2px solid #0056b3"
-                        : "1px solid #ddd", // Граница
-                    transition: "all 0.3s ease-in-out", // Плавный переход
-                  }}
-                  onClick={() => {
-                    setSelectedCategory(cat);
-                    setPath((prev) => ({
-                      ...prev,
-                      selectedSecondLevelCategory: cat,
-                      selectedThirdLevelCategory: null,
-                    }));
-                    setThirdLevelCategories([]);
-                  }}
-                >
-                  {cat.titleRu}
-                </div>
-              ))
-            ))}
+          {secondLevelCategories.map((cat) =>
+            renderCategory(cat, onSelectCategory, selectedSecond),
+          )}
         </Splitter.Panel>
-
         <Splitter.Panel
-          size={400}
-          style={{ background: "#fff" }}
           resizable={false}
+          style={{ padding: 8, background: "#fff" }}
         >
-          {thirdLevelCategories.length > 1 &&
-            (isLoading ? (
-              <Spin />
-            ) : (
-              thirdLevelCategories.map((cat) => (
-                <div
-                  key={cat.id}
-                  style={{
-                    padding: 10,
-                    cursor: "pointer",
-                    borderRadius: 5,
-                    backgroundColor:
-                      path.selectedThirdLevelCategory?.id === cat.id
-                        ? "#007bff"
-                        : "#f5f5f5", // Синий фон для выбранного
-                    color:
-                      path.selectedThirdLevelCategory?.id === cat.id
-                        ? "#fff"
-                        : "#000", // Белый текст для выбранного
-                    border:
-                      path.selectedThirdLevelCategory?.id === cat.id
-                        ? "2px solid #0056b3"
-                        : "1px solid #ddd", // Граница
-                    transition: "all 0.3s ease-in-out", // Плавный переход
-                  }}
-                  onClick={() => {
-                    setSelectedCategory(cat);
-                    setPath((prev) => ({
-                      ...prev,
-                      selectedThirdLevelCategory: cat,
-                    }));
-                  }}
-                >
-                  {cat.titleRu}
-                </div>
-              ))
-            ))}
+          {thirdLevelCategories.map((cat) =>
+            renderCategory(cat, onSelectCategory, selectedThird),
+          )}
         </Splitter.Panel>
       </Splitter>
     );
   },
 );
+
 export default DesktopCategory;

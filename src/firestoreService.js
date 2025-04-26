@@ -4,7 +4,7 @@ import { useDispatch } from "react-redux";
 import { setItems } from "./redux/itemsSlice";
 
 // ✅ Настройка базового URL API
-const API_URL = "http://192.168.0.18:5000/api";
+const API_URL = "http://192.168.0.10:5000/api";
 
 export const api = axios.create({
   baseURL: API_URL,

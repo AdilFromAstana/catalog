@@ -5,13 +5,13 @@ import { CloseOutlined } from "@ant-design/icons";
 import { Content } from "antd/es/layout/layout";
 import { useNavigate } from "react-router-dom";
 import "./CreateItemPage.css";
-import CategoryModal from "./components/CategoryModal";
 import NeedField from "./components/NeedField";
 import { useWatch } from "antd/es/form/Form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
+import CategoryModal from "./components/CategoryModal";
 
-const API_URL = "http://192.168.0.18:5000/api";
+const API_URL = "http://192.168.0.10:5000/api";
 
 const api = axios.create({
   baseURL: API_URL,

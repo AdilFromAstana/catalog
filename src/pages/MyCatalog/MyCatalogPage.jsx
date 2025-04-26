@@ -8,7 +8,7 @@ import { PlusOutlined } from "@ant-design/icons";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 
-const API_URL = "http://192.168.0.18:5000/api";
+const API_URL = "http://192.168.0.10:5000/api";
 
 const api = axios.create({
   baseURL: API_URL,

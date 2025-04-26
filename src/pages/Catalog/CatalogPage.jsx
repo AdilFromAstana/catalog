@@ -11,7 +11,7 @@ import axios from "axios";
 import InlineFilters from "../../components/InlineAttributes/InlineFilters";
 import Filters from "../../components/DesktopAttributes/Filter";
 
-const API_URL = "http://192.168.0.18:5000/api";
+const API_URL = "http://192.168.0.10:5000/api";
 
 const api = axios.create({
   baseURL: API_URL,
