@@ -1,54 +1,62 @@
-.horizontal-scroll-container .ant-list-items {
-  display: flex;
+.related-carousel-horizontal-scroll-container .ant-list-items {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  align-items: stretch;
   overflow-x: auto;
-  gap: 20px;
+  gap: 0px;
   scrollbar-width: thin;
+  padding-bottom: 4px;
 }
 
-.categoryQuickAccess .ant-list-split .ant-list-item {
-  margin-bottom: 1px;
-  border: 0px solid transparent;
-}
-
-.horizontal-scroll-container::-webkit-scrollbar {
+.related-carousel-horizontal-scroll-container::-webkit-scrollbar {
   height: 8px;
 }
 
-.horizontal-scroll-container::-webkit-scrollbar-thumb {
-  background: #888;
+.related-carousel-horizontal-scroll-container::-webkit-scrollbar-thumb {
+  background: #bbb;
   border-radius: 4px;
 }
 
-.horizontal-scroll-container::-webkit-scrollbar-thumb:hover {
-  background: #555;
+.related-carousel-horizontal-scroll-container::-webkit-scrollbar-thumb:hover {
+  background: #888;
 }
 
 .related-carousel-title {
-  color: #4f4f4f;
+  color: #333;
   margin: 10px 0;
   font-size: 24px;
+  font-weight: 600;
 }
 
-.related-carousel-item-details {
+.ant-list .ant-list-item.related-carousel-item {
   display: flex;
   flex-direction: column;
+  align-items: stretch;
+  position: relative;
+  gap: 10px;
+  border-radius: 10px;
+  box-sizing: border-box;
+  overflow: hidden;
+  padding: 0 10px;
+  height: 100%;
 }
 
-.related-carousel-item-category {
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  line-clamp: 1;
-  -webkit-line-clamp: 1;
-  color: #4f4f4f;
+.related-carousel-item-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  flex-grow: 1;
 }
 
 .related-carousel-item-image-wrapper {
   display: flex;
   aspect-ratio: 1/1;
-  align-items: flex-start;
-  align-self: center;
+  align-items: center;
+  justify-content: center;
   text-align: center;
 }
 
@@ -73,88 +81,61 @@
   position: absolute;
 }
 
-.ant-list .ant-list-item.related-carousel-item {
-  position: relative;
-  flex: 0 0 auto;
-  gap: 10px;
-  border-radius: 10px;
-  box-sizing: border-box;
-  overflow: hidden;
-}
-
-.related-carousel-item-content {
-  display: flex;
-  flex-direction: column;
-  justify-items: center;
-  align-items: center;
-  gap: 10px;
-  width: 100%;
-}
-
-.related-carousel-item-details {
-  display: flex;
-  flex-direction: row;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 10px;
-}
-
+.related-carousel-item-details,
 .related-carousel-item-info {
   display: flex;
   flex-direction: column;
+  gap: 4px;
+  width: 100%;
 }
 
-.related-carousel-item-title:hover {
-  color: #4f4f4f;
-}
 .related-carousel-item-title {
   font-size: 16px;
   font-weight: 700;
-  line-height: normal;
   color: #4f4f4f;
   display: -webkit-box;
   -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
   overflow: hidden;
   text-overflow: ellipsis;
-  -webkit-line-clamp: 2;
   line-clamp: 2;
+}
+
+.related-carousel-item-title:hover {
+  color: #111;
+}
+
+.related-carousel-item-category {
+  font-size: 13px;
+  color: #777;
+  -webkit-line-clamp: 1;
+  line-clamp: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
 }
 
 .related-carousel-item-price-wrapper {
   display: flex;
   flex-direction: column;
   margin-top: auto;
-  gap: 0;
-}
-.related-carousel-item-price {
-  color: #4f4f4f;
-  font-weight: 700;
-  font-size: 20px;
-  line-height: normal;
-}
-.related-carousel-item-priceWithoutDiscount {
-  color: #4f4f4f;
-  font-weight: 700;
-  font-size: 14px;
-  text-decoration: line-through;
-  line-height: normal;
 }
 
-.related-carousel-item-details,
-.related-carousel-item-info {
-  width: 100%;
+.related-carousel-item-price {
+  font-weight: bold;
+  font-size: 18px;
+  color: #222;
+}
+
+.related-carousel-item-priceWithoutDiscount {
+  font-size: 13px;
+  color: #999;
+  text-decoration: line-through;
 }
 
 @media (max-width: 768px) {
-  .related-carousel-item-image-wrapper {
-    height: 150px;
-    width: 150px;
-  }
-}
-
-@media (min-width: 449px) {
-  .related-carousel-item-image-wrapper {
-    height: 175px;
-    width: 175px;
+  .related-carousel-horizontal-scroll-container .ant-list-items {
+    overflow-x: auto;
   }
 }

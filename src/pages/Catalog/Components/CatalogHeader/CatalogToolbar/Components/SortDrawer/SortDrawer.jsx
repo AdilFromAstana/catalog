@@ -1,9 +1,9 @@
 import { Drawer, Radio } from "antd";
 import { memo } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { setSortOrder } from "../redux/filterSlice";
+import { setSortOrder } from "../../../../../../../redux/filterSlice";
 
-const DrawerFilters = memo(({ isSortDrawerVisible, toggleSortDrawer }) => {
+const SortDrawer = memo(({ isSortDrawerVisible, toggleSortDrawer }) => {
   const dispatch = useDispatch();
   const sortOrder = useSelector((state) => state.filters.sortOrder);
 
@@ -71,4 +71,4 @@ const DrawerFilters = memo(({ isSortDrawerVisible, toggleSortDrawer }) => {
   );
 });
 
-export default DrawerFilters;
+export default SortDrawer;

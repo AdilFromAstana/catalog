@@ -2,7 +2,6 @@ import { useState, useEffect, memo } from "react";
 import { Input, Button, Slider } from "antd";
 import useFilters from "../hooks/useFilters";
 import { useSelector } from "react-redux"; // Импорт useSelector для получения minPrice и maxPrice из Redux
-import { setPriceRange } from "../store/filterSlice"; // Импорт action для обновления диапазона цен
 import { useDispatch } from "react-redux"; // Импорт useDispatch для отправки действий в Redux
 
 const PriceFilter = memo(() => {

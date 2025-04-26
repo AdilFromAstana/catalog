@@ -9,8 +9,8 @@ import UpdateItemPage from "../pages/UpdateItem/UpdateItemPage";
 import { Content } from "antd/es/layout/layout";
 import { AnimatePresence, motion } from "framer-motion";
 import CartPage from "../pages/Cart/CartPage";
-import { useEffect, useState } from "react";
-import { initializeData } from "../redux/filterSlice";
+import { useEffect } from "react";
+import { initializeData, setSortOrder } from "../redux/filterSlice";
 import { useDispatch } from "react-redux";
 import { initialFilters, initialFlowers } from "../common/initialData";
 import ProductAnalyticsPage from "../pages/Statistics/ProductAnalyticsPage";
@@ -35,17 +35,9 @@ const pageVariants = {
   },
 };
 
-const MobileOnlyPage = () => (
-  <div style={{ textAlign: "center", padding: "50px", color: "#4f4f4f" }}>
-    <h1>Этот сайт доступен только с мобильных устройств</h1>
-    <p>Попробуйте открыть его на телефоне или уменьшите размер окна.</p>
-  </div>
-);
-
 const AppRouter = () => {
   const dispatch = useDispatch();
   const location = useLocation();
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
   useEffect(() => {
     dispatch(
@@ -53,22 +45,13 @@ const AppRouter = () => {
         items: initialFlowers,
         filters: initialFilters,
       }),
+      setSortOrder({
+        by: "price",
+        order: "asc",
+        value: "priceasc",
+      }),
     );
   }, [dispatch]);
-
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
-  console.log("window.innerWidth < 768: ", window.innerWidth < 768);
-
-  if (!isMobile) {
-    return <MobileOnlyPage />;
-  }
 
   const routes = [
     { path: "/", element: <MainPage /> },

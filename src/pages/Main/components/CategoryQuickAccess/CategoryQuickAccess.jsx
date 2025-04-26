@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
-import { List, Typography } from "antd";
+import { List } from "antd";
+import "./CategoryQuickAccess.css";
 
 const categories = [
   {
@@ -32,6 +33,7 @@ const categories = [
 const CategoryQuickAccess = () => {
   const [carouselItemWidth, setCarouselItemWidth] = useState(0);
   const carouselWrapperRef = useRef(null);
+
   useEffect(() => {
     const updateItemWidth = () => {
       if (carouselWrapperRef.current) {
@@ -40,11 +42,7 @@ const CategoryQuickAccess = () => {
 
         let cardWidth;
         if (pageWidth <= 768) {
-          cardWidth = carouselWidth / 2;
-        } else if (pageWidth <= 962) {
-          cardWidth = carouselWidth / 3;
-        } else {
-          cardWidth = carouselWidth / 4;
+          cardWidth = carouselWidth / 5;
         }
 
         setCarouselItemWidth(cardWidth);
@@ -52,38 +50,29 @@ const CategoryQuickAccess = () => {
     };
 
     updateItemWidth();
-
     window.addEventListener("resize", updateItemWidth);
     return () => window.removeEventListener("resize", updateItemWidth);
   }, []);
 
   return (
     <div className="categoryQuickAccess">
-      <h2 className="related-carousel-title">Категории</h2>
+      <h2 className="categoryQuickAccess__title">Категории</h2>
       <div ref={carouselWrapperRef}>
         <List
           grid={null}
-          className="horizontal-scroll-container"
+          className="categoryQuickAccess__list"
           dataSource={categories}
           renderItem={(item) => (
             <List.Item
-              style={{
-                width: `${carouselItemWidth}px`,
-                display: "flex",
-                flexDirection: "column",
-              }}
+              className="categoryQuickAccess__item"
+              style={{ width: `${carouselItemWidth}px` }}
             >
               <img
                 src={item.image}
                 alt={item.title}
-                style={{
-                  width: 64,
-                  height: 64,
-                  borderRadius: "50%",
-                  objectFit: "cover",
-                }}
+                className="categoryQuickAccess__image"
               />
-              <div style={{ fontSize: 12, lineClamp: 1 }}>{item.title}</div>
+              <div className="categoryQuickAccess__label">{item.title}</div>
             </List.Item>
           )}
         />

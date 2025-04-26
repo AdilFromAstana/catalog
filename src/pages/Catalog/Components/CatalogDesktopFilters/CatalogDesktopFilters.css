@@ -1,0 +1,40 @@
+.desktop-filters {
+  display: none;
+  background: #fff;
+  padding: 16px;
+  border-right: 1px solid #e0e0e0;
+  font-size: 14px;
+}
+
+.desktop-filters__section {
+  margin-bottom: 24px;
+}
+
+.desktop-filters__title {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.desktop-filters__options {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 200px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.desktop-filters__price-inputs {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+@media (min-width: 964px) {
+  .desktop-filters {
+    display: block;
+  }
+}

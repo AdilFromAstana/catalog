@@ -1,0 +1,6 @@
+.catalog-header-container {
+  width: 100%;
+  position: fixed;
+  background: white;
+  z-index: 1;
+}

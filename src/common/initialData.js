@@ -158,7 +158,7 @@ export const initialFlowers = [
     flowerCount: 11,
     flowerHeight: 50,
     discount: 5,
-    features: [{ code: "hypoallergenic", title: "Гипоаллергенные" },],
+    features: [{ code: "hypoallergenic", title: "Гипоаллергенные" }],
     images: [
       {
         url: "https://content2.flowwow-images.com/data/flowers/524x524/30/1549098965_85620930.jpg",
@@ -233,7 +233,7 @@ export const initialFlowers = [
     flowerCount: 11,
     flowerHeight: 70,
     discount: 10,
-    features: [{ code: "hypoallergenic", title: "Гипоаллергенные" },],
+    features: [{ code: "hypoallergenic", title: "Гипоаллергенные" }],
     images: [
       {
         url: "https://flor2u.ru/images/uploads/conversion/e3b/e3b827314cb38e7af3a7bb70c207e687/e3b827314cb38e7af3a7bb70c207e687-flor.detail.gallery.jpg",
@@ -251,7 +251,10 @@ export const initialFlowers = [
     flowerCount: 15,
     flowerHeight: 50,
     discount: 25,
-    features: [{ code: "fragrant", title: "Ароматные" }, { code: "hypoallergenic", title: "Гипоаллергенные" },],
+    features: [
+      { code: "fragrant", title: "Ароматные" },
+      { code: "hypoallergenic", title: "Гипоаллергенные" },
+    ],
     images: [
       {
         url: "https://florcat.ru/upload/delight.webpconverter/upload/resize_cache/iblock/078/500_500_1/0780672841c589a5c40d1e6679611643.jpg.webp?164706808132522",
@@ -287,7 +290,10 @@ export const initialFlowers = [
     flowerCount: 21,
     flowerHeight: 60,
     discount: 10,
-    features: [{ code: "hypoallergenic", title: "Гипоаллергенные" }, { title: "Экзотические", code: "exotic" }],
+    features: [
+      { code: "hypoallergenic", title: "Гипоаллергенные" },
+      { title: "Экзотические", code: "exotic" },
+    ],
     images: [
       {
         url: "https://content2.flowwow-images.com/data/flowers/524x524/51/1710944365_97583151.jpg",
@@ -323,10 +329,13 @@ export const initialFlowers = [
     flowerCount: 51,
     flowerHeight: 60,
     discount: 15,
-    features: [{ code: "fragrant", title: "Ароматные" }, { title: "Экзотические", code: "exotic" }],
+    features: [
+      { code: "fragrant", title: "Ароматные" },
+      { title: "Экзотические", code: "exotic" },
+    ],
     images: [
       {
-        url: "https://www.roza4u.ru/image/cache/catalog/51-roza-mix/51-dlinnaja-roza-miks-1400x1400.jpg",
+        url: "https://avatars.mds.yandex.net/get-altay/11003990/2a0000018c36424130e630da31e0748166f5/XXL_height",
       },
     ],
   },
@@ -341,7 +350,7 @@ export const initialFlowers = [
     flowerCount: 11,
     flowerHeight: 50,
     discount: 25,
-    features: [{ code: "hypoallergenic", title: "Гипоаллергенные" },],
+    features: [{ code: "hypoallergenic", title: "Гипоаллергенные" }],
     images: [
       {
         url: "https://zakazbuketov.kz/upload/resize_cache/webp/iblock/251/251af18dfa32da5e151f4bb16aef96c8.webp",
@@ -359,7 +368,10 @@ export const initialFlowers = [
     flowerCount: 15,
     flowerHeight: 70,
     discount: 10,
-    features: [{ code: "hypoallergenic", title: "Гипоаллергенные" }, { title: "Экзотические", code: "exotic" }],
+    features: [
+      { code: "hypoallergenic", title: "Гипоаллергенные" },
+      { title: "Экзотические", code: "exotic" },
+    ],
     images: [
       {
         url: "https://megacvet24.ru/image/cache/catalog/51-liliya-miks-900x900.jpg",
@@ -395,7 +407,7 @@ export const initialFlowers = [
     flowerCount: 15,
     flowerHeight: 60,
     discount: 10,
-    features: [{ code: "hypoallergenic", title: "Гипоаллергенные" },],
+    features: [{ code: "hypoallergenic", title: "Гипоаллергенные" }],
     images: [
       {
         url: "https://megacvet24.ru/image/cache/catalog/35-oranzhevykh-liliy-4-899x899.jpg",
@@ -413,7 +425,7 @@ export const initialFlowers = [
     flowerCount: 21,
     flowerHeight: 50,
     discount: 25,
-    features: [{ code: "hypoallergenic", title: "Гипоаллергенные" },],
+    features: [{ code: "hypoallergenic", title: "Гипоаллергенные" }],
     images: [
       {
         url: "https://gorod-buketov.ru/wp-content/uploads/2019/05/4324-Buket-belyh-gvozdik.jpg",
@@ -467,7 +479,10 @@ export const initialFlowers = [
     flowerCount: 11,
     flowerHeight: 60,
     discount: 10,
-    features: [{ code: "hypoallergenic", title: "Гипоаллергенные" }, { title: "Экзотические", code: "exotic" }],
+    features: [
+      { code: "hypoallergenic", title: "Гипоаллергенные" },
+      { title: "Экзотические", code: "exotic" },
+    ],
     images: [
       { url: "https://venusinfleurs.ru/image/catalog/product/4161/4161_1.jpg" },
     ],
@@ -517,7 +532,7 @@ export const initialFlowers = [
     flowerCount: 51,
     flowerHeight: 70,
     discount: 10,
-    features: [{ code: "hypoallergenic", title: "Гипоаллергенные" },],
+    features: [{ code: "hypoallergenic", title: "Гипоаллергенные" }],
     images: [
       {
         url: "https://rozavam.ru/uploads/photos/3463/thumbs/3463_file_6328585316d55.jpg",
@@ -535,10 +550,10 @@ export const initialFlowers = [
     flowerCount: 21,
     flowerHeight: 50,
     discount: 15,
-    features: [{ code: "hypoallergenic", title: "Гипоаллергенные" },],
+    features: [{ code: "hypoallergenic", title: "Гипоаллергенные" }],
     images: [
       {
-        url: "https://www.roza4u.ru/image/cache/catalog/buket-iz-gvozdik/buket-iz-gvozdik-sochnyj-miks-1400x1400.jpg",
+        url: "https://avatars.mds.yandex.net/get-altay/11381866/2a0000018c1bf7ccc6ee4f32ddf0a1288aa1/XXXL",
       },
     ],
   },
@@ -571,7 +586,10 @@ export const initialFlowers = [
     flowerCount: 21,
     flowerHeight: 60,
     discount: 10,
-    features: [{ code: "hypoallergenic", title: "Гипоаллергенные" }, { title: "Экзотические", code: "exotic" }],
+    features: [
+      { code: "hypoallergenic", title: "Гипоаллергенные" },
+      { title: "Экзотические", code: "exotic" },
+    ],
     images: [
       {
         url: "https://floralkiki.ru/wp-content/uploads/2024/11/1729441512_12508106.jpg",
@@ -589,7 +607,10 @@ export const initialFlowers = [
     flowerCount: 15,
     flowerHeight: 50,
     discount: 20,
-    features: [{ code: "fragrant", title: "Ароматные" }, { code: "hypoallergenic", title: "Гипоаллергенные" },],
+    features: [
+      { code: "fragrant", title: "Ароматные" },
+      { code: "hypoallergenic", title: "Гипоаллергенные" },
+    ],
     images: [
       {
         url: "https://venusinfleurs.ru/image/cache/catalog/product/4066/4066_1-350x350.jpg",
@@ -666,7 +687,7 @@ export const initialFlowers = [
     flowerCount: 51,
     flowerHeight: 50,
     discount: 15,
-    features: [{ code: "hypoallergenic", title: "Гипоаллергенные" },],
+    features: [{ code: "hypoallergenic", title: "Гипоаллергенные" }],
     images: [
       {
         url: "https://dari-cvety.com/assets/images/products/1169/buket-iz-51-gvozdik-miks.jpg",
@@ -700,7 +721,10 @@ export const initialFlowers = [
     flowerCount: 21,
     flowerHeight: 60,
     discount: 10,
-    features: [{ code: "fragrant", title: "Ароматные" }, { title: "Экзотические", code: "exotic" }],
+    features: [
+      { code: "fragrant", title: "Ароматные" },
+      { title: "Экзотические", code: "exotic" },
+    ],
     images: [
       { url: "https://ir-3.ozone.ru/s3/multimedia-7/c1000/6067212547.jpg" },
     ],
@@ -716,7 +740,7 @@ export const initialFlowers = [
     flowerCount: 11,
     flowerHeight: 60,
     discount: 10,
-    features: [{ code: "hypoallergenic", title: "Гипоаллергенные" },],
+    features: [{ code: "hypoallergenic", title: "Гипоаллергенные" }],
     images: [
       { url: "https://venusinfleurs.ru/image/catalog/category/428/428_1.jpg" },
     ],
@@ -724,15 +748,15 @@ export const initialFlowers = [
 ];
 
 export const hotFlowers = initialFlowers.filter(
-  (item) => item.id >= 23 && item.id <= 28
+  (item) => item.id >= 23 && item.id <= 28,
 );
 
 export const mostSoldFlowers = initialFlowers.filter(
-  (item) => item.id >= 3 && item.id <= 8
+  (item) => item.id >= 3 && item.id <= 8,
 );
 
 export const roseFlowers = initialFlowers.filter((item) =>
-  item.bouquetComposition?.some((flower) => flower.code === "rose")
+  item.bouquetComposition?.some((flower) => flower.code === "rose"),
 );
 
 export const initialFilters = {

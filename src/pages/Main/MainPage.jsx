@@ -1,69 +1,62 @@
 import React from "react";
-import { Button, Carousel } from "antd";
+import BannersCarousel from "./components/BannersCarousel/BannersCarousel";
+import DesktopFiltersPanel from "../../components/DesktopFiltersPanel/DesktopFiltersPanel";
+import CategoryQuickAccess from "./components/CategoryQuickAccess/CategoryQuickAccess";
 import RelatedCarousel from "../../components/RelatedCarousel/RelatedCarousel";
+import BestSelections from "./components/BestSelections/BestSelections";
+import afterLongSeparation from "../../assets/afterLongSeparation.png";
+import forDischarge from "../../assets/forDischarge.png";
+import forMorning from "../../assets/forMorning.png";
+import birthDay from "../../assets/birthDay.png";
 import {
   hotFlowers,
   mostSoldFlowers,
   roseFlowers,
 } from "../../common/initialData";
-import CategoryQuickAccess from "../../components/CategoryQuickAccess";
+import "./MainPage.css";
 
 const MainPage = () => {
   return (
-    <div>
-      <div style={{ maxWidth: "100%", margin: "0 auto" }}>
-        <div style={{ aspectRatio: "16 / 9", overflow: "hidden" }}>
-          <Carousel autoplay draggable autoplaySpeed={4000} speed={1500}>
-            <div>
-              <img
-                src="https://i.ibb.co.com/PvPGS213/photo-2025-04-22-15-58-03.webp"
-                // src="https://s4.ezgif.com/tmp/ezgif-4ff4d39be47cbf.gif"
-                alt="Слайд 1"
-                style={{ width: "100%", height: "100%", objectFit: "cover" }}
-              />
-            </div>
-            <div>
-              <img
-                src="https://i.ibb.co.com/n8b4zqpt/3000.png"
-                alt="Слайд 2"
-                style={{ width: "100%", height: "100%", objectFit: "cover" }}
-              />
-            </div>
-            <div>
-              <img
-                src="https://i.ibb.co.com/GQ4TB7FP/ezgif-com-optimize.gif"
-                alt="Слайд 2"
-                style={{ width: "100%", height: "100%", objectFit: "cover" }}
-              />
-            </div>
-          </Carousel>
+    <div className="mainpage-container">
+      <div className="mainpage-layout">
+        {/* <div className="mainpage-sidebar">
+          <DesktopFiltersPanel />
+        </div> */}
+        <div className="mainpage-content">
+          <BannersCarousel />
+          <div className="mainpage-inner">
+            <CategoryQuickAccess />
+
+            <RelatedCarousel
+              id="hot"
+              title="Хит продаж"
+              products={hotFlowers}
+              isLoading={false}
+            />
+
+            <BestSelections
+              images={[{ link: forMorning }, { link: afterLongSeparation }]}
+            />
+
+            <RelatedCarousel
+              id="best"
+              title="Популярные"
+              products={mostSoldFlowers}
+              isLoading={false}
+            />
+
+            <BestSelections
+              images={[{ link: forDischarge }, { link: birthDay }]}
+            />
+
+            <RelatedCarousel
+              id="roses"
+              title="Розы всем!"
+              products={roseFlowers}
+              isLoading={false}
+            />
+          </div>
         </div>
-      </div>
-      <div
-        style={{
-          margin: "0 20px",
-          marginTop: 20,
-        }}
-      >
-        <CategoryQuickAccess />
-        <RelatedCarousel
-          id="hot"
-          title="Хит продаж"
-          products={hotFlowers}
-          isLoading={false}
-        />
-        <RelatedCarousel
-          id="best"
-          title="Популярные"
-          products={mostSoldFlowers}
-          isLoading={false}
-        />
-        <RelatedCarousel
-          id="roses"
-          title="Розы всем!"
-          products={roseFlowers}
-          isLoading={false}
-        />
       </div>
     </div>
   );

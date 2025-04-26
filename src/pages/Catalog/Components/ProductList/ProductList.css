@@ -1,0 +1,17 @@
+.product-list-horizontal-scroll-container .ant-list-items {
+  display: grid;
+  align-items: stretch;
+  gap: 12px;
+  scrollbar-width: thin;
+  padding-bottom: 4px;
+  grid-template-columns: 1fr 1fr;
+}
+
+@media (min-width: 604px) {
+  .product-list-horizontal-scroll-container .ant-list-items {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+}

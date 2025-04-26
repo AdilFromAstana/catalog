@@ -1,18 +1,17 @@
 import { Button, List, Skeleton } from "antd";
 import {
-  HeartOutlined,
-  HeartFilled,
+  LeftOutlined,
+  RightOutlined,
   ShoppingCartOutlined,
 } from "@ant-design/icons";
 import { Link } from "react-router-dom";
-import useFavorites from "../../hooks/useFavorites";
 import { memo, useEffect, useRef, useState } from "react";
 import { formatNumber } from "../../common/common";
 import "./RelatedCarousel.css";
+import RelatedCarouselItem from "./RelatedCarouselItem";
 
 const RelatedCarousel = memo(
   ({ products, isLoading = true, setIsItemLoading, title, id }) => {
-    const { favorites, toggleFavorite } = useFavorites();
     const [carouselItemWidth, setCarouselItemWidth] = useState(0);
     const carouselWrapperRef = useRef(null);
 
@@ -34,11 +33,13 @@ const RelatedCarousel = memo(
 
           let cardWidth;
           if (pageWidth <= 768) {
-            cardWidth = carouselWidth / 2 - 12;
+            cardWidth = carouselWidth / 2;
           } else if (pageWidth <= 962) {
-            cardWidth = carouselWidth / 3 - 12;
+            cardWidth = carouselWidth / 3;
+          } else if (pageWidth <= 1280) {
+            cardWidth = carouselWidth / 4;
           } else {
-            cardWidth = carouselWidth / 4 - 12;
+            cardWidth = carouselWidth / 5;
           }
 
           setCarouselItemWidth(cardWidth);
@@ -49,7 +50,7 @@ const RelatedCarousel = memo(
 
       window.addEventListener("resize", updateItemWidth);
       return () => window.removeEventListener("resize", updateItemWidth);
-    }, []); // ✅ зависимостей не нужно, потому что window не реактивный
+    }, []);
 
     useEffect(() => {
       scrollToStart();
@@ -57,20 +58,66 @@ const RelatedCarousel = memo(
 
     return (
       <div>
-        <h2 className="related-carousel-title">{title}</h2>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            marginBottom: 8,
+          }}
+        >
+          <h2 className="related-carousel-title" style={{ margin: 0 }}>
+            {title}
+          </h2>
+          <div style={{ display: "flex", gap: 8 }}>
+            <Button
+              shape="circle"
+              icon={<LeftOutlined />}
+              onClick={() => {
+                const listContainer =
+                  carouselWrapperRef.current?.querySelector(".ant-list-items");
+                if (listContainer) {
+                  listContainer.scrollBy({
+                    left: -carouselItemWidth,
+                    behavior: "smooth",
+                  });
+                }
+              }}
+            />
+            <Button
+              shape="circle"
+              icon={<RightOutlined />}
+              onClick={() => {
+                const listContainer =
+                  carouselWrapperRef.current?.querySelector(".ant-list-items");
+                if (listContainer) {
+                  listContainer.scrollBy({
+                    left: carouselItemWidth,
+                    behavior: "smooth",
+                  });
+                }
+              }}
+            />
+          </div>
+        </div>
         <div
           ref={carouselWrapperRef}
-          style={{ display: "flex", flexDirection: "column", gap: "16px" }}
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "16px",
+            padding: "12px 0",
+          }}
         >
           {isLoading && (
             <List
-              className="horizontal-scroll-container"
+              className="related-carousel-horizontal-scroll-container"
               dataSource={Array.from({ length: 12 }, (_, index) => index + 1)}
               renderItem={() => {
                 return (
                   <List.Item
                     className="related-carousel-item"
-                    // style={{ width: `${carouselItemWidth}px` }}
+                    style={{ width: `${carouselItemWidth}px` }}
                   >
                     <Skeleton active />
                   </List.Item>
@@ -82,63 +129,14 @@ const RelatedCarousel = memo(
             <List
               grid={null}
               dataSource={products}
-              className="horizontal-scroll-container"
+              className="related-carousel-horizontal-scroll-container"
               renderItem={(item) => {
                 return (
                   <List.Item
                     className="related-carousel-item"
                     style={{ width: `${carouselItemWidth}px` }}
                   >
-                    <div className="related-carousel-item-content">
-                      <div className="related-carousel-item-image-wrapper">
-                        <img
-                          src={item.images[0].url}
-                          alt={item.images[0].url || "Продукт"}
-                          className="related-carousel-item-image"
-                        />
-                      </div>
-                      <div className="related-carousel-item-details">
-                        <div className="related-carousel-item-info">
-                          <Link
-                            className="related-carousel-item-title"
-                            to={`/items/${item.id}`}
-                          >
-                            {item.title}
-                          </Link>
-                          <div className="related-carousel-item-category">
-                            {item.categoryRu || "Не указано"}
-                          </div>
-                          <div className="related-carousel-item-price-wrapper">
-                            <div className="related-carousel-item-priceWithoutDiscount">
-                              {formatNumber(item.originalPrice)}₸
-                            </div>
-                            <div className="related-carousel-item-price">
-                              {formatNumber(item.price)}₸
-                            </div>
-                          </div>
-                        </div>
-                        {/* <div
-                          className="related-carousel-item-favorite"
-                          onClick={() => toggleFavorite(item.id)}
-                        >
-                          {favorites.includes(item.id) ? (
-                            <HeartFilled
-                              style={{ color: "red", fontSize: "24px" }}
-                            />
-                          ) : (
-                            <HeartOutlined style={{ fontSize: "24px" }} />
-                          )}
-                        </div> */}
-                      </div>
-                      <Button
-                        icon={
-                          <ShoppingCartOutlined style={{ fontSize: "24px" }} />
-                        }
-                        style={{ width: "100%" }}
-                      >
-                        В корзину
-                      </Button>
-                    </div>
+                    <RelatedCarouselItem item={item} />
                   </List.Item>
                 );
               }}
