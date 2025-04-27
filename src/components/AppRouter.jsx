@@ -40,6 +40,7 @@ const AppRouter = () => {
   const dispatch = useDispatch();
   const location = useLocation();
 
+
   useEffect(() => {
     dispatch(
       initializeData({

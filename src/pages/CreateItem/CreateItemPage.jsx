@@ -5,11 +5,11 @@ import { CloseOutlined } from "@ant-design/icons";
 import { Content } from "antd/es/layout/layout";
 import { useNavigate } from "react-router-dom";
 import "./CreateItemPage.css";
-import NeedField from "./components/NeedField";
+import NeedField from "./Components/NeedField/NeedField";
 import { useWatch } from "antd/es/form/Form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
-import CategoryModal from "./components/CategoryModal";
+import CategoryModal from "./Components/CategoryModal/CategoryModal";
 
 const API_URL = "http://192.168.0.10:5000/api";
 
@@ -83,7 +83,6 @@ const CreateItemPage = () => {
   const handleSubmit = async (values) => {
     const categoryId = selectedCategory.id;
 
-    // Преобразуем attributes из объекта в массив
     const attributesArray = Object.entries(values.attributes || {}).map(
       ([code, value]) => {
         const attribute = selectedCategory.attributes.find(
@@ -99,7 +98,6 @@ const CreateItemPage = () => {
       },
     );
 
-    // Финальные данные для отправки
     const data = {
       businessId: 1,
       typeId: 1,

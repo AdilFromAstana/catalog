@@ -2,47 +2,64 @@ import { useQuery, useMutation, useInfiniteQuery } from "@tanstack/react-query";
 import axios from "axios";
 
 // ✅ Настройка базового URL API
-const API_URL = "http://localhost:5000/api";
+const API_URL = "http://192.168.0.10:5000/api";
 
-const api = axios.create({
+export const api = axios.create({
   baseURL: API_URL,
   headers: {
     "Content-Type": "application/json",
   },
 });
 
-// ✅ 1. Хук для добавления данных (POST)
+export const useUpdateCategoryAttributes = (categoryId) => {
+  return useMutation({
+    mutationFn: async (attributes) => {
+      const { data } = await api.patch(
+        `/categories/update/${categoryId}/attributes`,
+        {
+          attributes,
+        },
+      );
+      return data;
+    },
+    onSuccess: (data, variables, context) => {
+      console.log("Атрибуты обновлены!", data);
+    },
+    onError: (error) => {
+      console.error("Ошибка при обновлении атрибутов:", error);
+    },
+  });
+};
 export const useAddData = (collectionName) => {
   return useMutation(async (data) => {
+    console.log("data: ", data);
     const response = await api.post(`/${collectionName}`, data);
     return response.data;
   });
 };
-
-// ✅ 2. Хук для обновления данных (PUT)
 export const useUpdateData = (collectionName) => {
   return useMutation(async ({ id, data }) => {
     const response = await api.put(`/${collectionName}/${id}`, data);
     return response.data;
   });
 };
-
-// ✅ 3. Хук для удаления данных (DELETE)
 export const useDeleteData = (collectionName) => {
   return useMutation(async (id) => {
     await api.delete(`/${collectionName}/${id}`);
   });
 };
 
-// ✅ 4. Хук для получения всех данных (GET)
-export const useGetData = (collectionName, params = {}) => {
-  return useQuery([collectionName, params], async () => {
-    const response = await api.get(`/${collectionName}`, { params });
-    return response.data;
+export const useGetData = ({ collectionName, params = {} }) => {
+  return useQuery({
+    queryKey: ["getData", collectionName, params],
+    queryFn: async () => {
+      const response = await api.get(`/${collectionName}`, { params });
+      return response.data;
+    },
+    staleTime: 5 * 60 * 1000,
   });
 };
 
-// ✅ 5. Хук для получения данных с пагинацией (GET + пагинация)
 export const useGetPaginatedData = ({
   collectionName,
   pageSize = 10,
@@ -60,7 +77,6 @@ export const useGetPaginatedData = ({
   });
 };
 
-// ✅ 6. Хук для получения данных по ID (GET /:id)
 export const useGetDataById = (collectionName, id) => {
   return useQuery(
     [collectionName, id],
@@ -68,30 +84,47 @@ export const useGetDataById = (collectionName, id) => {
       const response = await api.get(`/${collectionName}/${id}`);
       return response.data;
     },
-    { enabled: !!id }
+    { enabled: !!id },
   );
 };
-export const useGetDataByCategory = (
-  collectionName,
+
+export const useGetDataByCategory = ({
+  endPoint,
   level = 1,
-  parentId = null
-) => {
+  parentId = null,
+  titleRu = "",
+}) => {
   return useQuery({
-    queryKey: [collectionName, level, parentId],
+    queryKey: [endPoint, level, parentId, titleRu],
     queryFn: async () => {
-      const response = await api.get(`/${collectionName}`, {
-        params: { level, parentId },
+      const response = await api.get(`/${endPoint}?businessId=1`, {
+        params: { level, parentId, titleRu },
       });
       return response.data;
     },
-    staleTime: 60000, // Данные считаются актуальными 60 секунд (1 минута)
-    cacheTime: 300000, // Данные остаются в кэше 5 минут
-    enabled: level > 0, // Запрос не выполняется при невалидных значениях
+    staleTime: 5 * 60 * 1000, // Данные считаются актуальными в течение 5 минут
+    cacheTime: 10 * 60 * 1000, // Данные остаются в кэше 10 минут после последнего использования
+    keepPreviousData: true, // Сохраняет предыдущие данные до получения новых
   });
 };
 
-
-// ✅ 8. Хук для загрузки файлов (UPLOAD)
+export const useGetDataByAttribute = ({
+  endPoint,
+  level = 1,
+  parentId = null,
+  titleRu = "",
+}) => {
+  return useQuery({
+    queryKey: [endPoint],
+    queryFn: async () => {
+      const response = await api.get(`/${endPoint}?businessId=1`);
+      return response.data;
+    },
+    staleTime: 5 * 60 * 1000, // Данные считаются актуальными в течение 5 минут
+    cacheTime: 10 * 60 * 1000, // Данные остаются в кэше 10 минут после последнего использования
+    keepPreviousData: true, // Сохраняет предыдущие данные до получения новых
+  });
+};
 export const useUploadFile = () => {
   return useMutation(async (file) => {
     const formData = new FormData();
@@ -104,7 +137,6 @@ export const useUploadFile = () => {
     return response.data;
   });
 };
-
 export const useGetDataByIds = ({ collectionName, ids = [] }) => {
   return useQuery(
     [collectionName, "byIds", ids],
@@ -112,6 +144,166 @@ export const useGetDataByIds = ({ collectionName, ids = [] }) => {
       const response = await api.post(`/${collectionName}/by-ids`, { ids });
       return response.data;
     },
-    { enabled: Array.isArray(ids) && ids.length > 0 }
+    { enabled: Array.isArray(ids) && ids.length > 0 },
   );
+};
+//////////////////////////////
+const fetchCategoryHierarchiesByBusiness = async (businessId) => {
+  if (!businessId) {
+    throw new Error("businessId является обязательным параметром");
+  }
+
+  const { data } = await api.get(
+    `categories/getCategoryHierarchiesByBusiness`,
+    {
+      params: { businessId },
+    },
+  );
+
+  return data;
+};
+
+export const useGetCategoryHierarchiesByBusiness = (
+  businessId,
+  options = {},
+) => {
+  return useQuery({
+    queryKey: ["getCategoryHierarchiesByBusiness", businessId], // Ключ для кэширования
+    queryFn: () => fetchCategoryHierarchiesByBusiness(businessId),
+    enabled: !!businessId, // Запрос выполняется только если передан businessId
+    ...options, // Дополнительные настройки (например, refetchInterval)
+    staleTime: 60000,
+  });
+};
+
+const fetchItem = async ({ queryKey }) => {
+  const [, itemId] = queryKey;
+  if (!itemId) throw new Error("businessId обязателен");
+
+  const response = await api.get(`items/getById/${itemId}`);
+
+  return response.data;
+};
+
+export const useFetchItemById = ({ itemId }) => {
+  return useQuery({
+    queryKey: ["item", itemId],
+    queryFn: fetchItem,
+    staleTime: 5 * 60 * 1000, // 5 минут кэширования
+  });
+};
+
+const fetchItems = async ({ queryKey }) => {
+  const [, categoryId, businessId, limit] = queryKey;
+  if (!businessId) throw new Error("businessId обязателен");
+
+  const response = await api.get("items/getItemsByCategory", {
+    params: {
+      categoryId: categoryId || null,
+      businessId,
+      limit,
+    },
+  });
+
+  return response.data;
+};
+
+export const useFetchItemsByCategory = ({
+  categoryId,
+  businessId,
+  limit,
+  enabledOn,
+}) => {
+  return useQuery({
+    queryKey: ["items", categoryId, businessId, limit],
+    queryFn: fetchItems,
+    staleTime: 5 * 60 * 1000,
+    enabled: enabledOn,
+  });
+};
+
+const fetchAttributeCounts = async ({ queryKey }) => {
+  const [, categoryId, businessId] = queryKey;
+  if (!businessId) throw new Error("businessId обязателен");
+
+  const response = await api.get("items/getAttributeCounts", {
+    params: {
+      categoryId: categoryId || null,
+      businessId,
+    },
+  });
+
+  return response.data;
+};
+
+export const useGetAttributeCounts = ({ categoryId, businessId, enabled }) => {
+  return useQuery({
+    queryKey: ["getAttributeCounts", categoryId, businessId],
+    queryFn: fetchAttributeCounts,
+    staleTime: 5 * 60 * 1000, // 5 минут кэширования
+    enabled, // Контролируем выполнение запроса
+  });
+};
+
+const fetchFilteredItems = async ({ queryKey }) => {
+  const [, businessId, categoryId, filters] = queryKey;
+  if (!businessId) throw new Error("businessId обязателен");
+
+  const response = await api.get("items/filterItems", {
+    params: { businessId, categoryId, filters: JSON.stringify(filters) },
+  });
+
+  return response.data;
+};
+
+export const useFilterItems = ({
+  businessId,
+  categoryId,
+  filters,
+  categoryHasChild,
+}) => {
+  const hasFilters = filters && Object.keys(filters).length > 0;
+
+  return useQuery({
+    queryKey: ["filterItems", businessId, categoryId, filters],
+    queryFn: fetchFilteredItems,
+    enabled: categoryHasChild === false && hasFilters,
+    staleTime: 5 * 60 * 1000,
+  });
+};
+
+export const getSource = () => {
+  const referrer = document.referrer;
+  if (!referrer) return "direct";
+  if (referrer.includes(window.location.host)) {
+    return sessionStorage.getItem("prevPage") || "internal";
+  }
+  return `external:${new URL(referrer).hostname}`;
+};
+
+export const logProductView = async ({ productId, source, duration }) => {
+  try {
+    await api.post("views/log", { productId, source, duration });
+  } catch (error) {
+    console.error(
+      "Error logging product view:",
+      error.response?.data || error.message,
+    );
+  }
+};
+
+const fetchAttributes = async ({ queryKey }) => {
+  const response = await api.get("attributes/getAll", {
+    params: {},
+  });
+
+  return response.data;
+};
+
+export const useFetchAttributes = ({}) => {
+  return useQuery({
+    queryKey: ["attributes/getAll"],
+    queryFn: fetchAttributes,
+    staleTime: 5 * 60 * 1000, // 5 минут кэширования
+  });
 };

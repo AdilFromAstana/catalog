@@ -15,7 +15,6 @@ const statusTitleObj = {
 };
 
 const MyCatalog = () => {
-  const [isLoading, setIsLoading] = useState(false);
   const [activeTab, setActiveTab] = useState(1);
   const [isButtonsDisabled, setIsButtonsDisabled] = useState(false);
   const [products, setProducts] = useState([]);
@@ -40,27 +39,16 @@ const MyCatalog = () => {
     }));
   };
 
-  const getCatalog = async () => {
-    try {
-      setIsLoading(true);
-      const { data } = useGetData({
-        collectionName: "items",
-        storeCode: "cool-store",
-      });
-      setProducts(data);
-    } catch (error) {
-      console.error("Ошибка при загрузке данных:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const { data, isLoading, error } = useGetData({
+    collectionName: "items/getAll",
+    params: {},
+  });
 
   const toUpdateStatus = async ({ id, status }) => {
     try {
       setIsButtonsDisabled(true);
       // await itemToArchive({ collectionName: "items", id, status });
       message.success("Статус успешно обновлен!");
-      getCatalog();
     } catch (error) {
       message.error("Ошибка при обновлении товара!");
       console.error(error);
@@ -75,10 +63,6 @@ const MyCatalog = () => {
       setActiveTab(initialTab);
     }
   }, [products]);
-
-  useEffect(() => {
-    getCatalog();
-  }, []);
 
   return (
     <Content className="content">
@@ -115,11 +99,7 @@ const MyCatalog = () => {
             gutter: 16,
             column: 1,
           }}
-          dataSource={
-            activeTab
-              ? products.filter((product) => product.status === activeTab)
-              : products
-          }
+          dataSource={data}
           renderItem={(item) => {
             const nextStatusCode =
               item.status === "archive" ? "active" : "archive";
@@ -130,8 +110,8 @@ const MyCatalog = () => {
               <List.Item className="my-catalog-item-wrapper">
                 <div className="my-catalog-item">
                   <img
-                    src={item.images[0].url}
-                    alt={item.images[0].url || "Продукт"}
+                    src={item.images?.[0]?.url || "/placeholder.jpg"}
+                    alt={item.images?.[0]?.url || "Изображение отсутствует"}
                     className="my-catalog-item-image"
                   />
                   <div className="my-catalog-item-details">
