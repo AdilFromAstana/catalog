@@ -13,5 +13,20 @@
   }
 }
 
-@media (max-width: 768px) {
+@media (min-width: 768px) {
+  .product-list-horizontal-scroll-container .ant-list-items {
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+  }
+}
+
+@media (min-width: 964px) {
+  .product-list-horizontal-scroll-container .ant-list-items {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+}
+
+@media (min-width: 1176px) {
+  .product-list-horizontal-scroll-container .ant-list-items {
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+  }
 }

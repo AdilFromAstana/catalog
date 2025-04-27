@@ -76,7 +76,6 @@ export const useGetPaginatedData = ({
     getNextPageParam: (lastPage) => lastPage.nextPage || null,
   });
 };
-
 export const useGetDataById = (collectionName, id) => {
   return useQuery(
     [collectionName, id],
@@ -87,7 +86,6 @@ export const useGetDataById = (collectionName, id) => {
     { enabled: !!id },
   );
 };
-
 export const useGetDataByCategory = ({
   endPoint,
   level = 1,
@@ -208,6 +206,21 @@ const fetchItems = async ({ queryKey }) => {
   return response.data;
 };
 
+const getCategoryFilters = async ({ queryKey }) => {
+  const [, categoryId, businessId, limit] = queryKey;
+  if (!businessId) throw new Error("businessId обязателен");
+
+  const response = await api.get("items/getCategoryFilters", {
+    params: {
+      categoryId: categoryId || null,
+      businessId,
+      limit,
+    },
+  });
+
+  return response.data;
+};
+
 export const useFetchItemsByCategory = ({
   categoryId,
   businessId,
@@ -219,6 +232,14 @@ export const useFetchItemsByCategory = ({
     queryFn: fetchItems,
     staleTime: 5 * 60 * 1000,
     enabled: enabledOn,
+  });
+};
+
+export const useFetchCategoryFilters = ({ categoryId, businessId }) => {
+  return useQuery({
+    queryKey: ["items", categoryId, businessId],
+    queryFn: getCategoryFilters,
+    staleTime: 5 * 60 * 1000,
   });
 };
 

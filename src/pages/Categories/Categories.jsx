@@ -66,29 +66,42 @@ const Categories = () => {
     }
   };
 
-  const selectCategory = (newCategory) => {
-    if (!newCategory.hasChild) {
-      setSelectedItem(newCategory);
-      setEditedAttributes(newCategory.attributes || []);
-      setIsModalOpen(true);
+  const selectCategory = (
+    newCategory,
+    isFromBreadcrumb = false,
+    breadcrumbIndex = -1,
+  ) => {
+    if (isFromBreadcrumb) {
+      const newBreadcrumb = breadcrumb.slice(0, breadcrumbIndex + 1);
+
+      setCategory({
+        level: newCategory.level,
+        parentId: newCategory?.id,
+        hasChild: newCategory.hasChild ?? true,
+      });
+      setBreadcrumb(newBreadcrumb);
     } else {
-      const existsInBreadcrumb = breadcrumb.some(
-        (item) => item.id === newCategory.id,
-      );
+      if (!newCategory.hasChild) {
+        setSelectedItem(newCategory);
+        setEditedAttributes(newCategory.attributes || []);
+        setIsModalOpen(true);
+      } else {
+        const existsInBreadcrumb = breadcrumb.some(
+          (item) => item.id === newCategory.id,
+        );
 
-      if (!existsInBreadcrumb) {
-        console.log("Добавляем новую категорию в breadcrumb:", newCategory);
+        if (!existsInBreadcrumb) {
+          setCategory({
+            level: category.level + 1,
+            parentId: newCategory?.id,
+            hasChild: newCategory.hasChild ?? true,
+          });
 
-        setCategory({
-          level: category.level + 1,
-          parentId: newCategory?.id,
-          hasChild: newCategory.hasChild ?? true,
-        });
-
-        setBreadcrumb((prev) => [
-          ...prev,
-          { ...newCategory, level: category.level + 1 },
-        ]);
+          setBreadcrumb((prev) => [
+            ...prev,
+            { ...newCategory, level: category.level + 1 },
+          ]);
+        }
       }
     }
   };

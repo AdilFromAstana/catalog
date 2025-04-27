@@ -5,9 +5,3 @@
   padding: 10px 16px;
   overflow-x: scroll;
 }
-
-@media (min-width: 768px) {
-  .inline-filters-scrollable-row {
-    display: none;
-  }
-}

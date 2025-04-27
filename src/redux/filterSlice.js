@@ -9,6 +9,7 @@ const initialState = {
   firstSelectedFilter: null,
   sortOrder: { by: "price", order: "default", value: "default" },
   priceRange: { min: 0, max: 0 },
+  totalItems: 0, // ✅ ДОБАВИЛ totalItems
 };
 
 function applyFiltersAndSorting(state) {
@@ -22,19 +23,19 @@ function applyFiltersAndSorting(state) {
 
       if (Array.isArray(itemValue)) {
         const extractedValues = itemValue.map((el) =>
-          typeof el === "object" ? el.value || el.code || el.title : el,
+          typeof el === "object" ? el.value || el.code || el.title : el
         );
         return values.some((v) => extractedValues.includes(v));
       }
 
       return values.includes(itemValue);
-    }),
+    })
   );
 
   if (filters.price) {
     const [min, max] = filters.price;
     filtered = filtered.filter(
-      (item) => item.price >= min && item.price <= max,
+      (item) => item.price >= min && item.price <= max
     );
   }
 
@@ -62,34 +63,47 @@ const filterSlice = createSlice({
   initialState,
   reducers: {
     initializeData: (state, action) => {
-      const { items, filters } = action.payload;
-
-      const allPrices = items.flatMap((item) => [
-        item.price,
-        item.originalPrice,
-      ]);
-      const min = Math.min(...allPrices);
-      const max = Math.max(...allPrices);
-
-      const priceFilter = {
-        name: "Цена",
-        range: { min, max },
-      };
-
-      const fullFilters = {
-        ...filters,
-        price: priceFilter,
-      };
-
-      state.initialFiltersState = fullFilters;
-      state.filteredOptions = JSON.parse(JSON.stringify(fullFilters));
+      const { items, filtersData, totalItems } = action.payload;
+      // ✅ Теперь здесь принимаем и totalItems
 
       state.allItems = items;
       state.filteredItems = items;
       state.filters = {};
       state.firstSelectedFilter = null;
-      state.priceRange = { min, max };
-      state.sortOrder = "default";
+
+      state.priceRange = {
+        min: filtersData?.minPrice || 0,
+        max: filtersData?.maxPrice || 0,
+      };
+
+      const attributesFilters = {};
+      for (const [code, attr] of Object.entries(filtersData?.attributes || {})) {
+        attributesFilters[code] = {
+          name: attr.titleRu,
+          options: attr.values.map((v) => ({
+            value: v.value,
+            count: v.count,
+          })),
+        };
+      }
+
+      state.initialFiltersState = {
+        ...attributesFilters,
+        price: {
+          name: "Цена",
+          range: {
+            min: filtersData?.minPrice || 0,
+            max: filtersData?.maxPrice || 0,
+          },
+        },
+      };
+
+      state.filteredOptions = JSON.parse(
+        JSON.stringify(state.initialFiltersState)
+      );
+
+      state.sortOrder = { by: "price", order: "default", value: "default" };
+      state.totalItems = totalItems || 0; // ✅ сохраняем сюда общее количество товаров
     },
 
     updateFilter: (state, action) => {
@@ -97,15 +111,15 @@ const filterSlice = createSlice({
 
       if (!state.firstSelectedFilter) {
         state.firstSelectedFilter = param;
-        state.initialFiltersState = state.filteredOptions
-          ? JSON.parse(JSON.stringify(state.filteredOptions))
-          : {};
+        state.initialFiltersState = JSON.parse(
+          JSON.stringify(state.filteredOptions)
+        );
       }
 
       if (values.length) {
         state.filters[param] = values;
       } else {
-        delete state.filters[param]; // удаляем фильтр, если пустой
+        delete state.filters[param];
       }
 
       state.filteredItems = applyFiltersAndSorting(state);
@@ -122,13 +136,13 @@ const filterSlice = createSlice({
                 count: state.filteredItems.filter((item) =>
                   Array.isArray(item[key])
                     ? item[key].some((el) =>
-                        typeof el === "object"
-                          ? el.value === option.value ||
-                            el.title === option.value ||
-                            el.code === option.value
-                          : el === option.value,
-                      )
-                    : item[key] === option.value,
+                      typeof el === "object"
+                        ? el.value === option.value ||
+                        el.title === option.value ||
+                        el.code === option.value
+                        : el === option.value
+                    )
+                    : item[key] === option.value
                 ).length,
               }))
               .filter((option) => option.count > 0);
@@ -136,22 +150,17 @@ const filterSlice = createSlice({
 
           return acc;
         },
-        {},
+        {}
       );
 
-      const allPrices = state.allItems.map((item) => item.price);
-      const minPrice = allPrices.length ? Math.min(...allPrices) : 0;
-      const maxPrice = allPrices.length ? Math.max(...allPrices) : 0;
-
+      const prices = state.filteredItems.map((item) => item.price);
       state.filteredOptions.price = {
         name: "Цена",
-        range: { min: minPrice, max: maxPrice },
+        range: {
+          min: prices.length ? Math.min(...prices) : 0,
+          max: prices.length ? Math.max(...prices) : 0,
+        },
       };
-
-      if (state.firstSelectedFilter) {
-        state.filteredOptions[state.firstSelectedFilter] =
-          state.initialFiltersState[state.firstSelectedFilter];
-      }
     },
 
     setPriceRange: (state, action) => {
@@ -170,18 +179,13 @@ const filterSlice = createSlice({
       state.filters = {};
       state.filteredItems = state.allItems;
       state.filteredOptions = JSON.parse(
-        JSON.stringify(state.initialFiltersState),
+        JSON.stringify(state.initialFiltersState)
       );
       state.firstSelectedFilter = null;
-      state.sortOrder = "default";
-
-      const allPrices = state.allItems.flatMap((item) => [
-        item.price,
-        item.originalPrice,
-      ]);
+      state.sortOrder = { by: "price", order: "default", value: "default" };
       state.priceRange = {
-        min: Math.min(...allPrices),
-        max: Math.max(...allPrices),
+        min: state.initialFiltersState.price.range.min,
+        max: state.initialFiltersState.price.range.max,
       };
     },
   },

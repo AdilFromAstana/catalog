@@ -15,6 +15,10 @@ import { useDispatch } from "react-redux";
 import { initialFilters, initialFlowers } from "../common/initialData";
 import ProductAnalyticsPage from "../pages/Statistics/ProductAnalyticsPage";
 import Categories from "../pages/Categories/Categories";
+import {
+  useFetchCategoryFilters,
+  useFetchItemsByCategory,
+} from "../firestoreService";
 
 const pageVariants = {
   initial: { opacity: 0, y: 40 },
@@ -40,12 +44,20 @@ const AppRouter = () => {
   const dispatch = useDispatch();
   const location = useLocation();
 
+  const { data } = useFetchItemsByCategory({ businessId: 1, categoryId: 2441 });
+  const { data: filters } = useFetchCategoryFilters({
+    businessId: 1,
+    categoryId: 2441,
+  });
+
+  console.log("filters: ", filters);
 
   useEffect(() => {
     dispatch(
       initializeData({
-        items: initialFlowers,
-        filters: initialFilters,
+        items: data,
+        // items: initialFlowers,
+        filtersData: filters,
       }),
       setSortOrder({
         by: "price",
