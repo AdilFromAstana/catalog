@@ -37,13 +37,7 @@
 }
 
 .catalog-toolbar__icon {
-    color: #4f4f4f;
-    font-size: 30px;
-    cursor: pointer;
-  }
-
-@media (min-width: 964px) {
-  .catalog-toolbar {
-    display: none;
-  }
+  color: #4f4f4f;
+  font-size: 30px;
+  cursor: pointer;
 }

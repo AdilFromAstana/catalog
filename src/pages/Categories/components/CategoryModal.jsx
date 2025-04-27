@@ -52,7 +52,6 @@ const CategoryModal = ({
     setAttributes(newAttributes);
   };
 
-  // Мутация для обновления атрибутов
   const { mutate, isLoading } = useUpdateCategoryAttributes(selectedItem?.id);
 
   const saveChanges = () => {
@@ -70,7 +69,7 @@ const CategoryModal = ({
         isEditing ? (
           <>
             <Button onClick={() => setIsEditing(false)}>Отмена</Button>
-            <Button type="primary" onClick={saveChanges} loading={isLoading}>
+            <Button type="primary" onClick={saveChanges}>
               {isLoading ? "Сохранение..." : "Сохранить"}
             </Button>
           </>

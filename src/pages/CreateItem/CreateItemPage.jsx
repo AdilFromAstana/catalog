@@ -11,7 +11,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import CategoryModal from "./components/CategoryModal";
 
-const API_URL = "http://192.168.0.10:5000/api";
+const API_URL = "http://192.168.0.14:5000/api";
 
 const api = axios.create({
   baseURL: API_URL,

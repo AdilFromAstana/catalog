@@ -4,3 +4,9 @@
   background: white;
   z-index: 1;
 }
+
+@media (min-width: 964px) {
+  .catalog-header-container {
+    display: none;
+  }
+}

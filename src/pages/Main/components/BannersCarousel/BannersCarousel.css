@@ -28,7 +28,7 @@
   border-radius: 20px;
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 768px) {
   .banners-carousel__wrapper {
     aspect-ratio: 83 / 13;
   }
